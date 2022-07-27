@@ -5,12 +5,10 @@ LogBox.ignoreAllLogs();
 //les deux lignes ci-dessus permettent de cacher les messages d'erreur sur telephone
 
 import * as React from "react";
-
-//react native paper
-import { Provider as PaperProvider } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 //redux
-import { Provider as StoreProvider } from "react-redux";
+/* import { Provider as StoreProvider } from "react-redux"; */
 /* import pseudo from "./reducers/pseudo.reducer";
 import { createStore, combineReducers } from "redux"; 
 const store = createStore(combineReducers({ }));*/
@@ -36,6 +34,8 @@ import { Text, View } from "react-native";
 import BooksScreen from "./screens/BooksScreen";
 import FeedScreen from "./screens/FeedScreen";
 import BooksDrawerScreen from "./screens/BooksDrawerScreen";
+
+
 
 //au cas où besoin du stack navigator:
 
@@ -83,16 +83,19 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
 	return (
-		<PaperProvider>
+		
 			<NavigationContainer>
 				<Tab.Navigator
+				initialRouteName='My recipes'
 					screenOptions={({ route }) => ({
-						tabBarActiveTintColor: "black",
-						tabBarInactiveTintColor: "#a3a3a3",
+						tabBarActiveTintColor: "#ff7f50",
+						tabBarInactiveTintColor: "#dfe4ea",
 						tabBarLabelPosition: "beside-icon",
+						tabBarShowLabel: false,
 						tabBarStyle: [
 							{
 								display: "flex",
+								backgroundColor: '#2f3542'
 							},
 							null,
 						],
@@ -101,10 +104,12 @@ export default function App() {
 						tabBarIcon: ({ color }) => {
 							let iconName;
 
-							if (route.name === "Books") {
-								iconName = "book-multiple";
-							} else if (route.name === "Feed") {
+							if (route.name === "Feed") {
 								iconName = "hamburger";
+							} else if (route.name === "Add") {
+								iconName = "plus-circle";
+							} else if (route.name === "My recipes") {
+								iconName = "silverware-clean";
 							}
 							return (
 								<MaterialCommunityIcons
@@ -117,18 +122,25 @@ export default function App() {
 					})}
 				>
 					<Tab.Screen
-						name="Books"
-						component={BooksAndDrawer}
-						options={{ headerShown: false }}
-					/>
-					<Tab.Screen
 						name="Feed"
 						component={FeedScreen}
 						options={{ headerShown: false }}
 					/>
+					<Tab.Screen
+						name="Add"
+						component={FeedScreen}
+						options={{ headerShown: false }}
+					/>
+					<Tab.Screen
+						name="My recipes"
+						component={BooksAndDrawer}
+						options={{ headerShown: false }}
+					/>
+					
+					
 				</Tab.Navigator>
 			</NavigationContainer>
-		</PaperProvider>
+		
 	);
 }
 
