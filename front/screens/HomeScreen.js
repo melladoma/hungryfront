@@ -17,14 +17,17 @@ import {
 	Text,
 	TextInput,
 } from "react-native";
-import { DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
+
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-function BooksScreen({ navigation }, props) {
+function HomeScreen( props) {
+	const navigation = useNavigation()
+
 	const [isDessertFilterSelected, setIsDessertFilterSelected] =
 		useState(false);
 	const [isTradionnelFilterSelected, setIsTraditionnelFilterSelected] =
@@ -33,6 +36,8 @@ function BooksScreen({ navigation }, props) {
 		useState(false);
 
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+
+	const [typeAffichage, setTypeAffichage] = useState('icones');
 
 	var dessertColor = "white";
 	if (isDessertFilterSelected) {
@@ -100,7 +105,11 @@ function BooksScreen({ navigation }, props) {
 		},
 	];
 
-	const Item = ({ source, title }) => (
+	var Item
+	var flatlist
+	if (typeAffichage === 'icones') {
+	Item = ({ source, title }) => (
+		<TouchableOpacity onPress={() => navigation.navigate('RecipeSheetScreen')}>
 		<View
 			style={{
 				height: 200,
@@ -123,12 +132,74 @@ function BooksScreen({ navigation }, props) {
 				}}
 				source={source}
 			/>
-		</View>
+		</View></TouchableOpacity>
 	);
 
 	const renderItem = ({ item }) => (
 		<Item source={item.source} title={item.title} />
 	);
+
+	flatlist = <FlatList
+	key={'icones'}
+	columnWrapperStyle={{ justifyContent: "space-evenly" }}
+	numColumns={2}
+	data={DATA}
+	renderItem={renderItem}
+	keyExtractor={(item) => item.id}
+/>
+} else if (typeAffichage === 'liste') {
+	Item = ({ source, title }) => (
+	<TouchableOpacity onPress={() => navigation.navigate('RecipeSheetScreen')}>
+		<View
+			style={{
+				display:'flex',
+				flexDirection:'row',
+				height: 150,
+				width: '90%',
+				alignSelf:'center',
+				
+				marginTop: 10,
+				borderRadius: 10,
+				borderWidth: 1,
+			}}
+		>
+			<Image
+				style={{
+					height:'100%',
+					width: "40%",
+					borderBottomLeftRadius: 10,
+					borderBottomRightRadius: 0,
+					borderTopLeftRadius: 10,
+					borderTopRightRadius: 0,
+					
+				}}
+				source={source}
+			/>
+			<View style={{margin:10}}>
+				<Text style={{ fontSize:20}}>{title}</Text>
+				<Text style={{ fontSize:15}}>Hum tres bonne tarte</Text>
+				<Text style={{ fontSize:15, fontWeight:'bold' }}>#Dylan</Text>
+				<Text style={{ fontSize:15 }}>58 Likes</Text>
+			</View>
+			
+			
+		</View></TouchableOpacity>
+	);
+
+	const renderItem = ({ item }) => (
+		<Item source={item.source} title={item.title} />
+	);
+
+	flatlist = <FlatList
+	
+	key={'liste'}
+	data={DATA}
+	renderItem={renderItem}
+	keyExtractor={(item) => item.id}
+/>
+}
+
+	
 	//----------------------------- ------------------------------------Fin de la flatList
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -147,7 +218,7 @@ function BooksScreen({ navigation }, props) {
 
 	var overlay;
 	if (isOverlayVisible) {
-		overlay = <View style={[styles.overlay, { height: 360 }]} />;
+		overlay = <View style={[styles.overlay, { height: 360 }]} ><Text>Type d'affichage:</Text><Button title='Icônes' onPress={()=> {setTypeAffichage('icones'); setIsOverlayVisible(!isOverlayVisible)} }></Button><Text>ou</Text><Button title='Liste' onPress={()=> {setTypeAffichage('liste'); setIsOverlayVisible(!isOverlayVisible)} }></Button></View>;
 	}
 	var overlayShadow;
 	if (isOverlayVisible) {
@@ -188,14 +259,33 @@ function BooksScreen({ navigation }, props) {
 						placeholder="Chercher une recette"
 						underlineColorAndroid="transparent"
 					/>
-					<TouchableOpacity onPress={() => setIsOverlayVisible(!isOverlayVisible)}><MaterialCommunityIcons
+					<TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}><MaterialCommunityIcons
 						style={styles.searchIcon}
 						name="magnify"
 						size={28}
 						color="#2f3542"
 						
 					/></TouchableOpacity>
+					
 				</View>
+				<TouchableOpacity
+					style={{ }}
+					onPress={() => setIsOverlayVisible(!isOverlayVisible)}
+				>
+					
+					<MaterialCommunityIcons
+						name="tune-vertical"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
 			</View>
 
 			<View style={styles.content}>
@@ -287,13 +377,7 @@ function BooksScreen({ navigation }, props) {
 						</Pressable>
 					</ScrollView>
 				</View>
-				<FlatList
-					columnWrapperStyle={{ justifyContent: "space-evenly" }}
-					numColumns={2}
-					data={DATA}
-					renderItem={renderItem}
-					keyExtractor={(item) => item.id}
-				/>
+				{flatlist}
 				{overlayShadow}
 				{overlay}
 			</View>
@@ -313,9 +397,9 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BooksScreen); */
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen); */
 
-export default BooksScreen;
+export default HomeScreen;
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -345,8 +429,8 @@ const styles = StyleSheet.create({
 	searchSection: {
 		flex: 1,
 		height: 40,
-		margin: 12,
-		marginLeft: 0,
+		marginTop: 12,
+		marginBottom: 12,
 
 		borderRadius: 5,
 

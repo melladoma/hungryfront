@@ -23,9 +23,11 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-function FeedScreen(props) {
+function AddScreen(props) {
 
 	const navigation = useNavigation()
+
+	
 
 	const [searchInput, setSearchInput] = useState("");
 
@@ -51,14 +53,23 @@ function FeedScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="light-content" />
 			<View style={styles.appBar}>
+			<Text style={{fontSize:20}}>AddScreen</Text>
+			</View>
+
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Text style={{fontSize:20}}>AddScreen</Text>
 				<TouchableOpacity
 					style={{}}
-					onPress={() =>
-						navigation.dispatch(DrawerActions.openDrawer())
-					}
+					onPress={() => navigation.navigate('SnapScreen')}
 				>
 					<MaterialCommunityIcons
-						name="menu"
+						name="camera"
 						size={28}
 						color="#2f3542"
 						style={{
@@ -70,35 +81,41 @@ function FeedScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-				<View style={styles.searchSection}>
-					<TextInput
-						style={styles.searchInput}
-						onChangeText={(value) => setSearchInput(value)}
-						value={searchInput}
-						placeholder="Chercher une recette"
-						underlineColorAndroid="transparent"
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('UrlScreen')}
+				>
+					<MaterialCommunityIcons
+						name="web"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
 					/>
-					<TouchableOpacity
-						onPress={() => navigation.navigate('SearchScreen')}
-					>
-						<MaterialCommunityIcons
-							style={styles.searchIcon}
-							name="magnify"
-							size={28}
-							color="#2f3542"
-						/>
-					</TouchableOpacity>
-				</View>
-			</View>
-
-			<View
-				style={{
-					flex: 1,
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
-				<Text style={{fontSize:20}}>FeedScreen</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('FormScreen')}
+				>
+					<MaterialCommunityIcons
+						name="pencil"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
+				
 			</View>
 		</View>
 	);
@@ -116,9 +133,9 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen); */
+export default connect(mapStateToProps, mapDispatchToProps)(AddScreen); */
 
-export default FeedScreen;
+export default AddScreen;
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -139,6 +156,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		height: APPBAR_HEIGHT,
 		width: "100%",
+
+		justifyContent:'center'
 	},
 	content: {
 		flex: 1,

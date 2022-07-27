@@ -37,7 +37,11 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function BooksDrawerScreen() {
+import { useNavigation, DrawerActions } from "@react-navigation/native";
+
+
+export default function DrawerScreen( props) {
+	const navigation = useNavigation()
 	const [active, setActive] = useState("");
 
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -76,7 +80,7 @@ export default function BooksDrawerScreen() {
 					style={{
 						display: "flex",
 						flexDirection: "row",
-						borderWidth: 2,
+						borderWidth: 2
 					}}
 				>
 					<View
@@ -91,7 +95,8 @@ export default function BooksDrawerScreen() {
 					>
 						{avatar}
 					</View>
-					<View style={{ padding: 30 }}>
+					<View style={{ flex:1, paddingLeft: 30, paddingTop:30, paddingBottom:30, 
+						borderWidth:1 }}>
 						<View
 							style={{
 								display: "flex",
@@ -144,7 +149,7 @@ export default function BooksDrawerScreen() {
 							color="#2f3542"
 						/>
 						<Button
-							
+							onPress={() => navigation.navigate('ShoppingList')}
 							title="Ma liste de courses"
 							color="#841584"
 							accessibilityLabel="Navigate to Ma liste de course"
@@ -165,7 +170,7 @@ export default function BooksDrawerScreen() {
 							color="#2f3542"
 						/>
 						<Button
-							onPress={() => console.log("hello")}
+							onPress={() => navigation.navigate('Planner')}
 							title="Mon planning"
 							color="#841584"
 							accessibilityLabel="Navigate to Ma liste de course"
@@ -187,7 +192,7 @@ export default function BooksDrawerScreen() {
 							color="#2f3542"
 						/>
 						<Button
-							onPress={() => console.log("hello")}
+							onPress={() => navigation.navigate('Account')}
 							title="Paramètres"
 							color="#841584"
 							accessibilityLabel="Navigate to Ma liste de course"

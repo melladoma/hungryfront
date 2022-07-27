@@ -23,7 +23,7 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-function FeedScreen(props) {
+function FormScreen(props) {
 
 	const navigation = useNavigation()
 
@@ -79,7 +79,7 @@ function FeedScreen(props) {
 						underlineColorAndroid="transparent"
 					/>
 					<TouchableOpacity
-						onPress={() => navigation.navigate('SearchScreen')}
+						onPress={() => setIsOverlayVisible(!isOverlayVisible)}
 					>
 						<MaterialCommunityIcons
 							style={styles.searchIcon}
@@ -98,7 +98,25 @@ function FeedScreen(props) {
 					alignItems: "center",
 				}}
 			>
-				<Text style={{fontSize:20}}>FeedScreen</Text>
+				<Text style={{fontSize:20}}>FormScreen</Text>
+				<Button title='Valider le formulaire' onPress={() => navigation.navigate('RecipeSheetScreen')}/>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.goBack()}
+				>
+					<MaterialCommunityIcons
+						name="arrow-left"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -116,9 +134,9 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen); */
+export default connect(mapStateToProps, mapDispatchToProps)(FormScreen); */
 
-export default FeedScreen;
+export default FormScreen;
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;

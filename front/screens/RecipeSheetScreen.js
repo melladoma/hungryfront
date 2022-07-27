@@ -23,7 +23,7 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-function FeedScreen(props) {
+function RecipeSheetScreen(props) {
 
 	const navigation = useNavigation()
 
@@ -79,7 +79,7 @@ function FeedScreen(props) {
 						underlineColorAndroid="transparent"
 					/>
 					<TouchableOpacity
-						onPress={() => navigation.navigate('SearchScreen')}
+						onPress={() => setIsOverlayVisible(!isOverlayVisible)}
 					>
 						<MaterialCommunityIcons
 							style={styles.searchIcon}
@@ -98,7 +98,92 @@ function FeedScreen(props) {
 					alignItems: "center",
 				}}
 			>
-				<Text style={{fontSize:20}}>FeedScreen</Text>
+				<Text style={{fontSize:20}}>RecipeSheetScreen</Text>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('FormScreen')}
+				>
+					<MaterialCommunityIcons
+						name="pencil"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+					</TouchableOpacity>
+					<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('ShoppingListScreen')}
+				>
+					<MaterialCommunityIcons
+						name="cart"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+					</TouchableOpacity>
+					<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('PlannerScreen')}
+				>
+					<MaterialCommunityIcons
+						name="calendar"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+					</TouchableOpacity>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('HomeDrawer2')}
+				>
+					<MaterialCommunityIcons
+						name="book-plus"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => navigation.navigate('HomeDrawer2')}
+				>
+					<MaterialCommunityIcons
+						name="arrow-left"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -116,9 +201,9 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen); */
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeSheetScreen); */
 
-export default FeedScreen;
+export default RecipeSheetScreen;
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
