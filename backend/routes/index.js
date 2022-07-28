@@ -7,7 +7,11 @@ const { default: mongoose } = require("mongoose");
 const tesseract = require("node-tesseract-ocr");
 const vision = require("@google-cloud/vision");
 
+
 //Test tesseract
+
+//ne pas oublier d'installer l'engine tesseract => brew install tesseract
+//+packages langues => brew install tesseract-lang
 router.get("/tesseract", async function (req, res, next) {
 	// const config = {
 	// 	lang: "eng",
@@ -24,13 +28,16 @@ router.get("/tesseract", async function (req, res, next) {
 
 
 	const config = {
-		lang: "eng",
-		oem: 3,
-		psm: 11,
+		lang: "fra",
+		// oem: 2,
+		// psm: 3,
 	}
 
+	var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
+	// var image = "./public/images/recetteTest.png"
+
 	tesseract
-		.recognize("https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg", config)
+		.recognize(image, config)
 		.then((text) => {
 			console.log("Result:", text)
 			res.json({ text });
