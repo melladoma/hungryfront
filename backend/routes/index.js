@@ -11,7 +11,7 @@ const vision = require("@google-cloud/vision");
 //Test tesseract
 
 //ne pas oublier d'installer l'engine tesseract => brew install tesseract
-//+packages langues => brew install tesseract-lang
+//+packages langues => brew install tesseract-lang (attention, tres long )
 router.get("/tesseract", async function (req, res, next) {
 	// const config = {
 	// 	lang: "eng",
@@ -29,12 +29,12 @@ router.get("/tesseract", async function (req, res, next) {
 
 	const config = {
 		lang: "fra",
-		// oem: 2,
-		// psm: 3,
+		oem: 3,
+		psm: 6,
 	}
 
-	var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
-	// var image = "./public/images/recetteTest.png"
+	// var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
+	var image = "./tests/images/ok/testfra_psm6.png"
 
 	tesseract
 		.recognize(image, config)
