@@ -25,8 +25,8 @@ router.get("/tesseract", async function (req, res, next) {
 
 	const config = {
 		lang: "eng",
-		oem: 1,
-		psm: 4,
+		oem: 3,
+		psm: 11,
 	}
 
 	tesseract
