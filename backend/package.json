@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
     "heroku-postbuild": "cd reactapp && npm install && npm run build"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "mongoose": "^6.4.4",
     "morgan": "~1.9.1",
     "node-tesseract-ocr": "^2.2.1",
+    "nodemon": "^2.0.19",
     "sync-request": "^6.1.0",
     "tesseractocr": "^2.0.3"
   }
