@@ -216,6 +216,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -227,5 +228,6 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		backgroundColor: "#f5f6fa",
+		
 	},
 });

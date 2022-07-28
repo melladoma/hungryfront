@@ -6,6 +6,11 @@ LogBox.ignoreAllLogs();
 
 import * as React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import {
+	Platform,
+	
+} from "react-native";
 
 //redux
 /* import { Provider as StoreProvider } from "react-redux"; */
@@ -240,8 +245,10 @@ function DrawerNavigator({ navigation }, props) {
 			initialRouteName="HomeDrawer"
 			drawerContent={(props) => <DrawerScreen />}
 			screenOptions={{
+				drawerType:'front',
 				drawerStyle: {
 					width: "80%",
+					paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
 				}
 			}}
 		>
@@ -287,8 +294,10 @@ function DrawerNavigator2({ navigation }, props) {
 			initialRouteName="AddDrawer"
 			drawerContent={(props) => <DrawerScreen />}
 			screenOptions={{
+				drawerType:'front',
 				drawerStyle: {
 					width: "80%",
+					paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
 				}
 			}}
 		>
@@ -334,8 +343,10 @@ function DrawerNavigator3({ navigation }, props) {
 			initialRouteName="FeedDrawer"
 			drawerContent={(props) => <DrawerScreen />}
 			screenOptions={{
+				drawerType:'front',
 				drawerStyle: {
 					width: "80%",
+					paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
 				}
 			}}
 		>

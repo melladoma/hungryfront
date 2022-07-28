@@ -141,6 +141,7 @@ function HomeScreen( props) {
 
 	flatlist = <FlatList
 	key={'icones'}
+	showsVerticalScrollIndicator={false}
 	columnWrapperStyle={{ justifyContent: "space-evenly" }}
 	numColumns={2}
 	data={DATA}
@@ -191,7 +192,7 @@ function HomeScreen( props) {
 	);
 
 	flatlist = <FlatList
-	
+	showsVerticalScrollIndicator={false}
 	key={'liste'}
 	data={DATA}
 	renderItem={renderItem}
@@ -375,6 +376,22 @@ function HomeScreen( props) {
 								<Text>Dessert</Text>
 							</View>
 						</Pressable>
+						<Pressable
+							onPress={() =>
+								setIsDessertFilterSelected(
+									!isDessertFilterSelected
+								)
+							}
+						>
+							<View
+								style={[
+									styles.filterContainer,
+									{ backgroundColor: dessertColor },
+								]}
+							>
+								<Text>Dessert</Text>
+							</View>
+						</Pressable>
 					</ScrollView>
 				</View>
 				{flatlist}
@@ -453,10 +470,11 @@ const styles = StyleSheet.create({
 	},
 	filterContainer: {
 		alignSelf: "center",
-		padding: 12,
+		paddingVertical: 5,
+		paddingHorizontal: 10,
 		margin: 5,
 		borderWidth: 1,
-		borderRadius: "50%",
+		borderRadius: 100,
 	},
 	overlay: {
 		flex: 1,
