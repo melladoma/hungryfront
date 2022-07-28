@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
 		padding: 12,
 		margin: 5,
 		borderWidth: 1,
-		borderRadius: "50%",
+		borderRadius: 100,
 	},
 	overlay: {
 		flex: 1,
