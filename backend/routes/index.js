@@ -13,29 +13,21 @@ const vision = require("@google-cloud/vision");
 //ne pas oublier d'installer l'engine tesseract => brew install tesseract
 //+packages langues => brew install tesseract-lang (attention, tres long )
 router.get("/tesseract", async function (req, res, next) {
-	// const config = {
-	// 	lang: "eng",
-	// 	oem: 1,
-	// 	psm: 3,
-	// }
-	// var text = await tesseract.recognize(
-	// 	"https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg", config
-	// );
+
 
 	// var text = await tesseract.recognize(
 	// 	"https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
 	// );
 
 
+	// var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
+	var image = "./tests/images/pizza.png"
+
 	const config = {
 		lang: "fra",
 		oem: 3,
-		psm: 6,
+		psm: 3,
 	}
-
-	// var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
-	var image = "./tests/images/ok/testfra_psm6.png"
-
 	tesseract
 		.recognize(image, config)
 		.then((text) => {
@@ -51,14 +43,14 @@ router.get("/tesseract", async function (req, res, next) {
 });
 
 //Test Cloud Vision
-
 router.get("/cloud-vision", async function (req, res, next) {
+	var image = "./tests/images/KO/recette_manuscrite.png"
 	//Creates a client
 	const client = new vision.ImageAnnotatorClient();
 
 	// Performs label detection on the image file
 	const [result] = await client.textDetection(
-		"https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
+		image
 	);
 	const detections = result.textAnnotations;
 
@@ -72,6 +64,7 @@ router.get("/cloud-vision", async function (req, res, next) {
 
 
 router.get("/cloud-vision-doc", async function (req, res, next) {
+
 	//Creates a client
 	const client = new vision.ImageAnnotatorClient();
 
