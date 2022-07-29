@@ -14,14 +14,13 @@ const vision = require("@google-cloud/vision");
 //+packages langues => brew install tesseract-lang (attention, tres long )
 router.get("/tesseract", async function (req, res, next) {
 
-
 	// var text = await tesseract.recognize(
 	// 	"https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
 	// );
 
 
 	// var image = "https://picturetherecipe.com/wp-content/uploads/2013/07/Picture-The-Recipe-Tips-Muffin-tin-for-stuffed-veggies.jpg"
-	var image = "./tests/images/pizza.png"
+	var image = "./tests/images/nouilles2.png"
 
 	const config = {
 		lang: "fra",
