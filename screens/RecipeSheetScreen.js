@@ -38,113 +38,126 @@ function RecipeSheetScreen(props) {
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}></View>
 
-			<View style={styles.content}>
-				<Text style={{ fontSize: 20 }}>RecipeSheetScreen</Text>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("FormScreen")}
-				>
-					<MaterialCommunityIcons
-						name="pencil"
-						size={28}
-						color="#2f3542"
+			<View style={{ flex: 1 }}>
+				<View style={styles.content}>
+					<Text style={{ fontSize: 20 }}>RecipeSheetScreen</Text>
+					<TouchableOpacity
+						style={{}}
+						onPress={() => navigation.navigate("FormScreen")}
+					>
+						<MaterialCommunityIcons
+							name="pencil"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{}}
+						onPress={() =>
+							navigation.navigate("ShoppingListScreen")
+						}
+					>
+						<MaterialCommunityIcons
+							name="cart"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{}}
+						onPress={() => navigation.navigate("PlannerScreen")}
+					>
+						<MaterialCommunityIcons
+							name="calendar"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{}}
+						onPress={() => navigation.navigate("HomeDrawer2")}
+					>
+						<MaterialCommunityIcons
+							name="book-plus"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+				</View>
+				<View style={styles.bottomTab}>
+					<View
 						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+							height: props.bottomTabHeight,
+							backgroundColor: "#f5f6fa",
+							display: "flex",
+							justifyContent: "center",
 						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("ShoppingListScreen")}
-				>
-					<MaterialCommunityIcons
-						name="cart"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("PlannerScreen")}
-				>
-					<MaterialCommunityIcons
-						name="calendar"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("HomeDrawer2")}
-				>
-					<MaterialCommunityIcons
-						name="book-plus"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("HomeDrawer2")}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
+					>
+						<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.navigate("HomeDrawer2")}
+						>
+							<MaterialCommunityIcons
+								name="arrow-left"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</View>
 		</View>
 	);
 }
 
-/* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
+function mapStateToProps(state) {
+	return { bottomTabHeight: state.bottomTabHeight };
 }
 
-function mapDispatchToProps(dispatch) {
+/*function mapDispatchToProps(dispatch) {
 	return {
-		deletePOI: function (i) {
-			dispatch({ type: "deletePOI", index: i });
+		onSubmitBottomTabHeight: function (bottomTabHeight) {
+			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
 		},
 	};
-}
+}*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecipeSheetScreen); */
-
-export default RecipeSheetScreen;
+export default connect(mapStateToProps, null)(RecipeSheetScreen);
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -167,9 +180,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	content: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
 		backgroundColor: "#f5f6fa",
+		flex: 1,
 	},
 });

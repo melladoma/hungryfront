@@ -36,63 +36,101 @@ function SnapScreen(props) {
 	return (
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
-
-			<View style={styles.content}>
-				<Text style={{ fontSize: 20 }}>SnapScreen</Text>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("FormScreen")}
-				>
-					<MaterialCommunityIcons
-						name="camera"
-						size={28}
-						color="#2f3542"
+			<View style={{ flex: 1 }}>
+				<View style={styles.content}>
+					<Text style={{ fontSize: 20 }}>SnapScreen</Text>
+				</View>
+				<View style={styles.bottomTab}>
+					<View
 						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+							height: 150,
+							flexDirection: "row",
+							backgroundColor: "#2F3542",
+							display: "flex",
+							justifyContent: "space-around",
+							padding: 20,
 						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.goBack()}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
+					>
+						<TouchableOpacity
+							style={{ alignSelf: "flex-end" }}
+							onPress={() => navigation.goBack()}
+						>
+							<MaterialCommunityIcons
+								name="arrow-left"
+								size={28}
+								color="white"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.navigate("FormScreen")}
+						>
+							<View
+								style={{
+									display: "flex",
+									width: 80,
+									height: 80,
+									borderWidth: 2,
+									borderRadius: 100,
+									backgroundColor: "white",
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<MaterialCommunityIcons
+									name="camera"
+									size={28}
+									color="#2F3542"
+									style={{
+										zIndex: 1,
+									}}
+								/>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={{ alignSelf: "flex-end" }}
+							onPress={() => navigation.navigate("FormScreen")}
+						>
+							<MaterialCommunityIcons
+								name="image"
+								size={28}
+								color="white"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</View>
 		</View>
 	);
 }
 
-/* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
+function mapStateToProps(state) {
+	return { bottomTabHeight: state.bottomTabHeight };
 }
 
-function mapDispatchToProps(dispatch) {
+/*function mapDispatchToProps(dispatch) {
 	return {
-		deletePOI: function (i) {
-			dispatch({ type: "deletePOI", index: i });
+		onSubmitBottomTabHeight: function (bottomTabHeight) {
+			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
 		},
 	};
-}
+}*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(SnapScreen); */
-
-export default SnapScreen;
+export default connect(mapStateToProps, null)(SnapScreen);
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;

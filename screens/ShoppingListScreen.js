@@ -17,19 +17,14 @@ import {
 	Text,
 	TextInput,
 } from "react-native";
-import {useNavigation, DrawerActions } from "@react-navigation/native";
-
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-function ShoppingListScreen( props) {
-
-	
-const navigation = useNavigation()
-
-	
+function ShoppingListScreen(props) {
+	const navigation = useNavigation();
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -45,8 +40,6 @@ const navigation = useNavigation()
 		</View>
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
-
-
 
 	return (
 		<View style={styles.container}>
@@ -71,50 +64,59 @@ const navigation = useNavigation()
 						}}
 					/>
 				</TouchableOpacity>
-				
 			</View>
-
-			<View
-				style={styles.content}
-			>
-				<Text style={{fontSize:20}}>ShoppingListScreen</Text>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.goBack()}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
+			<View style={{ flex: 1 }}>
+				<View style={styles.content}>
+					<Text style={{ fontSize: 20 }}>ShoppingListScreen</Text>
+				</View>
+				<View style={styles.bottomTab}>
+					<View
 						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+							height: props.bottomTabHeight,
+							backgroundColor: "#f5f6fa",
+							display: "flex",
+							justifyContent: "center",
 						}}
-					/>
-				</TouchableOpacity>
+					>
+						<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.goBack()}
+						>
+							<MaterialCommunityIcons
+								name="arrow-left"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</View>
 		</View>
 	);
 }
 
-/* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
+function mapStateToProps(state) {
+	return { bottomTabHeight: state.bottomTabHeight };
 }
 
-function mapDispatchToProps(dispatch) {
+/*function mapDispatchToProps(dispatch) {
 	return {
-		deletePOI: function (i) {
-			dispatch({ type: "deletePOI", index: i });
+		onSubmitBottomTabHeight: function (bottomTabHeight) {
+			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
 		},
 	};
-}
+}*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShoppingListScreen); */
+export default connect(mapStateToProps, null)(ShoppingListScreen);
 
-export default ShoppingListScreen;
+
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;

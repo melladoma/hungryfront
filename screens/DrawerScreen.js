@@ -43,7 +43,7 @@ function DrawerScreen(props) {
 				style={{
 					width: 60,
 					height: 60,
-					borderWidth: 1,
+
 					borderRadius: 100,
 				}}
 			></Image>
@@ -59,7 +59,7 @@ function DrawerScreen(props) {
 					style={{
 						display: "flex",
 						flexDirection: "row",
-						borderWidth: 2,
+						backgroundColor: "#2F3542",
 					}}
 				>
 					<View
@@ -80,7 +80,6 @@ function DrawerScreen(props) {
 							paddingLeft: 30,
 							paddingTop: 30,
 							paddingBottom: 30,
-							borderWidth: 1,
 						}}
 					>
 						<View
@@ -91,11 +90,11 @@ function DrawerScreen(props) {
 							}}
 						>
 							<Text style={{ marginBottom: 10 }}>Francis</Text>
-							<MaterialCommunityIcons
+							{/* <MaterialCommunityIcons
 								name="pencil"
 								size={15}
 								color="#2f3542"
-							/>
+							/> */}
 						</View>
 						<View
 							style={{
@@ -103,99 +102,146 @@ function DrawerScreen(props) {
 								display: "flex",
 								flexDirection: "row",
 								alignItems: "center",
-
-								borderWidth: 1,
 							}}
 						>
-							<Text style={{ marginBottom: 10 }}>
-								J'habite à San FRANCISco et je suis pas
+							<Text
+								style={{
+									marginBottom: 10,
+									textAlign: "justify",
+								}}
+							>
+								J'habite pas à Saint FRANCISco et je suis pas
 								FRANCIScain. J'aime la cuisine FRANCAISe !
 							</Text>
-							<MaterialCommunityIcons
+							{/* <MaterialCommunityIcons
 								name="pencil"
 								size={15}
 								color="#2f3542"
-							/>
+							/> */}
 						</View>
 					</View>
 				</View>
 				<View
 					style={{
-						borderWidth: 2,
 						flex: 1,
 						justifyContent: "space-between",
-						paddingVertical: 10,
+						paddingTop: 10,
 					}}
 				>
 					<View>
-						<TouchableOpacity
+						<View
 							style={{
 								display: "flex",
-								flexDirection: "row",
+								justifyContent: "center",
 								alignItems: "center",
-								paddingLeft: 20,
+								borderWidth: 1,
+								marginLeft: 20,
 								marginBottom: 10,
+								borderRadius: 100,
+								alignSelf: "flex-start",
+								paddingVertical: 5,
+								paddingHorizontal: 10,
 							}}
-							onPress={() => console.log("hello")}
 						>
-							<MaterialCommunityIcons
-								name="cart"
-								size={24}
-								color="#2f3542"
-							/>
-							<Button
+							<TouchableOpacity
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+								}}
 								onPress={() =>
 									navigation.navigate("ShoppingList")
 								}
-								title="Ma liste de courses"
-								color="#841584"
-								accessibilityLabel="Navigate to Ma liste de course"
-							/>
-						</TouchableOpacity>
+							>
+								<MaterialCommunityIcons
+									name="cart"
+									size={24}
+									color="#2f3542"
+								/>
+								<Text
+									style={{
+										color: "black",
+										fontSize: 18,
+										marginLeft: 10,
+									}}
+								>
+									Ma liste de course
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								borderWidth: 1,
+								marginLeft: 20,
+								marginBottom: 10,
+								borderRadius: 100,
+								alignSelf: "flex-start",
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+							}}
+						>
+							<TouchableOpacity
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+								}}
+								onPress={() => navigation.navigate("Planner")}
+							>
+								<MaterialCommunityIcons
+									name="calendar"
+									size={24}
+									color="#2f3542"
+								/>
+								<Text
+									style={{
+										color: "black",
+										fontSize: 18,
+										marginLeft: 10,
+									}}
+								>
+									Mon planning
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+					<View
+						style={{
+							height: props.bottomTabHeight,
+							backgroundColor: "#2f3542",
+							display: "flex",
+							justifyContent: "center",
+						}}
+					>
 						<TouchableOpacity
 							style={{
 								display: "flex",
 								flexDirection: "row",
 								alignItems: "center",
+								justifySelf: "flex-end",
 								paddingLeft: 20,
 							}}
-							onPress={() => console.log("hello")}
+							onPress={() => navigation.navigate("Account")}
 						>
 							<MaterialCommunityIcons
-								name="calendar"
-								size={24}
-								color="#2f3542"
+								name="cog"
+								size={28}
+								color="#F19066"
 							/>
-							<Button
-								onPress={() => navigation.navigate("Planner")}
-								title="Mon planning"
-								color="#841584"
-								accessibilityLabel="Navigate to Ma liste de course"
-							/>
+							<Text
+								style={{
+									color: "#f5f6fa",
+									fontSize: 18,
+									marginLeft: 10,
+								}}
+							>
+								Paramètres
+							</Text>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
-							justifySelf: "flex-end",
-							paddingLeft: 20,
-						}}
-						onPress={() => console.log("hello")}
-					>
-						<MaterialCommunityIcons
-							name="cog-box"
-							size={24}
-							color="#2f3542"
-						/>
-						<Button
-							onPress={() => navigation.navigate("Account")}
-							title="Paramètres"
-							color="#841584"
-							accessibilityLabel="Navigate to Ma liste de course"
-						/>
-					</TouchableOpacity>
 				</View>
 			</View>
 		</View>

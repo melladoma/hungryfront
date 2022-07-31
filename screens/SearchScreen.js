@@ -40,25 +40,6 @@ function SearchScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}>
-				<TouchableOpacity
-					style={{}}
-					onPress={() =>
-						navigation.dispatch(DrawerActions.openDrawer())
-					}
-				>
-					<MaterialCommunityIcons
-						name="menu"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
 				<View style={styles.searchSection}>
 					<TextInput
 						style={styles.searchInput}
@@ -79,46 +60,58 @@ function SearchScreen(props) {
 					</TouchableOpacity>
 				</View>
 			</View>
-
-			<View style={styles.content}>
-				<Text style={{ fontSize: 20 }}>SearchScreen</Text>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.goBack()}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
+			<View style={{ flex: 1 }}>
+				<View style={styles.content}>
+					<Text style={{ fontSize: 20 }}>SearchScreen</Text>
+				</View>
+				<View style={styles.bottomTab}>
+					<View
 						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+							height: props.bottomTabHeight,
+							backgroundColor: "#f5f6fa",
+							display: "flex",
+							justifyContent: "center",
 						}}
-					/>
-				</TouchableOpacity>
+					>
+						<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.goBack()}
+						>
+							<MaterialCommunityIcons
+								name="arrow-left"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</View>
 		</View>
 	);
 }
 
-/* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
+function mapStateToProps(state) {
+	return { bottomTabHeight: state.bottomTabHeight };
 }
 
-function mapDispatchToProps(dispatch) {
+/*function mapDispatchToProps(dispatch) {
 	return {
-		deletePOI: function (i) {
-			dispatch({ type: "deletePOI", index: i });
+		onSubmitBottomTabHeight: function (bottomTabHeight) {
+			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
 		},
 	};
-}
+}*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchScreen); */
+export default connect(mapStateToProps, null)(SearchScreen);
 
-export default SearchScreen;
+
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -150,10 +143,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 40,
 		margin: 12,
-		marginLeft: 0,
-
 		borderRadius: 5,
-
 		flexDirection: "row",
 		justifyContent: "center",
 		alignItems: "center",

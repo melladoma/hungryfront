@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { useBottomTabBarHeight} from '@react-navigation/bottom-tabs'
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	StatusBar,
@@ -23,8 +23,10 @@ import {
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 function HomeScreen(props) {
-	const tabBarHeight = useBottomTabBarHeight(); 
-	props.onSubmitBottomTabHeight(tabBarHeight)
+	const tabBarHeight = useBottomTabBarHeight();
+	useEffect(() => {
+		props.onSubmitBottomTabHeight(tabBarHeight);
+	}, []);
 
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
 
@@ -376,7 +378,7 @@ function HomeScreen(props) {
 
 	//-----------------------------------RENDER-----------------------------------
 	return (
-		<View style={{flex: 1}}>
+		<View style={{ flex: 1 }}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}>
 				<TouchableOpacity
@@ -461,14 +463,15 @@ function HomeScreen(props) {
 function mapDispatchToProps(dispatch) {
 	return {
 		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+			dispatch({
+				type: "initializeBottomTabHeight",
+				bottomTabHeight: bottomTabHeight,
+			});
 		},
 	};
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen); 
-
-
+export default connect(null, mapDispatchToProps)(HomeScreen);
 
 //---------------------------------------------------------------début feuille de style
 
