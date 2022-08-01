@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 import {
 	StatusBar,
@@ -12,43 +13,110 @@ import {
 	TouchableOpacity,
 	Text,
 	TextInput,
-	ScrollView
+	ScrollView,
+	Pressable
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 
 function FormScreen(props) {
 	const navigation = useNavigation();
+
 	var handleSubmitForm = () => {
+		let recipeObj = recipe;
+		let recipeIngredientsCopy = [];
+		for (let i = 0; i < numInputs; i++) {
+			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
+		}
+		let tagsCopy = [];
+		// for (let i = 0; i < numInputsTags; i++) {
+		// 	tagsCopy.push(refInputsTags.current[i])
+		// }
+		recipeObj.ingredients = recipeIngredientsCopy;
+		recipeObj.tags = tagsCopy;
+		console.log(recipeObj)
 		navigation.navigate("RecipeSheetScreen")
 	}
 
-
-	//comment gerer multiple inputs in react native?
-	const [recipeTags, setRecipeTags] = useState("");
-	const [recipeIngredients, setRecipeIngredients] = useState("");
-
 	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", author: "", direction: "", privateStatus: "", tags: [], ingredients: [] })
 
-	// const [ingredientsFormInputs, setIngredientsFormInputs] = React.useState([
-	// 	{ key: "", name: "", quantity: "" },
-	// 	{ key: "", name: "", quantity: "" },
-	// ]);
+	const handleChange = (name, value) => {
+		setRecipe({
+			...recipe,
+			[name]: value,
+		});
+	};
+	// ----------------------------------INPUTS INGREDIENTS
+	const [textValue, setTextValue] = useState('');
+	const [numInputs, setNumInputs] = useState(1);
+	const refInputs = useRef([textValue]);
+	const [numValue, setNumValue] = useState('');
+	const refInputsQuantity = useRef([numValue]);
 
-	// //Add more inputs rows
-	// const handleAddMoreLine = () => {
-	// 	const _inputs = [...ingredientsFormInputs];
-	// 	_inputs.push({ key: "", name: "", quantity: "" });
-	// 	setIngredientsFormInputs(_inputs);
-	// }
-	// const inputHandleName = (text, key) => {
-	// 	const _formNameInputs = [...ingredientsFormInputs];
-	// 	_formNameInputs[key].key = key;
-	// 	_formNameInputs[key].name = value;
-	// 	setIngredientsFormInputs(_formNameInputs);
-	// }
+	const setInputValue = (index, value) => {
+		const inputs = refInputs.current;
+		inputs[index] = value;
+		setTextValue(value)
+	}
+	const setInputQuantity = (index, value) => {
+		const inputsQuantity = refInputsQuantity.current;
+		inputsQuantity[index] = value;
+		setNumValue(value)
+	}
+	const addInput = () => {
+		// add a new element in our refInputs array
+		refInputs.current.push('');
+		refInputsQuantity.current.push('');
+		// increase the number of inputs
+		setNumInputs(value => value + 1);
+	}
+	const removeInput = (i) => {
+		// remove from the array by index value
+		refInputs.current.splice(i, 1)[0];
+		refInputsQuantity.current.splice(i, 1)[0];
+		// decrease the number of inputs
+		setNumInputs(value => value - 1);
+	}
+
+	const inputsIngredients = [];
+	for (let i = 0; i < numInputs; i++) {
+		inputsIngredients.push(
+			<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
+				<Text>{i + 1}.</Text>
+				<TextInput
+					style={styles.input}
+					onChangeText={value => setInputValue(i, value)}
+					value={refInputs.current[i]}
+					placeholder="name"
+				/>
+				<TextInput
+					style={styles.input}
+					onChangeText={value => setInputQuantity(i, value)}
+					value={refInputsQuantity.current[i]}
+					placeholder="quantity"
+				/>
+				{/* To remove the input */}
+				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
+					<MaterialCommunityIcons
+						name="close"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</Pressable>
+			</View>
+		);
+	}
+
+
+
+
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -73,74 +141,80 @@ function FormScreen(props) {
 				<Text style={styles.label}>Nom de la recette</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setRecipeName(value)}
+					onChangeText={(value) => handleChange('name', value)}
 					value={recipe.name}
 				/>
 
 				<Text style={styles.label}>Image</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setRecipeImage(value)}
+					onChangeText={(value) => handleChange('iamge', value)}
 					value={recipe.image}
 				/>
 				<Text style={styles.label}>Temps de préparation</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setPrepTime(value)}
+					onChangeText={(value) => handleChange('prepTime', value)}
 					value={recipe.prepTime}
 				/>
 
 				<Text style={styles.label}>Temps de cuisson</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setCookTime(value)}
+					onChangeText={(value) => handleChange('cookTime', value)}
 					value={recipe.cookTime}
 				/>
 
 				<Text style={styles.label}>Auteur</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setAuthor(value)}
+					onChangeText={(value) => handleChange('author', value)}
 					value={recipe.author}
 				/>
 
 				<Text style={styles.label}>Ingrédients</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setRecipeIngredients(value)}
-					value={recipe.ingredients[0]}
-				/>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setRecipeIngredients(value)}
-					value={recipe.ingredients[0]}
-				/>
+				{/* MULTPIPLE INPUTS */}
+				{inputsIngredients}
+				<Pressable onPress={addInput} style={styles.addButton}>
+					<Text style={{ fontWeight: 'bold' }}><MaterialCommunityIcons
+						name="plus"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/> Add an ingredient</Text>
+				</Pressable>
+				<View style={{ marginTop: 25 }}>
+					<Text>You have answered:</Text>
+					{refInputs.current.map((value, i) => {
+						return <Text key={i} style={styles.answer}>{`${i + 1} - ${value} `}</Text>
+					})}
+				</View>
+				{/* FIN MULTIPLE INPUTS */}
+
 				<Text style={styles.label}>Instructions</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setDirection(value)}
+					onChangeText={(value) => handleChange('direction', value)}
 					value={recipe.direction}
 				/>
 
 				<Text style={styles.label}>Tags</Text>
-				<TextInput
+
+				{/* <TextInput
 					style={styles.input}
-					onChangeText={(value) => setRecipeTags(value)}
-					value={recipe.tags[0]}
-				/>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setRecipeTags(value)}
-					value={recipe.tags[1]}
-				/>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setRecipeTags(value)}
-					value={recipe.tags[2]}
-				/>
+					onChangeText={(value) => handleChange('tags', value)}
+					value={recipe.tags}
+				/> */}
 
 				<Text style={styles.label}>Publication</Text>
 				{/* inserer toggle */}
+
 
 				<TouchableOpacity
 					style={styles.button}
@@ -186,7 +260,7 @@ function FormScreen(props) {
 					{/* ------------------------------------Fin du formulaire */}
 				</View>
 			</View>
-		</View>
+		</View >
 	);
 }
 
