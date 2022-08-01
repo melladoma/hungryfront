@@ -23,6 +23,7 @@ import {
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 function HomeScreen(props) {
+	const [DATA, setDATA] = useState([]);
 	const tabBarHeight = useBottomTabBarHeight();
 	useEffect(() => {
 		props.onSubmitBottomTabHeight(tabBarHeight);
@@ -44,7 +45,13 @@ function HomeScreen(props) {
 	const [typeAffichage, setTypeAffichage] = useState("icones"); //dans l'overlay filtre, gère le type d'affichage
 
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
-
+	
+	const handleSearch = (input) => {
+		if (input.length !== 0) {
+			props.onSubmitSearchInput(input)
+			navigation.navigate("SearchScreen")
+		}
+	};
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -94,14 +101,38 @@ function HomeScreen(props) {
 
 	//-----------------------------------------------------------------Début Chips
 
-	const handlePressedChip = (name) => {
-		if (selectedFiltersArray.includes(name)) {
-			let tempArray = selectedFiltersArray.filter((x) => x !== name);
+	const handlePressedChip = async (name) => {
+		if (selectedFiltersArray.includes(name.toLowerCase())) {
+			let tempArray = selectedFiltersArray.filter(
+				(x) => x !== name.toLowerCase()
+			);
 			setSelectedFiltersArray(tempArray);
 		} else {
-			setSelectedFiltersArray([...selectedFiltersArray, name]);
+			setSelectedFiltersArray([
+				...selectedFiltersArray,
+				name.toLowerCase(),
+			]);
 		}
 	};
+
+	useEffect(() => {
+		async function fetchByTags() {
+			var rawResponse = await fetch(
+				"http://192.168.1.24:3000/search/search-tags",
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+				}
+			);
+
+			var response = await rawResponse.json();
+			setDATA(response.recipes);
+		}
+		fetchByTags();
+	}, [selectedFiltersArray]);
 
 	const Chips = filtersArray.map((x, i) => (
 		<Pressable key={i} onPress={() => handlePressedChip(x)}>
@@ -109,7 +140,9 @@ function HomeScreen(props) {
 				style={[
 					styles.filterContainer,
 					{
-						backgroundColor: selectedFiltersArray.includes(x)
+						backgroundColor: selectedFiltersArray.includes(
+							x.toLowerCase()
+						)
 							? "#F19066"
 							: "#dfe4ea",
 					},
@@ -127,139 +160,44 @@ function HomeScreen(props) {
 	// ITEM : c'est le composant Card, comme si on l'écrivait dans le render
 	// Render Item : Création d'un composant "Item" à partir de ITEM que pourra lire la FlatList
 	// FlatList : C'est le conteneur de toutes les cards. FlatList permet de scroller, scroll infini, disposition des cards en flex, etc... Il faut intégrer dans ses props DATA et Render Item. Puis c'est la FlatList qu'on intègre dans le render.
-
-	const DATA = [
-		//Contient toutes les infos de la recette qu'on veut afficher dans la card, après ce sera en dynamique dans un useState ou redux
-		{
-			id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28b",
-			title: "Pain perdu",
-			source: require("../assets/painperdu.jpeg"),
-		},
-		{
-			id: "3ac68afc-c605-48d3-a4f8-fbd91a97f63",
-			title: "Haricots",
-			source: require("../assets/haricots.png"),
-		},
-		{
-			id: "58694a0f-3da1-471f-bd96-14571e29d72",
-			title: "Trou normand",
-			source: require("../assets/image_noire.jpeg"),
-		},
-		{
-			id: "58694a0f-3da1-471f-bd9145571e29d72",
-			title: "Pain retrouvé",
-			source: require("../assets/painperdu.jpeg"),
-		},
-		{
-			id: "58694a0f-3da1-471f-bd9645571e29d72",
-			title: "Flageolets",
-			source: require("../assets/haricots.png"),
-		},
-		{
-			id: "58694a0f-da1-471f-bd96-145571e29d72",
-			title: "Pain perdu",
-			source: require("../assets/adaptive-icon.png"),
-		},
-		{
-			id: "58694a0f-3da1471f-bd96-145571e29d72",
-			title: "Pain perdu",
-			source: require("../assets/adaptive-icon.png"),
-		},
-		{
-			id: "5864a0f-3da1-471f-bd96-145571e29d72",
-			title: "Pain perdu",
-			source: require("../assets/adaptive-icon.png"),
-		},
-		{
-			id: "b7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-			title: "Pain perdu",
-			source: require("../assets/painperdu.jpeg"),
-		},
-		{
-			id: "3ac68afc-c605-48d3-a4f8-fbd91aa9f63",
-			title: "Pain perdu",
-			source: require("../assets/favicon.png"),
-		},
-		{
-			id: "58694a0f-3da-471f-bd96-1451e29d72",
-			title: "Pain perdu",
-			source: require("../assets/image_noire.jpeg"),
-		},
-	];
+	
 
 	var Item;
 	var flatlist;
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
-		if (Platform.OS === "ios") {
-			//pour corriger clignotement iOS, voir les 2 commentaires plus bas
-			Item = ({ source, title }) => (
-				<TouchableOpacity
-					onPress={() => navigation.navigate("RecipeSheetScreen")}
+		Item = ({ image, name }) => (
+			<TouchableOpacity
+				onPress={() => navigation.navigate("RecipeSheetScreen")}
+			>
+				<View
+					style={{
+						height: 200,
+						width: 170,
+						marginBottom: 10,
+						marginTop: 10,
+						borderRadius: 10,
+						borderWidth: 1,
+					}}
 				>
-					<View
+					<Text style={{ height: "15%", padding: 5 }}>{name}</Text>
+					<Image
 						style={{
-							height: 200,
-							width: 170,
-							marginBottom: 10,
-							marginTop: 10,
-							borderRadius: 10,
-							borderWidth: 1,
+							height: "85%",
+							width: "100%",
+							borderBottomLeftRadius: 10,
+							borderBottomRightRadius: 10,
+							borderTopLeftRadius: 0,
+							borderTopRightRadius: 0,
 						}}
-					>
-						<Text style={{ height: "15%", padding: 5 }}>
-							{title}
-						</Text>
-						<Image
-							style={{
-								height: "85%",
-								width: "100%",
-								borderBottomLeftRadius: 10,
-								borderBottomRightRadius: 10,
-								borderTopLeftRadius: 0,
-								borderTopRightRadius: 0,
-							}}
-							defaultSource={source} //"defaultSource" à la place de "source" corrige le probleme de clignotement sur iOS
-						/>
-					</View>
-				</TouchableOpacity>
-			);
-		} else {
-			Item = ({ source, title }) => (
-				<TouchableOpacity
-					onPress={() => navigation.navigate("RecipeSheetScreen")}
-				>
-					<View
-						style={{
-							height: 200,
-							width: 170,
-							marginBottom: 10,
-							marginTop: 10,
-							borderRadius: 10,
-							borderWidth: 1,
-						}}
-					>
-						<Text style={{ height: "15%", padding: 5 }}>
-							{title}
-						</Text>
-						<Image
-							style={{
-								height: "85%",
-								width: "100%",
-								borderBottomLeftRadius: 10,
-								borderBottomRightRadius: 10,
-								borderTopLeftRadius: 0,
-								borderTopRightRadius: 0,
-							}}
-							source={source} //Android ne prend pas en charge "defaultSource"
-						/>
-					</View>
-				</TouchableOpacity>
-			);
-		}
+						source={{ uri: image }} //Android ne prend pas en charge "defaultSource"
+					/>
+				</View>
+			</TouchableOpacity>
+		);
 
 		const renderItem = ({ item }) => (
-			<Item source={item.source} title={item.title} />
+			<Item image={item.image} name={item.name} />
 		);
 
 		flatlist = (
@@ -270,99 +208,57 @@ function HomeScreen(props) {
 				numColumns={2}
 				data={DATA}
 				renderItem={renderItem}
+				keyExtractor={(item) => item._id}
 			/>
 		);
 	} else if (typeAffichage === "liste") {
 		//--------------------------------affichage en "liste"
-		if (Platform.OS === "ios") {
-			Item = ({ source, title }) => (
-				<TouchableOpacity
-					onPress={() => navigation.navigate("RecipeSheetScreen")}
-				>
-					<View
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							height: 150,
-							width: "90%",
-							alignSelf: "center",
 
-							marginTop: 10,
-							borderRadius: 10,
-							borderWidth: 1,
-						}}
-					>
-						<Image
-							style={{
-								height: "100%",
-								width: "40%",
-								borderBottomLeftRadius: 10,
-								borderBottomRightRadius: 0,
-								borderTopLeftRadius: 10,
-								borderTopRightRadius: 0,
-							}}
-							defaultSource={source}
-						/>
-						<View style={{ margin: 10 }}>
-							<Text style={{ fontSize: 20 }}>{title}</Text>
-							<Text style={{ fontSize: 15 }}>
-								Hum tres bonne tarte
-							</Text>
-							<Text style={{ fontSize: 15, fontWeight: "bold" }}>
-								#Dylan
-							</Text>
-							<Text style={{ fontSize: 15 }}>58 Likes</Text>
-						</View>
-					</View>
-				</TouchableOpacity>
-			);
-		} else {
-			Item = ({ source, title }) => (
-				<TouchableOpacity
-					onPress={() => navigation.navigate("RecipeSheetScreen")}
-				>
-					<View
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							height: 150,
-							width: "90%",
-							alignSelf: "center",
+		Item = ({ image, name }) => (
+			<TouchableOpacity
+				onPress={() => navigation.navigate("RecipeSheetScreen")}
+			>
+				<View
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						height: 150,
+						width: "90%",
+						alignSelf: "center",
 
-							marginTop: 10,
-							borderRadius: 10,
-							borderWidth: 1,
+						marginTop: 10,
+						borderRadius: 10,
+						borderWidth: 1,
+					}}
+				>
+					<Image
+						style={{
+							height: "100%",
+							width: "40%",
+							borderBottomLeftRadius: 10,
+							borderBottomRightRadius: 0,
+							borderTopLeftRadius: 10,
+							borderTopRightRadius: 0,
 						}}
-					>
-						<Image
-							style={{
-								height: "100%",
-								width: "40%",
-								borderBottomLeftRadius: 10,
-								borderBottomRightRadius: 0,
-								borderTopLeftRadius: 10,
-								borderTopRightRadius: 0,
-							}}
-							source={source}
-						/>
-						<View style={{ margin: 10 }}>
-							<Text style={{ fontSize: 20 }}>{title}</Text>
-							<Text style={{ fontSize: 15 }}>
-								Hum tres bonne tarte
-							</Text>
-							<Text style={{ fontSize: 15, fontWeight: "bold" }}>
-								#Dylan
-							</Text>
-							<Text style={{ fontSize: 15 }}>58 Likes</Text>
-						</View>
+						source={{ uri: image }}
+					/>
+					<View style={{ margin: 10 }}>
+						<Text style={{ fontSize: 20 }}>{name}</Text>
+						<Text style={{ fontSize: 15 }}>
+							Hum tres bonne tarte
+						</Text>
+						<Text style={{ fontSize: 15, fontWeight: "bold" }}>
+							#Dylan
+						</Text>
+						<Text style={{ fontSize: 15 }}>58 Likes</Text>
 					</View>
-				</TouchableOpacity>
-			);
-		}
+				</View>
+			</TouchableOpacity>
+		);
 
 		const renderItem = (
-			{ item } //étape nécessaire en react native pour
-		) => <Item source={item.source} title={item.title} />;
+			{ item } 
+		) => <Item image={item.image} name={item.name} />;
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return
@@ -370,7 +266,7 @@ function HomeScreen(props) {
 				key={"liste"}
 				data={DATA}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item) => item._id}
 			/>
 		);
 	}
@@ -409,7 +305,7 @@ function HomeScreen(props) {
 						underlineColorAndroid="transparent"
 					/>
 					<TouchableOpacity
-						onPress={() => navigation.navigate("SearchScreen")}
+						onPress={() => handleSearch(searchInput)}
 					>
 						<MaterialCommunityIcons
 							style={styles.searchIcon}
@@ -466,6 +362,12 @@ function mapDispatchToProps(dispatch) {
 			dispatch({
 				type: "initializeBottomTabHeight",
 				bottomTabHeight: bottomTabHeight,
+			});
+		},
+		onSubmitSearchInput: function (searchInput) {
+			dispatch({
+				type: "copyInputFromHome",
+				searchInput: searchInput,
 			});
 		},
 	};
