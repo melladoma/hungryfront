@@ -14,7 +14,9 @@ import {
 	Text,
 	TextInput,
 	ScrollView,
-	Pressable
+	Pressable,
+	Switch,
+	KeyboardAvoidingView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,8 +24,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 function FormScreen(props) {
 	const navigation = useNavigation();
 
+	// ETAT OBJET RECIPE
+	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", author: "", direction: "", servings: "", privateStatus: "", tags: [], ingredients: [] })
+
+	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 	var handleSubmitForm = () => {
 		let recipeObj = recipe;
+		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
 		for (let i = 0; i < numInputs; i++) {
 			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
@@ -34,18 +41,26 @@ function FormScreen(props) {
 		// }
 		recipeObj.ingredients = recipeIngredientsCopy;
 		recipeObj.tags = tagsCopy;
+		recipeObj.privateStatus = !isEnabled;
+		recipeObj.tags = selectedFiltersArray;
 		console.log(recipeObj)
+
+		//---------envoi recipeObj dans store
+		// props.setRecipe(recipeObj)
 		navigation.navigate("RecipeSheetScreen")
 	}
 
-	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", author: "", direction: "", privateStatus: "", tags: [], ingredients: [] })
+	//-----------------------FIN FONCTION DE SOUMISSION DU FORMULAIRE
 
+	//-------------FONCTION MISE A JOUR DES CHAMPS SUR LE STATE RECIPE
 	const handleChange = (name, value) => {
 		setRecipe({
 			...recipe,
 			[name]: value,
 		});
 	};
+	//-------------FIN FONCTION MISE A JOUR DES CHAMPS SUR LE STATE RECIPE
+
 	// ----------------------------------INPUTS INGREDIENTS
 	const [textValue, setTextValue] = useState('');
 	const [numInputs, setNumInputs] = useState(1);
@@ -87,19 +102,19 @@ function FormScreen(props) {
 					style={styles.input}
 					onChangeText={value => setInputValue(i, value)}
 					value={refInputs.current[i]}
-					placeholder="name"
+					placeholder="ex: lait"
 				/>
 				<TextInput
 					style={styles.input}
 					onChangeText={value => setInputQuantity(i, value)}
 					value={refInputsQuantity.current[i]}
-					placeholder="quantity"
+					placeholder="20cL"
 				/>
 				{/* To remove the input */}
 				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
 					<MaterialCommunityIcons
 						name="close"
-						size={28}
+						size={25}
 						color="#2f3542"
 						style={{
 							paddingLeft: 20,
@@ -113,10 +128,35 @@ function FormScreen(props) {
 			</View>
 		);
 	}
+	// ----------------------------------FIN INPUTS INGREDIENTS
 
+	//----------------------------------------SWITCH publication publique
+	const [isEnabled, setIsEnabled] = useState(false);
+	const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+	//------------------------------------fin SWITCH publication publique
 
+	//------------------------------------------TAG LIST
+	var tags = ["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "recette de fête", "brunch"]
+	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
+	const handlePressedChip = (name) => {
+		if (selectedFiltersArray.includes(name)) {
+			let tempArray = selectedFiltersArray.filter((x) => x !== name);
+			setSelectedFiltersArray(tempArray);
+		} else {
+			setSelectedFiltersArray([...selectedFiltersArray, name]);
+		}
+	};
 
+	var tagList = tags.map((item, index) => {
+		var color = selectedFiltersArray.includes(item) ? "#F19066" : "#dfe4ea"
+		return <TouchableOpacity key={index}
+			style={{ backgroundColor: color, padding: 10, margin: 5, borderRadius: 5 }}
+			onPress={() => handlePressedChip(item)}>
+			<Text>{item}</Text>
+		</TouchableOpacity >
+	})
 
+	//-------------------------------------------FIN TAG LIST
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -138,6 +178,7 @@ function FormScreen(props) {
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
+
 				<Text style={styles.label}>Nom de la recette</Text>
 				<TextInput
 					style={styles.input}
@@ -145,10 +186,17 @@ function FormScreen(props) {
 					value={recipe.name}
 				/>
 
+				<Text style={styles.label}>Auteur</Text>
+				<TextInput
+					style={styles.input}
+					onChangeText={(value) => handleChange('author', value)}
+					value={recipe.author}
+				/>
+
 				<Text style={styles.label}>Image</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => handleChange('iamge', value)}
+					onChangeText={(value) => handleChange('image', value)}
 					value={recipe.image}
 				/>
 				<Text style={styles.label}>Temps de préparation</Text>
@@ -165,36 +213,30 @@ function FormScreen(props) {
 					value={recipe.cookTime}
 				/>
 
-				<Text style={styles.label}>Auteur</Text>
+				<Text style={styles.label}>Nombre de personnes</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => handleChange('author', value)}
-					value={recipe.author}
+					onChangeText={(value) => handleChange('servings', value)}
+					value={recipe.servings}
 				/>
 
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
 				{inputsIngredients}
-				<Pressable onPress={addInput} style={styles.addButton}>
-					<Text style={{ fontWeight: 'bold' }}><MaterialCommunityIcons
+				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "start" }}>
+					<MaterialCommunityIcons
 						name="plus"
-						size={28}
+						size={25}
 						color="#2f3542"
 						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
 							paddingTop: 10,
 							paddingBottom: 10,
 							zIndex: 1,
 						}}
-					/> Add an ingredient</Text>
+					/>
+					<Text style={{ fontWeight: 'bold' }}> Ajouter un ingrédient</Text>
 				</Pressable>
-				<View style={{ marginTop: 25 }}>
-					<Text>You have answered:</Text>
-					{refInputs.current.map((value, i) => {
-						return <Text key={i} style={styles.answer}>{`${i + 1} - ${value} `}</Text>
-					})}
-				</View>
+
 				{/* FIN MULTIPLE INPUTS */}
 
 				<Text style={styles.label}>Instructions</Text>
@@ -205,6 +247,9 @@ function FormScreen(props) {
 				/>
 
 				<Text style={styles.label}>Tags</Text>
+				<View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+					{tagList}
+				</View>
 
 				{/* <TextInput
 					style={styles.input}
@@ -212,8 +257,21 @@ function FormScreen(props) {
 					value={recipe.tags}
 				/> */}
 
-				<Text style={styles.label}>Publication</Text>
-				{/* inserer toggle */}
+
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+					<Text>Partager sur le feed Hungry: </Text>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Text style={{ marginLeft: 10 }}>{isEnabled ? "oui" : "non"}</Text>
+						<Switch
+							style={{ marginRight: 10, marginLeft: 10 }}
+							trackColor={{ false: "#767577", true: "#81b0ff" }}
+							thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
+							ios_backgroundColor="#3e3e3e"
+							onValueChange={toggleSwitch}
+							value={isEnabled}
+						/>
+					</View>
+				</View>
 
 
 				<TouchableOpacity
@@ -221,7 +279,8 @@ function FormScreen(props) {
 					title="Valider le formulaire"
 					onPress={() => handleSubmitForm()}
 				><Text style={styles.text}>Valider le formulaire</Text></TouchableOpacity>
-			</ScrollView>
+
+			</ScrollView >
 
 
 			<View
