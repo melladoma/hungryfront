@@ -31,14 +31,7 @@ function HomeScreen(props) {
 
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
 
-	const [filtersArray, setFiltersArray] = useState([
-		"Dessert",
-		"Sans Gluten",
-		"Rapide",
-		"Végétarien",
-		"Flexitarien",
-		"Etc",
-	]); //peut etre pas besoin d'en faire un useState si on ne les modifie pas ?
+	const [filtersArray, setFiltersArray] = useState(["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "recette de fête", "brunch"]); //peut etre pas besoin d'en faire un useState si on ne les modifie pas ?
 	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]); //contient tous les filtres(ou chips) qui ont été selectionnées, pour les griser ou les colorer en orange grâce à un filter
 
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'overlay "filtres"

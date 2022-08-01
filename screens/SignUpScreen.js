@@ -44,7 +44,7 @@ function SignUpScreen(props) {
 	var handleSubmitSignup = async () => {
 
 		console.log('hello');
-		const data = await fetch("http://192.168.10.135:3000/users/sign-up", {
+		const data = await fetch("http://192.168.1.24:3000/users/sign-up", {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
