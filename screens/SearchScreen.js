@@ -19,8 +19,28 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 function SearchScreen(props) {
 	const navigation = useNavigation();
 
-	const [searchInput, setSearchInput] = useState("");
+	const [searchInput, setSearchInput] = useState(props.searchInput);
+	const [DATA, setDATA] = useState([]);
 
+	/* useEffect(() => {
+		async function fetchByInput() {
+			var rawResponse = await fetch(
+				"http://192.168.1.24:3000/search/search-input",
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+				}
+			);
+
+			var response = await rawResponse.json();
+			setDATA(response.recipes);
+		}
+		fetchByTags();
+	}, [selectedFiltersArray]); */
+	
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -35,6 +55,8 @@ function SearchScreen(props) {
 		</View>
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
+
+
 
 	return (
 		<View style={styles.container}>
@@ -98,7 +120,7 @@ function SearchScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { bottomTabHeight: state.bottomTabHeight, searchInput: state.searchInput };
 }
 
 /*function mapDispatchToProps(dispatch) {
