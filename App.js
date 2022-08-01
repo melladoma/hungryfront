@@ -9,9 +9,10 @@ import * as React from "react";
 // redux
 import { Provider } from "react-redux";
 import bottomTabHeight from "./reducers/bottomTabHeight.reducer";
+import token from './reducers/token.reducer'
 import searchInput from "./reducers/searchInput.reducer";
 import { createStore, combineReducers } from "redux";
-const store = createStore(combineReducers({ bottomTabHeight, searchInput }));
+const store = createStore(combineReducers({ bottomTabHeight, token ,searchInput}));
 
 //modules pour la navigation
 import { NavigationContainer } from "@react-navigation/native";
