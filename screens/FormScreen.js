@@ -24,13 +24,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 function FormScreen(props) {
+	var privateIPBackend = "192.168.10.114"
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
-	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", author: "", direction: "", servings: "", privateStatus: "", tags: [], ingredients: [] })
+	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [] })
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
-	var handleSubmitForm = () => {
+
+	var handleSubmitForm = async function () {
 		let recipeObj = recipe;
 		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
@@ -38,17 +40,49 @@ function FormScreen(props) {
 			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
 		}
 		let tagsCopy = [];
-		// for (let i = 0; i < numInputsTags; i++) {
-		// 	tagsCopy.push(refInputsTags.current[i])
-		// }
-		recipeObj.ingredients = recipeIngredientsCopy;
-		recipeObj.tags = tagsCopy;
+		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
-		recipeObj.tags = selectedFiltersArray;
+		recipeObj.tags = [...selectedFiltersArray];
 		console.log(recipeObj)
 
-		//---------envoi recipeObj dans store
+		if (image) {
+			var data = new FormData();
+
+			//attention ne fonctionne que sur jpg
+			data.append('image', {
+				uri: image,
+				type: 'image/jpeg',
+				name: 'recipe.jpg',
+			});
+
+			var rawResponseImg = await fetch(`http://${privateIPBackend}:3000/upload-image`, {
+				method: 'POST',
+				body: data
+			})
+			var responseImg = await rawResponseImg.json()
+			if (responseImg.result) {
+				recipeObj.image = responseImg.resultObj.imageUrl
+			} else {
+				recipeObj.image = require("../assets/default-post-image.jpg")
+			}
+
+		} else {
+			recipeObj.image = require("../assets/default-post-image.jpg")
+		}
+		//---- envoi recette en BDD 
+		let recipeData = { recipe: recipeObj, userToken: props.token }
+		var rawResponse = await fetch(`http://${privateIPBackend}:3000/validate-form`, {
+			method: 'POST',
+			headers: { 'Content-type': 'application/json; charset=UTF-8' },
+			body: JSON.stringify(recipeData)
+		})
+		var response = await rawResponse.json()
+		console.log(response)
+
+		//---------envoi recipe traitee Backend dans store
 		// props.setRecipe(recipeObj)
+
+		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
 	}
 
@@ -118,7 +152,7 @@ function FormScreen(props) {
 	for (let i = 0; i < numInputs; i++) {
 		inputsIngredients.push(
 			<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-				<Text>{i + 1}.</Text>
+				<Text style={{ marginLeft: 10 }}>{i + 1}.</Text>
 				<TextInput
 					style={styles.input}
 					onChangeText={value => setInputValue(i, value)}
@@ -201,6 +235,10 @@ function FormScreen(props) {
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
+				<View style={styles.title}>
+					<Text style={{ fontSize: 24, textAlign: "center" }} >Saisir la recette</Text>
+				</View>
+
 
 				<Text style={styles.label}>Nom de la recette</Text>
 				<TextInput
@@ -209,12 +247,6 @@ function FormScreen(props) {
 					value={recipe.name}
 				/>
 
-				<Text style={styles.label}>Auteur</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => handleChange('author', value)}
-					value={recipe.author}
-				/>
 
 				<Text style={styles.label}>Image</Text>
 				<TextInput
@@ -253,7 +285,7 @@ function FormScreen(props) {
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
 				{inputsIngredients}
-				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginLeft: 10 }}>
 					<MaterialCommunityIcons
 						name="plus"
 						size={25}
@@ -270,31 +302,38 @@ function FormScreen(props) {
 				{/* FIN MULTIPLE INPUTS */}
 
 				<Text style={styles.label}>Instructions</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => handleChange('direction', value)}
-					value={recipe.direction}
-				/>
+				<ScrollView
+					scrollEnabled="false"
+				>
+					{/* "fausse" scollview pour escape le clavier en multiline, voir https://stackoverflow.com/questions/38981117/dismiss-keyboard-in-multiline-textinput-in-react-native */}
+					<TextInput
+						style={{
+							height: 120,
+							margin: 12,
+							borderWidth: 1,
+							padding: 10,
+						}}
+						multiline
+						onChangeText={(value) => handleChange('directions', value)}
+						value={recipe.directions}
+					/>
+
+				</ScrollView>
+
 
 				<Text style={styles.label}>Tags</Text>
-				<View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+				<View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 10 }}>
 					{tagList}
 				</View>
 
-				{/* <TextInput
-					style={styles.input}
-					onChangeText={(value) => handleChange('tags', value)}
-					value={recipe.tags}
-				/> */}
 
-
-				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10, marginBottom: 10 }}>
 					<Text>Partager sur le feed Hungry: </Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ marginLeft: 10 }}>{isEnabled ? "oui" : "non"}</Text>
+						<Text style={{ marginLeft: 10 }}>{isEnabled ? "Oui" : "Non"}</Text>
 						<Switch
 							style={{ marginRight: 10, marginLeft: 10 }}
-							trackColor={{ false: "#767577", true: "#81b0ff" }}
+							trackColor={{ false: "#2F3542", true: "#81b0ff" }}
 							thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
 							ios_backgroundColor="#3e3e3e"
 							onValueChange={toggleSwitch}
@@ -354,7 +393,7 @@ function FormScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token };
 }
 
 /*function mapDispatchToProps(dispatch) {
@@ -386,6 +425,13 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "space-between",
 	},
+	title: {
+		backgroundColor: "#dfe4ea",
+		height: 50,
+		justifyContent: "center",
+		alignContent: "center",
+		marginBottom: 10
+	},
 	button: {
 		backgroundColor: "#2F3542",
 		alignItems: "center",
@@ -401,6 +447,7 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	label: {
+		marginLeft: 10
 
 	}
 });
