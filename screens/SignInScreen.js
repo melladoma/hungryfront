@@ -38,7 +38,7 @@ function SignInScreen(props) {
 
 	var handleSubmitSignin = async () => {
  
-		const data = await fetch('http://192.168.10.135:3000/users/sign-in', {
+		const data = await fetch('http://192.168.10.136:3000/users/sign-in', {
 		  method: 'POST',
 		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
@@ -65,7 +65,7 @@ function SignInScreen(props) {
 	}, [userExists]);
 	
 	  var tabErrorsSignin = listErrorsSignin.map((error,i) => {
-		return(<Text style={{color:'red'}} key={i}>{error}</Text>)
+		return(<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
 	  })
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -87,44 +87,57 @@ function SignInScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-			<View style={styles.content}>
-				<View>
+			<View style={{flex : 1}}>
+
+				<View style={{	flexDirection:"row",}}>
+					
 					<Text style={styles.baseText}>
-						HUNGRYBOOK SIGN-UP
+						HUNGRYBOOK
 					</Text>
 					<Button
+					color='#F19066'
 					title="S'inscrire"
+					type="solid"
 					onPress={() => navigation.navigate("SignUp")}
 				/>
 				</View>
-				<SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
 
+
+				<View style={styles.content}>
+
+
+				<Text style={styles.text}>Email ou Name:</Text>
 				<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='Email'
+						placeholder='francis@gmail.com'
+						keyboardType="email-address"
 
 						onChangeText={(val) => setSignInEmail(val)}
 						value={signInEmail}
 
-					/>
+					/>					
+					<Text style={styles.text}>password :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='password'
-
+						secureTextEntry={true}
+						
 						onChangeText={(val) => setSignInPassword(val)}
 						value={signInPassword}
 
 					/>
 
 					{tabErrorsSignin}
-
-					<Button
-						title="connexion"
-						onPress={() => handleSubmitSignin()}
-					/>
-				</SafeAreaView>
+						<Button
+							title="connexion"
+							color="#737373"
+							type="solid"
+							buttonStyle={{ backgroundColor: "#ooooo" }}
+							onPress={() => handleSubmitSignin()}
+						></Button>
+					</View>
 			</View>
 
 			
@@ -156,6 +169,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: "#f5f6fa",
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -163,14 +177,25 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#f5f6fa",
+		margin:'15%',
+
 	},
 	input: {
 		height: 40,
-		margin: 12,
+		margin: 10,
 		borderWidth: 1,
 		padding: 10,
+	},
+	baseText:{
+		fontWeight: 'bold',
+		margin:35,
+		fontSize:25,
+	},
+	text:{
+		marginLeft: 12,
+		marginTop: 12,
 	}
+
+	
 	
 });

@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
+
 function SignUpScreen(props) {
 	const navigation = useNavigation();
 
@@ -44,7 +45,7 @@ function SignUpScreen(props) {
 	var handleSubmitSignup = async () => {
 
 		console.log('hello');
-		const data = await fetch("http://192.168.10.135:3000/users/sign-up", {
+		const data = await fetch("http://192.168.10.136:3000/users/sign-up", {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
@@ -71,7 +72,7 @@ function SignUpScreen(props) {
 
 
 	var tabErrorsSignup = listErrorsSignup.map((error, i) => {
-		return (<Text style={{color:'red'}} key={i}>{error}</Text>)
+		return (<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
 	})
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -93,47 +94,53 @@ function SignUpScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-			<View style={styles.content}>
 				<View>
 					<Text style={styles.baseText}>
-						HUNGRYBOOK SIGN-UP
+						HUNGRYBOOK
 					</Text>
 				</View>
 
-				<SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
 
+				<View style={styles.content}>
 
+					<Text style={styles.text}>nom d'utilisateur :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder="nom d'utilisateur"
+						placeholder="francis"
 
 						onChangeText={(val) => setSignUpUsername(val)}
 						value={signUpUsername}
 
 					/>
+					<Text style={styles.text}>Email :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='Email'
+						placeholder='francis@gmail.com'
+						keyboardType="email-address"
 
 						onChangeText={(val) => setSignUpEmail(val)}
 						value={signUpEmail}
 
-					/>
+					/>					
+					<Text style={styles.text}>password :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='password'
+						secureTextEntry={true}
 
 						onChangeText={(val) => setSignUpPassword(val)}
 						value={signUpPassword}
 
-					/>
+					/>					
+					<Text style={styles.text}>confirmation password :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='confirmation password'
+						secureTextEntry={true}
 
 						onChangeText={(val) => setSignUpConfirmPassword(val)}
 						value={signUpConfirmPassword}
@@ -146,10 +153,10 @@ function SignUpScreen(props) {
 						title="Valider l'inscription"
 						onPress={() => handleSubmitSignup()}
 					/>
+			</View>
 
 
 
-				</SafeAreaView>
 
 				<TouchableOpacity
 					style={{}}
@@ -169,7 +176,6 @@ function SignUpScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-			</View>
 		</View>
 	);
 }
@@ -199,6 +205,8 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: "#f5f6fa",
+
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -206,17 +214,24 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#f5f6fa",
+		margin:'15%',
+
 	},
 	baseText: {
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		margin:35,
+		fontSize:25,
+
 	},
 	input: {
 		height: 40,
-		margin: 12,
+		margin: 10,
 		borderWidth: 1,
 		padding: 10,
 	},
+	text:{
+		marginLeft: 12,
+		marginTop: 12,
+	}
 	
 });

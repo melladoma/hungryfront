@@ -118,7 +118,7 @@ function HomeScreen(props) {
 	useEffect(() => {
 		async function fetchByTags() {
 			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-tags",
+				"http://192.168.10.136:3000/search/search-tags",
 				{
 					method: "post",
 					headers: {
