@@ -10,6 +10,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
+	ImageBackground 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -35,14 +36,75 @@ function AddScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 
+	// -----------------------------------------------------------BOUTONS---------------------------------------------------------
+	const AppButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => navigation.navigate("SnapScreen")} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		  <MaterialCommunityIcons
+						name="camera"
+						size={28}
+						color="#d35400"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+		</TouchableOpacity>
+	  );
+	  const UrlButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => navigation.navigate("UrlScreen")} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		  <MaterialCommunityIcons
+						name="web"
+						size={28}
+						color="#d35400"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+		</TouchableOpacity>
+	  );
+	  const ManualButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => navigation.navigate("FormScreen")} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		  <MaterialCommunityIcons
+						name="pencil"
+						size={28}
+						color="#d35400"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+		</TouchableOpacity>
+	  );
+// -----------------------------------------------------------FIN BOUTONS --------------------------------------------------------------
 	return (
-		<View style={styles.container}>
+		<ImageBackground source={require('../assets/cook.jpg')} style={styles.container}>
+		
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}>
 				<TouchableOpacity
 					style={{}}
 					onPress={() =>
 						navigation.dispatch(DrawerActions.openDrawer())
+						
 					}
 				>
 					<MaterialCommunityIcons
@@ -58,66 +120,33 @@ function AddScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-				<Text style={{ fontSize: 20 }}>AddScreen</Text>
+				<Text style={{ fontSize: 18, textAlign:"center", color:"#2F3542"}}>Ma nouvelle recette.</Text>
+			</View>
+			<View>
+				
 			</View>
 
-			<View
-				style={styles.content}
-			>
-				<Text style={{ fontSize: 20 }}>AddScreen</Text>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("SnapScreen")}
-				>
-					<MaterialCommunityIcons
-						name="camera"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("UrlScreen")}
-				>
-					<MaterialCommunityIcons
-						name="web"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.navigate("FormScreen")}
-				>
-					<MaterialCommunityIcons
-						name="pencil"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
-			</View>
-		</View>
+				<View style={{marginTop:120}}>
+					<View style={styles.screenContainer}>
+							<AppButton title="Avec mon appareil photo " size="sm"/>	
+					</View>
+					<View style={styles.screenContainer}>
+							<UrlButton title="A l'aide d'une URL" size="sm"/>	
+					</View>
+					<View style={styles.screenContainer}>
+							<ManualButton title="A la main" size="sm"/>	
+					</View>
+				</View>
+
+
+
+
+
+
+			
+			
+		
+		</ImageBackground>
 	);
 }
 
@@ -164,4 +193,37 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#f5f6fa",
 	},
+	appButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#f5f6fa",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection:"row",
+		alignItems:"center",
+		justifyContent:"center",
+		marginTop:40,
+		border:1
+
+	},
+	  appButtonText: {
+		fontSize: 18,
+		color: "#d35400",
+		fontWeight: "bold",
+		alignSelf: "center",
+		textAlign:"center"
+	},
+	screenContainer: {
+		//flex: 1,
+		justifyContent: "center",
+		padding: 16
+	},
+	text:{
+		textAlign:"center",
+		fontSize:22,
+		marginTop: 45
+
+
+	}
+	
 });
