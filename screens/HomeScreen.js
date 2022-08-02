@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import {
+	TouchableWithoutFeedback,
+	Modal,
 	StatusBar,
 	View,
 	ScrollView,
@@ -13,7 +16,6 @@ import {
 	Image,
 	FlatList,
 	StyleSheet,
-	Button,
 	Pressable,
 	TouchableOpacity,
 	Text,
@@ -22,7 +24,13 @@ import {
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
+const STATUSBAR_HEIGHT =
+	Platform.OS === "android" ? StatusBar.currentHeight : 44; //permet de faire varier la taille de la status bar selon le téléphone
+const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier la taille de l'AppBar selon le téléphone
+// https://stackoverflow.com/a/39300715
+
 function HomeScreen(props) {
+	const [alert, setAlert] = useState(false);
 	const [DATA, setDATA] = useState([]);
 	const tabBarHeight = useBottomTabBarHeight();
 	useEffect(() => {
@@ -31,18 +39,34 @@ function HomeScreen(props) {
 
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
 
-	const [filtersArray, setFiltersArray] = useState(["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "recette de fête", "brunch"]); //peut etre pas besoin d'en faire un useState si on ne les modifie pas ?
+	var tags = [
+		"entrée",
+		"plat",
+		"dessert",
+		"amuse-bouche",
+		"boisson",
+		"asiatique",
+		"américain",
+		"italien",
+		"diététique",
+		"végétarien",
+		"rapide",
+		"gastronomique",
+		"recette de fête",
+		"brunch",
+	]; //peut etre pas besoin d'en faire un useState si on ne les modifie pas ?
 	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]); //contient tous les filtres(ou chips) qui ont été selectionnées, pour les griser ou les colorer en orange grâce à un filter
 
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'overlay "filtres"
+
 	const [typeAffichage, setTypeAffichage] = useState("icones"); //dans l'overlay filtre, gère le type d'affichage
 
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
-	
+
 	const handleSearch = (input) => {
 		if (input.length !== 0) {
-			props.onSubmitSearchInput(input)
-			navigation.navigate("SearchScreen")
+			props.onSubmitSearchInput(input);
+			navigation.navigate("SearchScreen");
 		}
 	};
 	//----------------------------- ------------------------------------Début StatusBar
@@ -59,38 +83,6 @@ function HomeScreen(props) {
 		</View>
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
-
-	//---------------------------------------------------------------Début Overlay qui contient les filtres
-	var overlay;
-	if (isOverlayVisible) {
-		overlay = (
-			<View style={[styles.overlay, { height: 360 }]}>
-				<Text>Type d'affichage:</Text>
-				<Button
-					title="Icônes"
-					onPress={() => {
-						setTypeAffichage("icones");
-						setIsOverlayVisible(!isOverlayVisible);
-					}}
-				></Button>
-				<Text>ou</Text>
-				<Button
-					title="Liste"
-					onPress={() => {
-						setTypeAffichage("liste");
-						setIsOverlayVisible(!isOverlayVisible);
-					}}
-				></Button>
-			</View>
-		);
-	}
-	var overlayShadow;
-	if (isOverlayVisible) {
-		overlayShadow = (
-			<View style={[styles.overlayShadow, { height: "100%" }]} />
-		);
-	}
-	//-----------------------------------------------------------------fin Overlay qui contient les filtres
 
 	//-----------------------------------------------------------------Début Chips
 
@@ -127,7 +119,7 @@ function HomeScreen(props) {
 		fetchByTags();
 	}, [selectedFiltersArray]);
 
-	const Chips = filtersArray.map((x, i) => (
+	const Chips = tags.map((x, i) => (
 		<Pressable key={i} onPress={() => handlePressedChip(x)}>
 			<View
 				style={[
@@ -145,7 +137,336 @@ function HomeScreen(props) {
 			</View>
 		</Pressable>
 	));
+
+	//Chips de l'overlay
+	const overlayChips = tags.map((x, i) => (
+		<TouchableOpacity
+			key={i}
+			onPress={() => {
+				handlePressedChip(x);
+				
+			}}
+		>
+			<View
+				style={[
+					styles.filterContainer,
+					{
+						backgroundColor: selectedFiltersArray.includes(
+							x.toLowerCase()
+						)
+							? "#F19066"
+							: "#dfe4ea",
+					},
+				]}
+			>
+				<Text>{x.toUpperCase()}</Text>
+			</View>
+		</TouchableOpacity>
+	));
 	//-----------------------------------------------------------------Fin Chips
+
+	//----Début Overlay qui contient les filtres
+	/* var overlay;
+	if (isOverlayVisible) {
+		overlay = (
+			
+			<View style={[styles.overlay, { height: 360 }]}>
+				<View style={{ marginVertical: 10 }}>
+					<Text style={{ alignSelf: "center" }}>
+						Type d'affichage:
+					</Text>
+					<View
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "center",
+							alignContent: "center",
+							marginVertical: 10,
+						}}
+					>
+						<View
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								borderWidth: 1,
+								borderRadius: 100,
+								alignSelf: "flex-start",
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+								backgroundColor:
+									typeAffichage === "liste"
+										? "#F19066"
+										: "#dfe4ea",
+							}}
+						>
+							<TouchableOpacity
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+								}}
+								onPress={() => {
+									setTypeAffichage("liste");
+									setIsOverlayVisible(!isOverlayVisible);
+								}}
+							>
+								<MaterialCommunityIcons
+									name="view-list"
+									size={24}
+									color="#2f3542"
+								/>
+								<Text
+									style={{
+										color: "black",
+										fontSize: 18,
+										marginLeft: 10,
+									}}
+								>
+									Liste
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<Text
+							style={{
+								alignSelf: "center",
+								marginHorizontal: 10,
+							}}
+						>
+							ou
+						</Text>
+						<View
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								borderWidth: 1,
+
+								borderRadius: 100,
+								alignSelf: "flex-start",
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+								backgroundColor:
+									typeAffichage === "icones"
+										? "#F19066"
+										: "#dfe4ea",
+							}}
+						>
+							<TouchableOpacity
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+								}}
+								onPress={() => {
+									setTypeAffichage("icones");
+									setIsOverlayVisible(!isOverlayVisible);
+								}}
+							>
+								<MaterialCommunityIcons
+									name="view-grid"
+									size={24}
+									color="#2f3542"
+								/>
+								<Text
+									style={{
+										color: "black",
+										fontSize: 18,
+										marginLeft: 10,
+									}}
+								>
+									Icônes
+								</Text>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+				<Text>Filtrer par tags</Text>
+				<View
+					style={{
+						flex: 1,
+						flexDirection: "row",
+						flexWrap: "wrap",
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+				>
+					{overlayChips}
+				</View>
+			</View>
+		);
+	} */
+
+	var overlayShadow;
+	if (isOverlayVisible) {
+		overlayShadow = (
+			<View style={[styles.overlayShadow, { height: "100%" }]} />
+		);
+	}
+
+	//-----------------------------------------------------------------fin Overlay qui contient les filtres
+
+	//MOdal qui remplacera l'overlay ?-----
+	var modal = (
+		<Modal
+			transparent={true}
+			visible={alert}
+			animationType="slide"
+			onRequestClose={() => {
+				setIsOverlayVisible(false);
+				setAlert(false);
+			}}
+		>
+			<TouchableOpacity
+				style={{ flex: 1 }}
+				activeOpacity={1}
+				onPressOut={() => {
+					setIsOverlayVisible(false);
+					setAlert(false);
+					
+				}}
+			>
+				<TouchableWithoutFeedback>
+					<View
+						style={{
+							alignItems: "center",
+
+							borderBottomLeftRadius: 20,
+							borderBottomRightRadius: 20,
+							backgroundColor: "#f5f6fa",
+							width: "100%",
+							height: 360,
+							marginTop: STATUSBAR_HEIGHT + APPBAR_HEIGHT,
+						}}
+					>
+						<View style={{ marginVertical: 10 }}>
+							<Text style={{ alignSelf: "center" }}>
+								Type d'affichage:
+							</Text>
+							<View
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									justifyContent: "center",
+									alignContent: "center",
+									marginVertical: 10,
+								}}
+							>
+								<View
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										borderWidth: 1,
+										borderRadius: 100,
+										alignSelf: "flex-start",
+										paddingVertical: 5,
+										paddingHorizontal: 10,
+										backgroundColor:
+											typeAffichage === "liste"
+												? "#F19066"
+												: "#dfe4ea",
+									}}
+								>
+									<TouchableOpacity
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											alignItems: "center",
+										}}
+										onPress={() => {
+											setTypeAffichage("liste");
+											
+										}}
+									>
+										<MaterialCommunityIcons
+											name="view-list"
+											size={24}
+											color="#2f3542"
+										/>
+										<Text
+											style={{
+												color: "black",
+												fontSize: 18,
+												marginLeft: 10,
+											}}
+										>
+											Liste
+										</Text>
+									</TouchableOpacity>
+								</View>
+								<Text
+									style={{
+										alignSelf: "center",
+										marginHorizontal: 10,
+									}}
+								>
+									ou
+								</Text>
+								<View
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										borderWidth: 1,
+
+										borderRadius: 100,
+										alignSelf: "flex-start",
+										paddingVertical: 5,
+										paddingHorizontal: 10,
+										backgroundColor:
+											typeAffichage === "icones"
+												? "#F19066"
+												: "#dfe4ea",
+									}}
+								>
+									<TouchableOpacity
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											alignItems: "center",
+										}}
+										onPress={() => {
+											setTypeAffichage("icones");
+											
+										}}
+									>
+										<MaterialCommunityIcons
+											name="view-grid"
+											size={24}
+											color="#2f3542"
+										/>
+										<Text
+											style={{
+												color: "black",
+												fontSize: 18,
+												marginLeft: 10,
+											}}
+										>
+											Icônes
+										</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						</View>
+						<Text>Filtrer par tags</Text>
+						<View
+							style={{
+								flex: 1,
+								flexDirection: "row",
+								flexWrap: "wrap",
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+						>
+							{overlayChips}
+						</View>
+					</View>
+				</TouchableWithoutFeedback>
+			</TouchableOpacity>
+		</Modal>
+	);
+	//-----------------fin modal
 
 	//  -----------------------------------------------------Début FlatList affichant les Cards
 	//En React Native, il y a plusieurs étapes pour afficher des cards dans une FlatList:
@@ -153,7 +474,6 @@ function HomeScreen(props) {
 	// ITEM : c'est le composant Card, comme si on l'écrivait dans le render
 	// Render Item : Création d'un composant "Item" à partir de ITEM que pourra lire la FlatList
 	// FlatList : C'est le conteneur de toutes les cards. FlatList permet de scroller, scroll infini, disposition des cards en flex, etc... Il faut intégrer dans ses props DATA et Render Item. Puis c'est la FlatList qu'on intègre dans le render.
-	
 
 	var Item;
 	var flatlist;
@@ -249,9 +569,9 @@ function HomeScreen(props) {
 			</TouchableOpacity>
 		);
 
-		const renderItem = (
-			{ item } 
-		) => <Item image={item.image} name={item.name} />;
+		const renderItem = ({ item }) => (
+			<Item image={item.image} name={item.name} />
+		);
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return
@@ -297,9 +617,7 @@ function HomeScreen(props) {
 						placeholder="Chercher une recette"
 						underlineColorAndroid="transparent"
 					/>
-					<TouchableOpacity
-						onPress={() => handleSearch(searchInput)}
-					>
+					<TouchableOpacity onPress={() => handleSearch(searchInput)}>
 						<MaterialCommunityIcons
 							style={styles.searchIcon}
 							name="magnify"
@@ -310,7 +628,10 @@ function HomeScreen(props) {
 				</View>
 				<TouchableOpacity
 					style={{}}
-					onPress={() => setIsOverlayVisible(!isOverlayVisible)}
+					onPress={() => {
+						setAlert(true);
+						setIsOverlayVisible(true);
+					}}
 				>
 					<MaterialCommunityIcons
 						name="tune-vertical"
@@ -339,8 +660,10 @@ function HomeScreen(props) {
 				</View>
 				{flatlist}
 				{overlayShadow}
-				{overlay}
+				{/* {overlay} */}
 			</View>
+
+			{modal}
 		</View>
 	);
 }
@@ -369,11 +692,6 @@ function mapDispatchToProps(dispatch) {
 export default connect(null, mapDispatchToProps)(HomeScreen);
 
 //---------------------------------------------------------------début feuille de style
-
-const STATUSBAR_HEIGHT =
-	Platform.OS === "android" ? StatusBar.currentHeight : 44; //permet de faire varier la taille de la status bar selon le téléphone
-const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier la taille de l'AppBar selon le téléphone
-// https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
 	statusBar: {
@@ -427,13 +745,13 @@ const styles = StyleSheet.create({
 	},
 	overlay: {
 		flex: 1,
+		alignItems: "center",
 		position: "absolute",
 		left: 0,
 		top: 0,
-		opacity: 0.97,
-		borderBottomLeftRadius: 50,
-		borderBottomRightRadius: 50,
-		backgroundColor: "white",
+		borderBottomLeftRadius: 20,
+		borderBottomRightRadius: 20,
+		backgroundColor: "#f5f6fa",
 		width: "100%",
 	},
 	overlayShadow: {
