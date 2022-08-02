@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { privateIP } from "../env.js"
 
 import {
 	StatusBar,
@@ -37,11 +38,11 @@ function SignInScreen(props) {
 	//--------------------------------------------------------------------------
 
 	var handleSubmitSignin = async () => {
- 
-		const data = await fetch('http://192.168.1.24:3000/users/sign-in', {
-		  method: 'POST',
-		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
+
+		const data = await fetch(`http://${privateIP}:3000/users/sign-in`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
 		})
 
 		const body = await data.json()
@@ -63,10 +64,10 @@ function SignInScreen(props) {
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
-	
-	  var tabErrorsSignin = listErrorsSignin.map((error,i) => {
-		return(<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
-	  })
+
+	var tabErrorsSignin = listErrorsSignin.map((error, i) => {
+		return (<Text style={{ color: 'red', height: 40, margin: 10 }} key={i}>{error}</Text>)
+	})
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -87,27 +88,27 @@ function SignInScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-			<View style={{flex : 1}}>
+			<View style={{ flex: 1 }}>
 
-				<View style={{	flexDirection:"row",}}>
-					
+				<View style={{ flexDirection: "row", }}>
+
 					<Text style={styles.baseText}>
 						HUNGRYBOOK
 					</Text>
 					<Button
-					color='#F19066'
-					title="S'inscrire"
-					type="solid"
-					onPress={() => navigation.navigate("SignUp")}
-				/>
+						color='#F19066'
+						title="S'inscrire"
+						type="solid"
+						onPress={() => navigation.navigate("SignUp")}
+					/>
 				</View>
 
 
 				<View style={styles.content}>
 
 
-				<Text style={styles.text}>Email ou Name:</Text>
-				<TextInput
+					<Text style={styles.text}>Email ou Name:</Text>
+					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='francis@gmail.com'
@@ -116,28 +117,28 @@ function SignInScreen(props) {
 						onChangeText={(val) => setSignInEmail(val)}
 						value={signInEmail}
 
-					/>					
+					/>
 					<Text style={styles.text}>password :</Text>
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='password'
 						secureTextEntry={true}
-						
+
 						onChangeText={(val) => setSignInPassword(val)}
 						value={signInPassword}
 
 					/>
 
 					{tabErrorsSignin}
-						<Button
-							title="connexion"
-							color="#737373"
-							type="solid"
-							buttonStyle={{ backgroundColor: "#ooooo" }}
-							onPress={() => handleSubmitSignin()}
-						></Button>
-					</View>
+					<Button
+						title="connexion"
+						color="#737373"
+						type="solid"
+						buttonStyle={{ backgroundColor: "#ooooo" }}
+						onPress={() => handleSubmitSignin()}
+					></Button>
+				</View>
 			</View>
 
 
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		margin:'15%',
+		margin: '15%',
 
 	},
 	input: {
@@ -186,16 +187,16 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 	},
-	baseText:{
+	baseText: {
 		fontWeight: 'bold',
-		margin:35,
-		fontSize:25,
+		margin: 35,
+		fontSize: 25,
 	},
-	text:{
+	text: {
 		marginLeft: 12,
 		marginTop: 12,
 	}
 
-	
-	
+
+
 });

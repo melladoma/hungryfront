@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { privateIP } from "../env.js"
 
 import {
 	TouchableWithoutFeedback,
@@ -33,7 +34,7 @@ function HomeScreen(props) {
 	const [alert, setAlert] = useState(false);
 	const [DATA, setDATA] = useState([]);
 	const [initialData, setInitialData] = useState([]);
-	
+
 	const tabBarHeight = useBottomTabBarHeight();
 	useEffect(() => {
 		props.onSubmitBottomTabHeight(tabBarHeight);
@@ -106,7 +107,7 @@ function HomeScreen(props) {
 		//initialisation
 		async function initialFetch() {
 			var rawResponse = await fetch(
-				"http://192.168.10.114:3000/search/search-tags",
+				`http://${privateIP}:3000/search/search-tags`,
 				{
 					method: "post",
 					headers: {
@@ -153,16 +154,16 @@ function HomeScreen(props) {
 	useEffect(() => { //tags     // apres faudra mettre initial data dans le store
 		if (selectedFiltersArray.length > 0 && searchInput.length === 0) {
 			let newDataSet = initialData
-			for (let i=0; i<selectedFiltersArray.length; i++) {
-				newDataSet = newDataSet.filter(x=>x.tags.includes(selectedFiltersArray[i]))
+			for (let i = 0; i < selectedFiltersArray.length; i++) {
+				newDataSet = newDataSet.filter(x => x.tags.includes(selectedFiltersArray[i]))
 			}
 			setDATA(newDataSet)
 
 		} else if (selectedFiltersArray.length === 0 && searchInput.length > 0) {
 			let tempDataSet = initialData
 			let newDataSet = []
-			
-			for (let i=0; i<tempDataSet.length; i++) {
+
+			for (let i = 0; i < tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
 				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
 					newDataSet.push(tempDataSet[i])
@@ -173,15 +174,15 @@ function HomeScreen(props) {
 		} else if (selectedFiltersArray.length > 0 && searchInput.length > 0) {
 			let tempDataSet = initialData
 			let newDataSet = []
-			
-			for (let i=0; i<tempDataSet.length; i++) {
+
+			for (let i = 0; i < tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
 				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
 					newDataSet.push(tempDataSet[i])
 				}
 			}
-			for (let i=0; i<selectedFiltersArray.length; i++) {
-				newDataSet = newDataSet.filter(x=>x.tags.includes(selectedFiltersArray[i]))
+			for (let i = 0; i < selectedFiltersArray.length; i++) {
+				newDataSet = newDataSet.filter(x => x.tags.includes(selectedFiltersArray[i]))
 			}
 			setDATA(newDataSet)
 
@@ -191,23 +192,23 @@ function HomeScreen(props) {
 
 
 
-			/* async function fetchByTags() {
-				var rawResponse = await fetch(
-					"http://192.168.1.24:3000/search/search-tags",
-					{
-						method: "post",
-						headers: {
-							"Content-Type": "application/x-www-form-urlencoded",
-						},
-						body: `tags=${JSON.stringify(selectedFiltersArray)}`,
-					}
-				);
+		/* async function fetchByTags() {
+			var rawResponse = await fetch(
+				"http://192.168.1.24:3000/search/search-tags",
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+				}
+			);
 
-				var response = await rawResponse.json();
-				setDATA(response.recipes);
-			}
-			fetchByTags(); */
-		
+			var response = await rawResponse.json();
+			setDATA(response.recipes);
+		}
+		fetchByTags(); */
+
 	}, [selectedFiltersArray, searchInput]);
 
 	const Chips = tags.map((x, i) => (
