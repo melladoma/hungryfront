@@ -134,7 +134,7 @@ function AddScreen(props) {
 							<UrlButton title="A l'aide d'une URL" size="sm"/>	
 					</View>
 					<View style={styles.screenContainer}>
-							<ManualButton title="A la main" size="sm"/>	
+							<ManualButton title="Saisie manuelle" size="sm"/>	
 					</View>
 				</View>
 

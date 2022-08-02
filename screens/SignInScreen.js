@@ -12,6 +12,8 @@ import {
 	TouchableOpacity,
 	Text,
 	TextInput,
+	ImageBackground,
+	KeyboardAvoidingView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -82,46 +84,68 @@ function SignInScreen(props) {
 		</View>
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
+	const AppButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => handleSubmitSignin()} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		</TouchableOpacity>
+	  );
+	  const SignUp = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={styles.appButtonContainer1}>
+		  <Text style={styles.appButtonText1}>
+			{title}
+		  </Text>
+		</TouchableOpacity>
+	  );
 
 	return (
-		<View style={styles.container}>
+		
+		<ImageBackground source={require('../assets/eggs.jpg')}  style={styles.container} >
+		{/* <KeyboardAvoidingView */}
+			
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
-
+			
 			<View style={{flex : 1}}>
-
-				<View style={{	flexDirection:"row",}}>
+			
+				<View style={{marginTop:100,}}>
+				<Text style={styles.baseText}>
+						THE
+					</Text>
 					
 					<Text style={styles.baseText}>
 						HUNGRYBOOK
 					</Text>
-					<Button
+					{/* <Button
 					color='#F19066'
 					title="S'inscrire"
 					type="solid"
 					onPress={() => navigation.navigate("SignUp")}
-				/>
+				/> */}
 				</View>
 
 
 				<View style={styles.content}>
 
 
-				<Text style={styles.text}>Email ou Name:</Text>
+				
 				<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='francis@gmail.com'
+						placeholder='Adresse E-mail'
 						keyboardType="email-address"
+						overflow="hidden"
+                        keyboardAppearance="dark"
 
 						onChangeText={(val) => setSignInEmail(val)}
 						value={signInEmail}
 
 					/>					
-					<Text style={styles.text}>password :</Text>
+					
 					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='password'
+						placeholder='Mot de passe'
 						secureTextEntry={true}
 						
 						onChangeText={(val) => setSignInPassword(val)}
@@ -130,18 +154,24 @@ function SignInScreen(props) {
 					/>
 
 					{tabErrorsSignin}
-						<Button
-							title="connexion"
-							color="#737373"
-							type="solid"
-							buttonStyle={{ backgroundColor: "#ooooo" }}
-							onPress={() => handleSubmitSignin()}
-						></Button>
+					
+					<View style={styles.screenContainer}>
+      					<AppButton title="Me connecter" size="sm"/>	
+    				</View>
+					<View style={{marginTop:90}}>
+				<Text style={styles.goSignup}>Vous n'avez pas encore de compte ?</Text>
 					</View>
+					<View style={styles.screenContainer}>
+      					<SignUp title="Créer mon compte" size="sm"/>	
+    				</View>
+					
+					</View>
+					
 			</View>
 
-			
-		</View>
+			{/* </KeyboardAvoidingView> */}
+		</ImageBackground>
+		
 	);
 }
 
@@ -169,7 +199,6 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f6fa",
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -181,20 +210,72 @@ const styles = StyleSheet.create({
 
 	},
 	input: {
-		height: 40,
+		height: 55,
 		margin: 10,
-		borderWidth: 1,
+		borderWidth: 0.75,
 		padding: 10,
+		borderRadius:15,
+		backgroundColor:"#dfe4ea",
+		
 	},
 	baseText:{
 		fontWeight: 'bold',
-		margin:35,
-		fontSize:25,
+		textAlign: 'center',
+		fontSize:55,
+		color:"#e67e22",
+		borderColor:"#fff",
+		textDecoration:"underline"
 	},
 	text:{
 		marginLeft: 12,
 		marginTop: 12,
-	}
+	},
+	screenContainer: {
+		//flex: 1,
+		justifyContent: "center",
+		padding: 16
+	  },
+	  appButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#e67e22",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection:"row",
+		alignItems:"center",
+		justifyContent:"center",
+		marginTop:10,
+
+	  },
+	  appButtonText: {
+		fontSize: 18,
+		color: "#fff",
+		fontWeight: "bold",
+		alignSelf: "center",
+	  },
+	  goSignup: {
+		fontSize:18,
+		color:"#fff",
+		textAlign:"center",		
+	  },
+	  appButtonContainer1: {
+		elevation: 8,
+		backgroundColor: "#2F3542",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection:"row",
+		alignItems:"center",
+		justifyContent:"center",
+	
+
+	  },
+	  appButtonText1: {
+		fontSize: 18,
+		color: "#fff",
+		fontWeight: "bold",
+		alignSelf: "center",
+	  },
 
 	
 	

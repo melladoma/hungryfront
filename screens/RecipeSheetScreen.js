@@ -243,7 +243,7 @@ function RecipeSheetScreen(props) {
 							<View>
 									<Text h1 style={styles.recipeName}>Tacos de Barcoa</Text>
 									<Text h1 style={styles.title}>ÉTAPE 1</Text>
-
+'
 									<Text style={{fontSize:20}}>A la poêle, faire dorer l'oignon émincé dans un peu d'huile d'olive.</Text>
 
 									<Text h1 style={styles.title}>ÉTAPE 2</Text>
