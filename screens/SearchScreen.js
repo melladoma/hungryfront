@@ -5,6 +5,9 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+	ScrollView,
+	Image,
+	FlatList,
 	StatusBar,
 	View,
 	Platform,
@@ -20,9 +23,34 @@ function SearchScreen(props) {
 	const navigation = useNavigation();
 
 	const [searchInput, setSearchInput] = useState(props.searchInput);
-	const [DATA, setDATA] = useState([]);
 
-	/* useEffect(() => {
+	const [listAuthor, setListAuthor] = useState([]);
+	const [dataByAuthor, setDataByAuthor] = useState([]);
+	const [dataByName, setDataByName] = useState([]);
+	const [dataByIngredients, setDataByIngredients] = useState([]);
+	const [dataByDirections, setDataByDirections] = useState([]);
+
+	const listAuthorComponent = listAuthor.map((x, i) => {
+		return (
+			<View
+				style={{
+					alignSelf: "center",
+					paddingVertical: 5,
+					paddingHorizontal: 10,
+					margin: 5,
+					borderWidth: 1,
+					borderRadius: 100,
+				}}
+				key={i}
+			>
+				<Text style={{ height: 20 }} key={i}>
+					{`#${x}`}
+				</Text>
+			</View>
+		);
+	});
+
+	useEffect(() => {
 		async function fetchByInput() {
 			var rawResponse = await fetch(
 				"http://192.168.1.24:3000/search/search-input",
@@ -31,16 +59,18 @@ function SearchScreen(props) {
 					headers: {
 						"Content-Type": "application/x-www-form-urlencoded",
 					},
-					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+					body: `input=${searchInput}`,
 				}
 			);
 
 			var response = await rawResponse.json();
-			setDATA(response.recipes);
+			console.log(JSON.parse(response.listAuthor));
+			setListAuthor(JSON.parse(response.listAuthor));
+			setDataByName(response.recipesByName);
 		}
-		fetchByTags();
-	}, [selectedFiltersArray]); */
-	
+		fetchByInput();
+	}, [searchInput]);
+
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -56,7 +86,76 @@ function SearchScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 
+	//Début flatlist-----------------------
+	var Item;
 
+	Item = ({ image, name }) => (
+		<TouchableOpacity
+			onPress={() => navigation.navigate("RecipeSheetScreen")}
+		>
+			<View
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					height: 150,
+					width: "90%",
+					alignSelf: "center",
+
+					marginTop: 10,
+					borderRadius: 10,
+					borderWidth: 1,
+				}}
+			>
+				<Image
+					style={{
+						height: "100%",
+						width: "40%",
+						borderBottomLeftRadius: 10,
+						borderBottomRightRadius: 0,
+						borderTopLeftRadius: 10,
+						borderTopRightRadius: 0,
+					}}
+					source={{ uri: image }}
+				/>
+				<View style={{ margin: 10 }}>
+					<Text style={{ fontSize: 20 }}>{name}</Text>
+					<Text style={{ fontSize: 15 }}>Hum tres bonne tarte</Text>
+					<Text style={{ fontSize: 15, fontWeight: "bold" }}>
+						#Dylan
+					</Text>
+					<Text style={{ fontSize: 15 }}>58 Likes</Text>
+				</View>
+			</View>
+		</TouchableOpacity>
+	);
+
+	const renderItem = ({ item }) => (
+		<Item image={item.image} name={item.name} />
+	);
+
+	//by author
+	var authorFlatlist;
+	authorFlatlist = (
+		<FlatList //composant qu'on met dans le return
+			showsVerticalScrollIndicator={false}
+			key={"liste"}
+			data={dataByAuthor}
+			renderItem={renderItem}
+			keyExtractor={(item) => item._id}
+		/>
+	);
+	//by name&ingredients&directions
+	let datas = [...dataByName, ...dataByIngredients, ...dataByDirections];
+	var nameFlatlist;
+	nameFlatlist = (
+		<FlatList //composant qu'on met dans le return
+			showsVerticalScrollIndicator={false}
+			key={"liste"}
+			data={datas}
+			renderItem={renderItem}
+			keyExtractor={(item) => item._id}
+		/>
+	);
 
 	return (
 		<View style={styles.container}>
@@ -82,9 +181,33 @@ function SearchScreen(props) {
 					</TouchableOpacity>
 				</View>
 			</View>
-			<View style={{ flex: 1 }}>
+			<View style={{ flex: 1, borderWidth: 1 }}>
 				<View style={styles.content}>
-					<Text style={{ fontSize: 20 }}>SearchScreen</Text>
+					{listAuthor.length > 0 ? ( <>
+						<Text style={{ alignSelf: "flex-start" }}>
+						Nous avons trouvé des auteurs qui correspondent:
+					</Text>
+						<View style={{ height: 50, marginBottom: 10 }}>
+						<ScrollView
+							horizontal
+							showsHorizontalScrollIndicator={false}
+							style={{}}
+						>
+							{listAuthorComponent}
+						</ScrollView>
+					</View></>
+						
+					) : null}
+					<Text style={{ alignSelf: "flex-start" }}>
+						Titres ou contenus qui correspondent:
+					</Text>
+					<View style={{ borderWidth: 1 }}>
+						{dataByName.length > 0 ? (
+							nameFlatlist
+						) : (
+							<Text>Aucune recette ne correspond</Text>
+						)}
+					</View>
 				</View>
 				<View style={styles.bottomTab}>
 					<View
@@ -120,7 +243,10 @@ function SearchScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, searchInput: state.searchInput };
+	return {
+		bottomTabHeight: state.bottomTabHeight,
+		searchInput: state.searchInput,
+	};
 }
 
 /*function mapDispatchToProps(dispatch) {
@@ -132,8 +258,6 @@ function mapStateToProps(state) {
 }*/
 
 export default connect(mapStateToProps, null)(SearchScreen);
-
-
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -157,7 +281,8 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flex: 1,
-		justifyContent: "center",
+		borderWidth: 0,
+
 		alignItems: "center",
 		backgroundColor: "#f5f6fa",
 	},

@@ -32,6 +32,8 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier 
 function HomeScreen(props) {
 	const [alert, setAlert] = useState(false);
 	const [DATA, setDATA] = useState([]);
+	const [initialData, setInitialData] = useState([]);
+	
 	const tabBarHeight = useBottomTabBarHeight();
 	useEffect(() => {
 		props.onSubmitBottomTabHeight(tabBarHeight);
@@ -100,24 +102,113 @@ function HomeScreen(props) {
 		}
 	};
 
-	useEffect(() => {
-		async function fetchByTags() {
+	useEffect(() => { // apres faudra mettre initial data dans le store
+		//initialisation
+		async function initialFetch() {
 			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-tags",
+				"http://192.168.1.24:3000/search/initial-search-myrecipes",
 				{
 					method: "post",
 					headers: {
 						"Content-Type": "application/x-www-form-urlencoded",
 					},
-					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+					body: `token=${props.token}`,
 				}
 			);
 
 			var response = await rawResponse.json();
-			setDATA(response.recipes);
+			console.log(response);
+			setDATA(response.addedRecipes);
+			setInitialData(response.addedRecipes)
 		}
-		fetchByTags();
-	}, [selectedFiltersArray]);
+		initialFetch();
+	}, []);
+
+	/* useEffect(() => {
+		if
+		 async function fetchByInput() {
+			if (searchInput.length > 0) {
+			var rawResponse = await fetch(
+				"http://192.168.1.24:3000/search/search-input-myrecipes",
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `input=${searchInput}`,
+				}
+			);
+
+			var response = await rawResponse.json();
+			console.log(response);
+			
+			// setDataByName(response.recipesByName); 
+			} else {
+
+			}
+		}
+		fetchByInput(); 
+	}, [searchInput]); */
+
+	useEffect(() => { //tags     // apres faudra mettre initial data dans le store
+		if (selectedFiltersArray.length > 0 && searchInput.length === 0) {
+			let newDataSet = initialData
+			for (let i=0; i<selectedFiltersArray.length; i++) {
+				newDataSet = newDataSet.filter(x=>x.tags.includes(selectedFiltersArray[i]))
+			}
+			setDATA(newDataSet)
+
+		} else if (selectedFiltersArray.length === 0 && searchInput.length > 0) {
+			let tempDataSet = initialData
+			let newDataSet = []
+			
+			for (let i=0; i<tempDataSet.length; i++) {
+				let regex = new RegExp(searchInput, 'i')
+				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+					newDataSet.push(tempDataSet[i])
+				}
+			}
+			setDATA(newDataSet)
+
+		} else if (selectedFiltersArray.length > 0 && searchInput.length > 0) {
+			let tempDataSet = initialData
+			let newDataSet = []
+			
+			for (let i=0; i<tempDataSet.length; i++) {
+				let regex = new RegExp(searchInput, 'i')
+				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+					newDataSet.push(tempDataSet[i])
+				}
+			}
+			for (let i=0; i<selectedFiltersArray.length; i++) {
+				newDataSet = newDataSet.filter(x=>x.tags.includes(selectedFiltersArray[i]))
+			}
+			setDATA(newDataSet)
+
+		} else if (selectedFiltersArray.length === 0 && searchInput.length === 0) {
+			setDATA(initialData)
+		}
+
+
+
+			/* async function fetchByTags() {
+				var rawResponse = await fetch(
+					"http://192.168.1.24:3000/search/search-tags",
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `tags=${JSON.stringify(selectedFiltersArray)}`,
+					}
+				);
+
+				var response = await rawResponse.json();
+				setDATA(response.recipes);
+			}
+			fetchByTags(); */
+		
+	}, [selectedFiltersArray, searchInput]);
 
 	const Chips = tags.map((x, i) => (
 		<Pressable key={i} onPress={() => handlePressedChip(x)}>
@@ -144,7 +235,6 @@ function HomeScreen(props) {
 			key={i}
 			onPress={() => {
 				handlePressedChip(x);
-				
 			}}
 		>
 			<View
@@ -323,7 +413,6 @@ function HomeScreen(props) {
 				onPressOut={() => {
 					setIsOverlayVisible(false);
 					setAlert(false);
-					
 				}}
 			>
 				<TouchableWithoutFeedback>
@@ -376,7 +465,6 @@ function HomeScreen(props) {
 										}}
 										onPress={() => {
 											setTypeAffichage("liste");
-											
 										}}
 									>
 										<MaterialCommunityIcons
@@ -428,7 +516,6 @@ function HomeScreen(props) {
 										}}
 										onPress={() => {
 											setTypeAffichage("icones");
-											
 										}}
 									>
 										<MaterialCommunityIcons
@@ -617,14 +704,13 @@ function HomeScreen(props) {
 						placeholder="Chercher une recette"
 						underlineColorAndroid="transparent"
 					/>
-					<TouchableOpacity onPress={() => handleSearch(searchInput)}>
-						<MaterialCommunityIcons
-							style={styles.searchIcon}
-							name="magnify"
-							size={28}
-							color="#2f3542"
-						/>
-					</TouchableOpacity>
+
+					<MaterialCommunityIcons
+						style={styles.searchIcon}
+						name="magnify"
+						size={28}
+						color="#2f3542"
+					/>
 				</View>
 				<TouchableOpacity
 					style={{}}
@@ -668,9 +754,9 @@ function HomeScreen(props) {
 	);
 }
 
-/* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
-}*/
+function mapStateToProps(state) {
+	return { token: state.token };
+}
 
 function mapDispatchToProps(dispatch) {
 	return {
@@ -689,7 +775,7 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(null, mapDispatchToProps)(HomeScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 
 //---------------------------------------------------------------début feuille de style
 
