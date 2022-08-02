@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,32 +14,113 @@ import {
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { Camera } from 'expo-camera';
+import { useIsFocused } from '@react-navigation/native';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import * as ImagePicker from 'expo-image-picker';
 
 function SnapScreen(props) {
 	const navigation = useNavigation();
 
 	//----------------------------- ------------------------------------Début StatusBar
-	const MyStatusBar = ({ backgroundColor, ...props }) => (
-		<View style={[styles.statusBar, { backgroundColor }]}>
-			<SafeAreaView>
-				<StatusBar
-					translucent
-					backgroundColor={backgroundColor}
-					barStyle="dark-content"
-					{...props}
-				/>
-			</SafeAreaView>
-		</View>
-	);
+	// const MyStatusBar = ({ backgroundColor, ...props }) => (
+	// 	<View style={[styles.statusBar, { backgroundColor }]}>
+	// 		<SafeAreaView>
+	// 			<StatusBar
+	// 				translucent
+	// 				backgroundColor={backgroundColor}
+	// 				barStyle="dark-content"
+	// 				{...props}
+	// 			/>
+	// 		</SafeAreaView>
+	// 	</View>
+	// );
 	//----------------------------- ------------------------------------Fin de StatusBar
+
+	//------------------------------------------------------------- Camera expo ------------------------------------------------------------------
+	const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
+	const [hasPermission, setHasPermission] = useState(null);
+	const [image, setImage] = useState(null);
+	//const [visible, setVisible] = useState(false);
+	var camera = useRef(null);
+    const isFocused = useIsFocused();
+
+
+// -------------------------------------------------------------------Gallerie photo --------------------------------------------------------
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+		  mediaTypes: ImagePicker.MediaTypeOptions.All,
+		  allowsEditing: true,
+		  aspect: [4, 3],
+		  quality: 1,
+		});
+	
+		console.log(result);
+	
+		if (!result.cancelled) {
+		  setImage(result.uri);
+		}
+	  };
+	
+// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
+	useEffect(() => {  
+		(async () => {
+			const { status } = await Camera.requestCameraPermissionsAsync();
+			setHasPermission(status === 'granted');
+		})();
+	  }, []);
+	  
+	  var cameraDisplay;
+	  if(hasPermission && isFocused){
+		cameraDisplay = <Camera 
+		  style={{ flex: 1 }}
+		  flashMode={flash}
+		  ref={ref => (camera = ref)}
+		>
+		   <View    
+			style={{
+			  flex: 1,
+			  backgroundColor: 'transparent',
+			  flexDirection: 'row',
+			}}>
+			   <TouchableOpacity
+				style={{
+				
+					alignSelf: 'flex-end',
+					alignItems: 'center',
+				}}
+				onPress={() => {
+					setFlash(
+					  flash === Camera.Constants.FlashMode.off
+						? Camera.Constants.FlashMode.torch
+						: Camera.Constants.FlashMode.off
+					);
+				  }}
+				>
+				<IconFontAwesome
+				name="flash"
+				size={20}
+				color="#ffffff"
+				/><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flash </Text>
+			   </TouchableOpacity>
+	
+			</View>
+		</Camera>
+	  } else {
+		cameraDisplay = <View style={{ flex: 1 }}></View>
+	  }
+	  //---------------------------------------------------------------------Fin composant camera ----------------------------------------------------
+	
 
 	return (
 		<View style={styles.container}>
-			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
+			{/* <MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" /> */}
+
 			<View style={{ flex: 1 }}>
-				<View style={styles.content}>
-					<Text style={{ fontSize: 20 }}>SnapScreen</Text>
-				</View>
+			{cameraDisplay} 
+
+	{/* ------------------------------------------------Boutons de camera et gallerie --------------------------------------------------- */}
 				<View style={styles.bottomTab}>
 					<View
 						style={{
@@ -68,10 +149,36 @@ function SnapScreen(props) {
 								}}
 							/>
 						</TouchableOpacity>
+
+{/* ---------------------------------------------------------Enregistrement photo + redirection sur FormScreen------------------------------------------ */}
 						<TouchableOpacity
 							style={{}}
-							onPress={() => navigation.navigate("FormScreen")}
+							onPress={async () => {
+								
+								if (camera) {
+									console.log("salut");
+									var photo = await camera.takePictureAsync({quality : 0.7, base64: true, exif: true});
+									console.log("photo",photo.uri);
+									var data = new FormData();
+									
+									data.append('recette', {
+									  uri: photo.uri,
+									  type: 'image/jpeg',
+									  name: 'recette.jpg',
+									});     
+									console.log(data,"data es tu la");            
+									var rawResponse = await fetch("http://192.168.10.128:3000/api/tesseract", {
+									  method: 'POST',
+									  body: data
+									});
+									var response = await rawResponse.json();
+									console.log(response,"repond nous")
+									navigation.navigate("FormScreen")
+								}
+							}
+							}
 						>
+
 							<View
 								style={{
 									display: "flex",
@@ -94,6 +201,7 @@ function SnapScreen(props) {
 								/>
 							</View>
 						</TouchableOpacity>
+{/* ------------------------------------------------REDIRECTION SUR LA GALLERIE PHOTO ---------------------------------------------- */}
 						<TouchableOpacity
 							style={{ alignSelf: "flex-end" }}
 							onPress={() => navigation.navigate("FormScreen")}
@@ -102,6 +210,7 @@ function SnapScreen(props) {
 								name="image"
 								size={28}
 								color="white"
+								onPress={pickImage}
 								style={{
 									paddingLeft: 20,
 									paddingRight: 20,
@@ -110,6 +219,7 @@ function SnapScreen(props) {
 									zIndex: 1,
 								}}
 							/>
+							{image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
 						</TouchableOpacity>
 					</View>
 				</View>

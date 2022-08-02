@@ -223,7 +223,7 @@ function FormScreen(props) {
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
 				{inputsIngredients}
-				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "start" }}>
+				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
 					<MaterialCommunityIcons
 						name="plus"
 						size={25}
