@@ -24,7 +24,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 function FormScreen(props) {
-	var privateIPBackend = "192.168.10.114"
+	var privateIPBackend = "192.168.1.24"
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE

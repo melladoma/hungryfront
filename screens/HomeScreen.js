@@ -106,7 +106,7 @@ function HomeScreen(props) {
 		//initialisation
 		async function initialFetch() {
 			var rawResponse = await fetch(
-				"http://192.168.10.114:3000/search/search-tags",
+				"http://192.168.1.24:3000/search/initial-search-myrecipes",
 				{
 					method: "post",
 					headers: {
@@ -161,10 +161,13 @@ function HomeScreen(props) {
 		} else if (selectedFiltersArray.length === 0 && searchInput.length > 0) {
 			let tempDataSet = initialData
 			let newDataSet = []
+			console.log("------ici",tempDataSet)
+			console.log("------là", tempDataSet[0].name.match('a'))
+			console.log("searchinput", searchInput)
 			
 			for (let i=0; i<tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
 					newDataSet.push(tempDataSet[i])
 				}
 			}
@@ -174,9 +177,10 @@ function HomeScreen(props) {
 			let tempDataSet = initialData
 			let newDataSet = []
 			
+			
 			for (let i=0; i<tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
 					newDataSet.push(tempDataSet[i])
 				}
 			}
