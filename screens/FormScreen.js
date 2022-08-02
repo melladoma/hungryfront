@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import * as ImagePicker from 'expo-image-picker';
+
 
 import {
 	StatusBar,
@@ -16,7 +18,7 @@ import {
 	ScrollView,
 	Pressable,
 	Switch,
-	KeyboardAvoidingView
+	KeyboardAvoidingView, Image
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -60,6 +62,25 @@ function FormScreen(props) {
 		});
 	};
 	//-------------FIN FONCTION MISE A JOUR DES CHAMPS SUR LE STATE RECIPE
+
+	//-----------------------------------IMAGE PICKER
+	const [image, setImage] = useState(null);
+	const pickImage = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log(result);
+
+		if (!result.cancelled) {
+			setImage(result.uri);
+		}
+	};
+
+	//----------------------------------FIN IMAGE PICKER
 
 	// ----------------------------------INPUTS INGREDIENTS
 	const [textValue, setTextValue] = useState('');
@@ -173,6 +194,8 @@ function FormScreen(props) {
 	);
 	//-----------------------------------------------------------------Fin de StatusBar
 
+	//------------------------------------------------------RETURN------------------------------------------
+
 	return (
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
@@ -199,6 +222,13 @@ function FormScreen(props) {
 					onChangeText={(value) => handleChange('image', value)}
 					value={recipe.image}
 				/>
+
+				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+					<Button title="Pick an image from camera roll" onPress={pickImage} />
+					{image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+				</View>
+
+
 				<Text style={styles.label}>Temps de préparation</Text>
 				<TextInput
 					style={styles.input}
@@ -223,7 +253,7 @@ function FormScreen(props) {
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
 				{inputsIngredients}
-				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "start" }}>
+				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
 					<MaterialCommunityIcons
 						name="plus"
 						size={25}

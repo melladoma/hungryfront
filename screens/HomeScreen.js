@@ -45,7 +45,7 @@ function HomeScreen(props) {
 	const [typeAffichage, setTypeAffichage] = useState("icones"); //dans l'overlay filtre, gère le type d'affichage
 
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
-	
+
 	const handleSearch = (input) => {
 		if (input.length !== 0) {
 			props.onSubmitSearchInput(input)
@@ -118,7 +118,7 @@ function HomeScreen(props) {
 	useEffect(() => {
 		async function fetchByTags() {
 			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-tags",
+				"http://192.168.10.114:3000/search/search-tags",
 				{
 					method: "post",
 					headers: {
@@ -160,7 +160,7 @@ function HomeScreen(props) {
 	// ITEM : c'est le composant Card, comme si on l'écrivait dans le render
 	// Render Item : Création d'un composant "Item" à partir de ITEM que pourra lire la FlatList
 	// FlatList : C'est le conteneur de toutes les cards. FlatList permet de scroller, scroll infini, disposition des cards en flex, etc... Il faut intégrer dans ses props DATA et Render Item. Puis c'est la FlatList qu'on intègre dans le render.
-	
+
 
 	var Item;
 	var flatlist;
@@ -257,7 +257,7 @@ function HomeScreen(props) {
 		);
 
 		const renderItem = (
-			{ item } 
+			{ item }
 		) => <Item image={item.image} name={item.name} />;
 
 		flatlist = (

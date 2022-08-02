@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +25,7 @@ function SignInScreen(props) {
 
 	//------------mettre les champs de saisie a vide------------------
 	const [signInEmail, setSignInEmail] = useState('')
-  	const [signInPassword, setSignInPassword] = useState('')
+	const [signInPassword, setSignInPassword] = useState('')
 	//---------------------------------------------------------------------
 
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
@@ -37,36 +37,36 @@ function SignInScreen(props) {
 	//--------------------------------------------------------------------------
 
 	var handleSubmitSignin = async () => {
- 
-		const data = await fetch('http://192.168.10.135:3000/users/sign-in', {
-		  method: 'POST',
-		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
+
+		const data = await fetch('http://192.168.10.114:3000/users/sign-in', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
 		})
-	
+
 		const body = await data.json()
 
 		console.log(body);
 
-		if(body.result == true){
-		  props.addToken(body.token)
-		  setUserExists(true)
-		  
-		}  else {
-		  setErrorsSignin(body.error)
-		}
-	  }
+		if (body.result == true) {
+			props.addToken(body.token)
+			setUserExists(true)
 
-	  useEffect(() => {
+		} else {
+			setErrorsSignin(body.error)
+		}
+	}
+
+	useEffect(() => {
 		if (userExists) {
 			console.log("le user existe (sign-in)");
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
-	
-	  var tabErrorsSignin = listErrorsSignin.map((error,i) => {
-		return(<Text style={{color:'red'}} key={i}>{error}</Text>)
-	  })
+
+	var tabErrorsSignin = listErrorsSignin.map((error, i) => {
+		return (<Text style={{ color: 'red' }} key={i}>{error}</Text>)
+	})
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -93,13 +93,13 @@ function SignInScreen(props) {
 						HUNGRYBOOK SIGN-UP
 					</Text>
 					<Button
-					title="S'inscrire"
-					onPress={() => navigation.navigate("SignUp")}
-				/>
+						title="S'inscrire"
+						onPress={() => navigation.navigate("SignUp")}
+					/>
 				</View>
 				<SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', }}>
 
-				<TextInput
+					<TextInput
 						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Email'
@@ -127,7 +127,7 @@ function SignInScreen(props) {
 				</SafeAreaView>
 			</View>
 
-			
+
 		</View>
 	);
 }
@@ -144,7 +144,7 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-export default connect(null, mapDispatchToProps)(SignInScreen); 
+export default connect(null, mapDispatchToProps)(SignInScreen);
 
 //export default SignInScreen;
 
@@ -172,5 +172,5 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 	}
-	
+
 });

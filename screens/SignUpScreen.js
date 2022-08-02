@@ -44,7 +44,7 @@ function SignUpScreen(props) {
 	var handleSubmitSignup = async () => {
 
 		console.log('hello');
-		const data = await fetch("http://192.168.10.135:3000/users/sign-up", {
+		const data = await fetch("http://192.168.10.114:3000/users/sign-up", {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
@@ -71,7 +71,7 @@ function SignUpScreen(props) {
 
 
 	var tabErrorsSignup = listErrorsSignup.map((error, i) => {
-		return (<Text style={{color:'red'}} key={i}>{error}</Text>)
+		return (<Text style={{ color: 'red' }} key={i}>{error}</Text>)
 	})
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -218,5 +218,5 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 	},
-	
+
 });
