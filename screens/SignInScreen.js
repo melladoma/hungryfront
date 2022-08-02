@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +25,7 @@ function SignInScreen(props) {
 
 	//------------mettre les champs de saisie a vide------------------
 	const [signInEmail, setSignInEmail] = useState('')
-  	const [signInPassword, setSignInPassword] = useState('')
+	const [signInPassword, setSignInPassword] = useState('')
 	//---------------------------------------------------------------------
 
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
@@ -43,21 +43,21 @@ function SignInScreen(props) {
 		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
 		})
-	
+
 		const body = await data.json()
 
 		console.log(body);
 
-		if(body.result == true){
-		  props.addToken(body.token)
-		  setUserExists(true)
-		  
-		}  else {
-		  setErrorsSignin(body.error)
-		}
-	  }
+		if (body.result == true) {
+			props.addToken(body.token)
+			setUserExists(true)
 
-	  useEffect(() => {
+		} else {
+			setErrorsSignin(body.error)
+		}
+	}
+
+	useEffect(() => {
 		if (userExists) {
 			console.log("le user existe (sign-in)");
 			navigation.navigate("HomeDrawer2");
@@ -140,7 +140,7 @@ function SignInScreen(props) {
 					</View>
 			</View>
 
-			
+
 		</View>
 	);
 }
@@ -157,7 +157,7 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-export default connect(null, mapDispatchToProps)(SignInScreen); 
+export default connect(null, mapDispatchToProps)(SignInScreen);
 
 //export default SignInScreen;
 

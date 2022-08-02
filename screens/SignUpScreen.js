@@ -73,7 +73,7 @@ function SignUpScreen(props) {
 
 
 	var tabErrorsSignup = listErrorsSignup.map((error, i) => {
-		return (<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
+		return (<Text style={{ color: 'red', height: 40, margin: 10 }} key={i}>{error}</Text>)
 	})
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -95,88 +95,88 @@ function SignUpScreen(props) {
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-				<View>
-					<Text style={styles.baseText}>
-						HUNGRYBOOK
-					</Text>
-				</View>
+			<View>
+				<Text style={styles.baseText}>
+					HUNGRYBOOK
+				</Text>
+			</View>
 
 
-				<View style={styles.content}>
+			<View style={styles.content}>
 
-					<Text style={styles.text}>nom d'utilisateur :</Text>
-					<TextInput
-						style={styles.input}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder="francis"
+				<Text style={styles.text}>nom d'utilisateur :</Text>
+				<TextInput
+					style={styles.input}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder="francis"
 
-						onChangeText={(val) => setSignUpUsername(val)}
-						value={signUpUsername}
+					onChangeText={(val) => setSignUpUsername(val)}
+					value={signUpUsername}
 
-					/>
-					<Text style={styles.text}>Email :</Text>
-					<TextInput
-						style={styles.input}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='francis@gmail.com'
-						keyboardType="email-address"
+				/>
+				<Text style={styles.text}>Email :</Text>
+				<TextInput
+					style={styles.input}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder='francis@gmail.com'
+					keyboardType="email-address"
 
-						onChangeText={(val) => setSignUpEmail(val)}
-						value={signUpEmail}
+					onChangeText={(val) => setSignUpEmail(val)}
+					value={signUpEmail}
 
-					/>					
-					<Text style={styles.text}>password :</Text>
-					<TextInput
-						style={styles.input}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='password'
-						secureTextEntry={true}
+				/>
+				<Text style={styles.text}>password :</Text>
+				<TextInput
+					style={styles.input}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder='password'
+					secureTextEntry={true}
 
-						onChangeText={(val) => setSignUpPassword(val)}
-						value={signUpPassword}
+					onChangeText={(val) => setSignUpPassword(val)}
+					value={signUpPassword}
 
-					/>					
-					<Text style={styles.text}>confirmation password :</Text>
-					<TextInput
-						style={styles.input}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='confirmation password'
-						secureTextEntry={true}
+				/>
+				<Text style={styles.text}>confirmation password :</Text>
+				<TextInput
+					style={styles.input}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder='confirmation password'
+					secureTextEntry={true}
 
-						onChangeText={(val) => setSignUpConfirmPassword(val)}
-						value={signUpConfirmPassword}
+					onChangeText={(val) => setSignUpConfirmPassword(val)}
+					value={signUpConfirmPassword}
 
-					/>
+				/>
 
-					{tabErrorsSignup}
+				{tabErrorsSignup}
 
-					<Button
-						title="Valider l'inscription"
-						onPress={() => handleSubmitSignup()}
-					/>
+				<Button
+					title="Valider l'inscription"
+					onPress={() => handleSubmitSignup()}
+				/>
 			</View>
 
 
 
 
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.goBack()}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+			<TouchableOpacity
+				style={{}}
+				onPress={() => navigation.goBack()}
+			>
+				<MaterialCommunityIcons
+					name="arrow-left"
+					size={28}
+					color="#2f3542"
+					style={{
+						paddingLeft: 20,
+						paddingRight: 20,
+						paddingTop: 10,
+						paddingBottom: 10,
+						zIndex: 1,
 
-						}}
-					/>
-				</TouchableOpacity>
+					}}
+				/>
+			</TouchableOpacity>
 		</View>
 	);
 }
@@ -215,13 +215,13 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		margin:'15%',
+		margin: '15%',
 
 	},
 	baseText: {
 		fontWeight: 'bold',
-		margin:35,
-		fontSize:25,
+		margin: 35,
+		fontSize: 25,
 
 	},
 	input: {
@@ -230,9 +230,9 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 	},
-	text:{
+	text: {
 		marginLeft: 12,
 		marginTop: 12,
 	}
-	
+
 });

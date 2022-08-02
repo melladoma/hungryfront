@@ -106,7 +106,7 @@ function HomeScreen(props) {
 		//initialisation
 		async function initialFetch() {
 			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/initial-search-myrecipes",
+				"http://192.168.10.114:3000/search/search-tags",
 				{
 					method: "post",
 					headers: {
