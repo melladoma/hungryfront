@@ -162,10 +162,13 @@ function HomeScreen(props) {
 		} else if (selectedFiltersArray.length === 0 && searchInput.length > 0) {
 			let tempDataSet = initialData
 			let newDataSet = []
-
-			for (let i = 0; i < tempDataSet.length; i++) {
+			console.log("------ici",tempDataSet)
+			console.log("------là", tempDataSet[0].name.match('a'))
+			console.log("searchinput", searchInput)
+			
+			for (let i=0; i<tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
 					newDataSet.push(tempDataSet[i])
 				}
 			}
@@ -174,10 +177,11 @@ function HomeScreen(props) {
 		} else if (selectedFiltersArray.length > 0 && searchInput.length > 0) {
 			let tempDataSet = initialData
 			let newDataSet = []
-
-			for (let i = 0; i < tempDataSet.length; i++) {
+			
+			
+			for (let i=0; i<tempDataSet.length; i++) {
 				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex).length > 0 || tempDataSet[i].directions.match(regex).length > 0) {
+				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
 					newDataSet.push(tempDataSet[i])
 				}
 			}
