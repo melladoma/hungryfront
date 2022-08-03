@@ -36,10 +36,10 @@ function SignUpScreen(props) {
 	const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('')
 	//-----------------------------------------------------------------
 
-   //-----------------------------------Show password -----------------
-   const [passwordVisibility, setPasswordVisibility] = useState(true);
-   const [rightIcon, setRightIcon] = useState('eye');
-   //------------------------------------------------------------
+	//-----------------------------------Show password -----------------
+	const [passwordVisibility, setPasswordVisibility] = useState(true);
+	const [rightIcon, setRightIcon] = useState('eye');
+	//------------------------------------------------------------
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
 	const [userExists, setUserExists] = useState(false)
 	//--------------------------------------------------------------------------
@@ -86,31 +86,31 @@ function SignUpScreen(props) {
 	const validateMail = (text) => {
 		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 		console.log(text, reg.test(text));
-	  };
+	};
 	//------------------------------------------------------Fin REGEX -------------------------------------------------------------------------
 
 	// -----------------------------------------------------Password show ----------------------------------------------------------------------
 	const handlePasswordVisibility = () => {
 		if (rightIcon === 'eye') {
-		  setRightIcon('eye-off');
-		  setPasswordVisibility(!passwordVisibility);
+			setRightIcon('eye-off');
+			setPasswordVisibility(!passwordVisibility);
 		} else if (rightIcon === 'eye-off') {
-		  setRightIcon('eye');
-		  setPasswordVisibility(!passwordVisibility);
+			setRightIcon('eye');
+			setPasswordVisibility(!passwordVisibility);
 		}
-	  };
+	};
 	//------------------------------------------------------fin password show ---------------------------------------------------------------
 
 	//----------------------------------------------------BOUTON -----------------------------------------------------
 	const AppButton = ({ onPress, title }) => (
 		<TouchableOpacity onPress={() => handleSubmitSignup()} style={styles.appButtonContainer}>
-		  <Text style={styles.appButtonText}>
-			{title}
-		  </Text>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
 		</TouchableOpacity>
-	  );
+	);
 	//-------------------------------------------------Fin bouton ----------------------------------------------
-	
+
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -128,103 +128,103 @@ function SignUpScreen(props) {
 	//----------------------------- ------------------------------------Fin de StatusBar
 
 	return (
-		<ImageBackground source={require('../assets/fork.jpg')}  style={styles.container} >
+		<ImageBackground source={require('../assets/fork.jpg')} style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-			<View style={{marginTop:100,}}>
-					<Text style={styles.baseText}>
-						THE
-					</Text>
-					<Text style={styles.baseText}>
-						HUNGRY-BOOK
-					</Text>
+			<View style={{ marginTop: 100, }}>
+				<Text style={styles.baseText}>
+					THE
+				</Text>
+				<Text style={styles.baseText}>
+					HUNGRY-BOOK
+				</Text>
 			</View>
 
 			<View style={styles.content}>
 
-					
-					<TextInput
-						style={styles.inputContainer}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder="Pseudo"
+
+				<TextInput
+					style={styles.inputContainer}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder="Pseudo"
 
 					onChangeText={(val) => setSignUpUsername(val)}
 					value={signUpUsername}
 
-					/>
-					
-					<TextInput
-						style={styles.inputContainer}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='Votre adresse E-mail'
-						keyboardType="email-address"
+				/>
 
-						onChangeText= {(val) => setSignUpEmail(val) }
-						value={signUpEmail}
+				<TextInput
+					style={styles.inputContainer}
+					inputStyle={{ marginLeft: 10 }}
+					placeholder='Votre adresse E-mail'
+					keyboardType="email-address"
 
-					/>					
-					<View style={styles.inputContainer}>
+					onChangeText={(val) => setSignUpEmail(val)}
+					value={signUpEmail}
+
+				/>
+				<View style={styles.inputContainer}>
 					<TextInput
-						
+
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Votre mot de passe'
 						secureTextEntry={passwordVisibility}
 
-					onChangeText={(val) => setSignUpPassword(val)}
-					value={signUpPassword}
+						onChangeText={(val) => setSignUpPassword(val)}
+						value={signUpPassword}
 
-					/>	
+					/>
 					<Pressable onPress={handlePasswordVisibility}>
-          				<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
-       			    </Pressable>
-					   </View>				
-					
-					<View style={styles.inputContainer}>
+						<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+					</Pressable>
+				</View>
+
+				<View style={styles.inputContainer}>
 					<TextInput
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Confirmer votre mot de passe'
 						secureTextEntry={passwordVisibility}
 
-					onChangeText={(val) => setSignUpConfirmPassword(val)}
-					value={signUpConfirmPassword}
+						onChangeText={(val) => setSignUpConfirmPassword(val)}
+						value={signUpConfirmPassword}
 
 					/>
 					<Pressable onPress={handlePasswordVisibility}>
-          				<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
-       			    </Pressable>
-					   </View>
-					{tabErrorsSignup}
+						<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+					</Pressable>
+				</View>
+				{tabErrorsSignup}
 
-					{/* <Button
+				{/* <Button
 						title="Valider l'inscription"
 						onPress={() => handleSubmitSignup()}
 					/> */}
-					<View style={styles.screenContainer}>
-      					<AppButton title="Créer mon compte" size="sm"/>	
-    				</View>
+				<View style={styles.screenContainer}>
+					<AppButton title="Créer mon compte" size="sm" />
+				</View>
 			</View>
 
 
 
 
-				<TouchableOpacity
-					style={{}}
-					onPress={() => navigation.goBack()}
-				>
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#dfe4ea"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
+			<TouchableOpacity
+				style={{}}
+				onPress={() => navigation.goBack()}
+			>
+				<MaterialCommunityIcons
+					name="arrow-left"
+					size={28}
+					color="#dfe4ea"
+					style={{
+						paddingLeft: 20,
+						paddingRight: 20,
+						paddingTop: 10,
+						paddingBottom: 10,
+						zIndex: 1,
 
-						}}
-					/>
-				</TouchableOpacity>
+					}}
+				/>
+			</TouchableOpacity>
 		</ImageBackground>
 	);
 }
@@ -268,8 +268,8 @@ const styles = StyleSheet.create({
 	},
 	baseText: {
 		fontWeight: 'bold',
-		margin:35,
-		fontSize:25,
+		margin: 35,
+		fontSize: 25,
 	},
 	inputContainer: {
 		backgroundColor: 'white',
@@ -285,51 +285,51 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 		width: '90%'
 	},
-	baseText:{
+	baseText: {
 		fontWeight: 'bold',
 		textAlign: 'center',
-		fontSize:50,
-		color:"#e67e22",
-		borderColor:"#fff",
-		textShadowColor:'#2c3e50',
-		textShadowOffset:{width: 3, height: 3},
-		textShadowRadius:10,
+		fontSize: 50,
+		color: "#e67e22",
+		borderColor: "#fff",
+		textShadowColor: '#2c3e50',
+		textShadowOffset: { width: 3, height: 3 },
+		textShadowRadius: 10,
 	},
 	inputContainer: {
-		backgroundColor: '#dfe4ea',		
+		backgroundColor: '#dfe4ea',
 		borderRadius: 15,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent:"space-between",
+		justifyContent: "space-between",
 		borderWidth: 0.75,
 		padding: 10,
 		height: 55,
 		margin: 10,
-		
+
 	},
 	screenContainer: {
 		//flex: 1,
 		justifyContent: "center",
 		padding: 16
-	  },
-	  appButtonContainer: {
+	},
+	appButtonContainer: {
 		elevation: 8,
 		backgroundColor: "#e67e22",
 		borderRadius: 25,
 		paddingVertical: 10,
 		paddingHorizontal: 12,
-		flexDirection:"row",
-		alignItems:"center",
-		justifyContent:"center",
-		marginTop:10,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 10,
 
-	  },
-	  appButtonText: {
+	},
+	appButtonText: {
 		fontSize: 18,
 		color: "#fff",
 		fontWeight: "bold",
 		alignSelf: "center",
-	  },
-	
-	
+	},
+
+
 });

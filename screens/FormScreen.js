@@ -25,7 +25,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 function FormScreen(props) {
-	var privateIPBackend = privateIP;
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
@@ -40,15 +39,12 @@ function FormScreen(props) {
 		for (let i = 0; i < numInputs; i++) {
 			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
 		}
-		let tagsCopy = [];
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
 		recipeObj.tags = [...selectedFiltersArray];
-		console.log(recipeObj)
 
 		if (image) {
 			var data = new FormData();
-
 			//attention ne fonctionne que sur jpg
 			data.append('image', {
 				uri: image,
@@ -56,32 +52,37 @@ function FormScreen(props) {
 				name: 'recipe.jpg',
 			});
 
-			var rawResponseImg = await fetch(`http://${privateIPBackend}:3000/upload-image`, {
-				method: 'POST',
+			var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+				method: 'post',
 				body: data
 			})
+
 			var responseImg = await rawResponseImg.json()
+
 			if (responseImg.result) {
 				recipeObj.image = responseImg.resultObj.imageUrl
 			} else {
-				recipeObj.image = require("../assets/default-post-image.jpg")
+				recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 			}
 
 		} else {
-			recipeObj.image = require("../assets/default-post-image.jpg")
+			recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 		}
 		//---- envoi recette en BDD 
 		let recipeData = { recipe: recipeObj, userToken: props.token }
-		var rawResponse = await fetch(`http://${privateIPBackend}:3000/validate-form`, {
+		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
 			method: 'POST',
 			headers: { 'Content-type': 'application/json; charset=UTF-8' },
 			body: JSON.stringify(recipeData)
 		})
 		var response = await rawResponse.json()
-		console.log(response)
+
+		var recipeToStore = response.recipeToFront
 
 		//---------envoi recipe traitee Backend dans store
-		// props.setRecipe(recipeObj)
+		if (recipeToStore) {
+			props.setRecipe(recipeToStore)
+		}
 
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
@@ -250,11 +251,7 @@ function FormScreen(props) {
 
 
 				<Text style={styles.label}>Image</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => handleChange('image', value)}
-					value={recipe.image}
-				/>
+
 
 				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 					<Button title="Pick an image from camera roll" onPress={pickImage} />
@@ -303,23 +300,23 @@ function FormScreen(props) {
 				{/* FIN MULTIPLE INPUTS */}
 
 				<Text style={styles.label}>Instructions</Text>
-				<ScrollView
+				{/* <ScrollView
 					scrollEnabled="false"
-				>
-					{/* "fausse" scollview pour escape le clavier en multiline, voir https://stackoverflow.com/questions/38981117/dismiss-keyboard-in-multiline-textinput-in-react-native */}
-					<TextInput
-						style={{
-							height: 120,
-							margin: 12,
-							borderWidth: 1,
-							padding: 10,
-						}}
-						multiline
-						onChangeText={(value) => handleChange('directions', value)}
-						value={recipe.directions}
-					/>
+				> */}
+				{/* "fausse" scollview pour escape le clavier en multiline, voir https://stackoverflow.com/questions/38981117/dismiss-keyboard-in-multiline-textinput-in-react-native */}
+				<TextInput
+					style={{
+						height: 120,
+						margin: 12,
+						borderWidth: 1,
+						padding: 10,
+					}}
+					multiline
+					onChangeText={(value) => handleChange('directions', value)}
+					value={recipe.directions}
+				/>
 
-				</ScrollView>
+				{/* </ScrollView> */}
 
 
 				<Text style={styles.label}>Tags</Text>
@@ -397,15 +394,15 @@ function mapStateToProps(state) {
 	return { bottomTabHeight: state.bottomTabHeight, token: state.token };
 }
 
-/*function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+		setRecipe: function (recipe) {
+			dispatch({ type: "setRecipe", recipe: recipe });
 		},
 	};
-}*/
+}
 
-export default connect(mapStateToProps, null)(FormScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(FormScreen);
 
 
 

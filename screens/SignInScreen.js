@@ -80,13 +80,13 @@ function SignInScreen(props) {
 	// -----------------------------------------------------Password show ----------------------------------------------------------------------
 	const handlePasswordVisibility = () => {
 		if (rightIcon === 'eye') {
-		  setRightIcon('eye-off');
-		  setPasswordVisibility(!passwordVisibility);
+			setRightIcon('eye-off');
+			setPasswordVisibility(!passwordVisibility);
 		} else if (rightIcon === 'eye-off') {
-		  setRightIcon('eye');
-		  setPasswordVisibility(!passwordVisibility);
+			setRightIcon('eye');
+			setPasswordVisibility(!passwordVisibility);
 		}
-	  };
+	};
 	//------------------------------------------------------fin password show ---------------------------------------------------------------
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -105,29 +105,29 @@ function SignInScreen(props) {
 	//----------------------------- ------------------------------------Fin de StatusBar
 	const AppButton = ({ onPress, title }) => (
 		<TouchableOpacity onPress={() => handleSubmitSignin()} style={styles.appButtonContainer}>
-		  <Text style={styles.appButtonText}>
-			{title}
-		  </Text>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
 		</TouchableOpacity>
-	  );
-	  const SignUp = ({ onPress, title }) => (
+	);
+	const SignUp = ({ onPress, title }) => (
 		<TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={styles.appButtonContainer1}>
-		  <Text style={styles.appButtonText1}>
-			{title}
-		  </Text>
+			<Text style={styles.appButtonText1}>
+				{title}
+			</Text>
 		</TouchableOpacity>
-	  );
+	);
 
 	return (
-		
-		<ImageBackground source={require('../assets/eggs.jpg')}  style={styles.container} >
-		{/* <KeyboardAvoidingView */}
-			
+
+		<ImageBackground source={require('../assets/eggs.jpg')} style={styles.container} >
+			{/* <KeyboardAvoidingView */}
+
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
-			
-			<View style={{flex : 1}}>
-			
-				<View style={{marginTop:100,}}>
+
+			<View style={{ flex: 1 }}>
+
+				<View style={{ marginTop: 100, }}>
 					<Text style={styles.baseText}>
 						THE
 					</Text>
@@ -140,19 +140,19 @@ function SignInScreen(props) {
 				<View style={styles.content}>
 
 
-				
-				<TextInput
+
+					<TextInput
 						style={styles.inputContainer}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Adresse E-mail'
 						keyboardType="email-address"
 						overflow="hidden"
-                        keyboardAppearance="dark"
+						keyboardAppearance="dark"
 
 						onChangeText={(val) => setSignInEmail(val)}
 						value={signInEmail}
 
-					/>					
+					/>
 					<View style={styles.inputContainer}>
 						<TextInput
 							style={styles.inputField}
@@ -168,24 +168,24 @@ function SignInScreen(props) {
 					</View>
 
 					{tabErrorsSignin}
-					
+
 					<View style={styles.screenContainer}>
-      					<AppButton title="Me connecter" size="sm"/>	
-    				</View>
-					<View style={{marginTop:90}}>
-				<Text style={styles.goSignup}>Vous n'avez pas encore de compte ?</Text>
+						<AppButton title="Me connecter" size="sm" />
+					</View>
+					<View style={{ marginTop: 90 }}>
+						<Text style={styles.goSignup}>Vous n'avez pas encore de compte ?</Text>
 					</View>
 					<View style={styles.screenContainer}>
-      					<SignUp title="Créer mon compte" size="sm"/>	
-    				</View>
-					
+						<SignUp title="Créer mon compte" size="sm" />
 					</View>
-					
+
+				</View>
+
 			</View>
 
 			{/* </KeyboardAvoidingView> */}
 		</ImageBackground>
-		
+
 	);
 }
 
@@ -223,15 +223,15 @@ const styles = StyleSheet.create({
 		margin: '15%',
 
 	},
-	baseText:{
+	baseText: {
 		fontWeight: 'bold',
 		textAlign: 'center',
-		fontSize:50,
-		color:"#e67e22",
-		borderColor:"#fff",
-		textShadowColor:'#2c3e50',
-		textShadowOffset:{width: 3, height: 3},
-		textShadowRadius:10,
+		fontSize: 50,
+		color: "#e67e22",
+		borderColor: "#fff",
+		textShadowColor: '#2c3e50',
+		textShadowOffset: { width: 3, height: 3 },
+		textShadowRadius: 10,
 	},
 	text: {
 		marginLeft: 12,
@@ -241,61 +241,61 @@ const styles = StyleSheet.create({
 		//flex: 1,
 		justifyContent: "center",
 		padding: 16
-	  },
-	  appButtonContainer: {
+	},
+	appButtonContainer: {
 		elevation: 8,
 		backgroundColor: "#e67e22",
 		borderRadius: 25,
 		paddingVertical: 10,
 		paddingHorizontal: 12,
-		flexDirection:"row",
-		alignItems:"center",
-		justifyContent:"center",
-		marginTop:10,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 10,
 
-	  },
-	  appButtonText: {
+	},
+	appButtonText: {
 		fontSize: 18,
 		color: "#fff",
 		fontWeight: "bold",
 		alignSelf: "center",
-	  },
-	  goSignup: {
-		fontSize:18,
-		color:"#ffffff",
-		textAlign:"center",		
-	  },
-	  appButtonContainer1: {
+	},
+	goSignup: {
+		fontSize: 18,
+		color: "#ffffff",
+		textAlign: "center",
+	},
+	appButtonContainer1: {
 		elevation: 8,
 		backgroundColor: "#2F3542",
 		borderRadius: 25,
 		paddingVertical: 10,
 		paddingHorizontal: 12,
-		flexDirection:"row",
-		alignItems:"center",
-		justifyContent:"center",
-	
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
 
-	  },
-	  appButtonText1: {
+
+	},
+	appButtonText1: {
 		fontSize: 18,
 		color: "#fff",
 		fontWeight: "bold",
 		alignSelf: "center",
-	  },
-	  inputContainer: {
-		backgroundColor: '#dfe4ea',		
+	},
+	inputContainer: {
+		backgroundColor: '#dfe4ea',
 		borderRadius: 15,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent:"space-between",
+		justifyContent: "space-between",
 		borderWidth: 0.75,
 		padding: 10,
 		height: 55,
 		margin: 10,
-		
+
 	},
-	
+
 
 
 
