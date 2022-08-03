@@ -50,7 +50,7 @@ function HomeScreen(props) {
 		props.sendBottomTabHeight(tabBarHeight);
 	}, []);
 
-	//------------------------------------------------------------------
+	//---------------------------------------------------------------------------------------------------------------
 
 	//StatusBar à laisser dans chaque page, la backgroundColor et la couleur du texte ('barStyle') peuvent être changés dans chaque page si besoin d'accorder des couleurs, cf aussi la stylesheet tout en bas
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -65,7 +65,7 @@ function HomeScreen(props) {
 			</SafeAreaView>
 		</View>
 	);
-	//----------------------------- ------------------------------------Fin de StatusBar
+	//-----------------------------------------------------------------Fin de StatusBar------------------------------
 
 	//Début Tags
 	var tags = [
