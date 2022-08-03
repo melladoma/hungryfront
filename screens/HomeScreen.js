@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import {
+	useNavigation,
+	DrawerActions,
+	useIsFocused,
+} from "@react-navigation/native";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { privateIP } from "../env.js"
+import { privateIP } from "../env.js";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import {
@@ -29,12 +33,14 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier 
 // https://stackoverflow.com/a/39300715
 
 function HomeScreen(props) {
+	const isFocused = useIsFocused();
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
 
 	const [alert, setAlert] = useState(false); //pour afficher la modal des filtres
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'ombre derrière la modal
 	const [typeAffichage, setTypeAffichage] = useState("icones"); //filtre accessible dans la modal, gère le type d'affichage
 	const [DATA, setDATA] = useState([]); //tableau d'objets contenant les données des recetes
+	const [initialData, setInitialData] = useState([]); //sert pour filtrer recettes par nom et tags
 
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
 	//pour connaître la taille utilisée sur chaque téléphone par TabNavigator:
@@ -43,8 +49,6 @@ function HomeScreen(props) {
 	useEffect(() => {
 		props.sendBottomTabHeight(tabBarHeight);
 	}, []);
-
-	const [initialData, setInitialData] = useState([]); //à mettre dans le store, renommer myRecipesList
 
 	//------------------------------------------------------------------
 
@@ -94,30 +98,29 @@ function HomeScreen(props) {
 	};
 
 	useEffect(() => {
-		// apres faudra mettre initial data dans le store
-		//initialisation
-		async function initialFetch() {
-			var rawResponse = await fetch(
-				`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
-				{
-					method: "post",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: `token=${props.token}`,
-				}
-			);
+		if (isFocused) {
+			async function initialFetch() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}`,
+					}
+				);
 
-			var response = await rawResponse.json();
+				var response = await rawResponse.json();
 
-			setDATA(response.addedRecipes);
-			setInitialData(response.addedRecipes);
+				setDATA(response.addedRecipes);
+				setInitialData(response.addedRecipes);
+			}
+			initialFetch();
 		}
-		initialFetch();
-	}, []);
+	}, [isFocused]);
 
 	useEffect(() => {
-		// apres faudra mettre initial data dans le store
 		if (selectedTagsArray.length > 0 && searchInput.length === 0) {
 			let newDataSet = initialData;
 			for (let i = 0; i < selectedTagsArray.length; i++) {
