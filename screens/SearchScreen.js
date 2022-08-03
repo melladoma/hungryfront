@@ -19,6 +19,8 @@ import {
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
+import { privateIP } from "../env.js"
+
 function SearchScreen(props) {
 	const navigation = useNavigation();
 
@@ -53,7 +55,7 @@ function SearchScreen(props) {
 	useEffect(() => {
 		async function fetchByInput() {
 			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-input",
+				`http://${privateIP}:3000/search/search-input`,
 				{
 					method: "post",
 					headers: {
@@ -183,20 +185,20 @@ function SearchScreen(props) {
 			</View>
 			<View style={{ flex: 1, borderWidth: 1 }}>
 				<View style={styles.content}>
-					{listAuthor.length > 0 ? ( <>
+					{listAuthor.length > 0 ? (<>
 						<Text style={{ alignSelf: "flex-start" }}>
-						Nous avons trouvé des auteurs qui correspondent:
-					</Text>
+							Nous avons trouvé des auteurs qui correspondent:
+						</Text>
 						<View style={{ height: 50, marginBottom: 10 }}>
-						<ScrollView
-							horizontal
-							showsHorizontalScrollIndicator={false}
-							style={{}}
-						>
-							{listAuthorComponent}
-						</ScrollView>
-					</View></>
-						
+							<ScrollView
+								horizontal
+								showsHorizontalScrollIndicator={false}
+								style={{}}
+							>
+								{listAuthorComponent}
+							</ScrollView>
+						</View></>
+
 					) : null}
 					<Text style={{ alignSelf: "flex-start" }}>
 						Titres ou contenus qui correspondent:

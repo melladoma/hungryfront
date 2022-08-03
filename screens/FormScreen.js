@@ -25,14 +25,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 function FormScreen(props) {
-	var privateIPBackend = privateIP;
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
 	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [] })
 
-	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
-
+	//-------------------------------------------FONCTION DE SOUMISSION DU FORMULAIRE
 	var handleSubmitForm = async function () {
 		let recipeObj = recipe;
 		//------recup du multi champs ingredients et push dans l'objet recipe
@@ -40,11 +38,9 @@ function FormScreen(props) {
 		for (let i = 0; i < numInputs; i++) {
 			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
 		}
-		let tagsCopy = [];
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
 		recipeObj.tags = [...selectedFiltersArray];
-		console.log(recipeObj)
 
 		if (image) {
 			var data = new FormData();
@@ -56,7 +52,7 @@ function FormScreen(props) {
 				name: 'recipe.jpg',
 			});
 
-			var rawResponseImg = await fetch(`http://${privateIPBackend}:3000/upload-image`, {
+			var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
 				method: 'POST',
 				body: data
 			})
@@ -72,16 +68,16 @@ function FormScreen(props) {
 		}
 		//---- envoi recette en BDD 
 		let recipeData = { recipe: recipeObj, userToken: props.token }
-		var rawResponse = await fetch(`http://${privateIPBackend}:3000/validate-form`, {
+		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
 			method: 'POST',
 			headers: { 'Content-type': 'application/json; charset=UTF-8' },
 			body: JSON.stringify(recipeData)
 		})
 		var response = await rawResponse.json()
-		console.log(response)
+		console.log(response.recipeSaved)
 
 		//---------envoi recipe traitee Backend dans store
-		// props.setRecipe(recipeObj)
+		// props.setRecipe(response.recipeSaved)
 
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
@@ -107,8 +103,6 @@ function FormScreen(props) {
 			aspect: [4, 3],
 			quality: 1,
 		});
-
-		console.log(result);
 
 		if (!result.cancelled) {
 			setImage(result.uri);
@@ -166,7 +160,7 @@ function FormScreen(props) {
 					value={refInputsQuantity.current[i]}
 					placeholder="20cL"
 				/>
-				{/* To remove the input */}
+
 				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
 					<MaterialCommunityIcons
 						name="close"
@@ -214,7 +208,7 @@ function FormScreen(props) {
 
 	//-------------------------------------------FIN TAG LIST
 
-	//----------------------------- ------------------------------------Début StatusBar
+	//-----------------------------------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
 			<SafeAreaView>
@@ -397,15 +391,15 @@ function mapStateToProps(state) {
 	return { bottomTabHeight: state.bottomTabHeight, token: state.token };
 }
 
-/*function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+		setRecipe: function (recipe) {
+			dispatch({ type: "setRecipe", recipe: recipe });
 		},
 	};
-}*/
+}
 
-export default connect(mapStateToProps, null)(FormScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(FormScreen);
 
 
 
