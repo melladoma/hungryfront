@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { privateIP } from "../env.js"
 
+import { MaterialCommunityIcons } from "react-native-vector-icons";
 import {
 	TouchableWithoutFeedback,
 	Modal,
@@ -23,25 +23,47 @@ import {
 	TextInput,
 } from "react-native";
 
-import { MaterialCommunityIcons } from "react-native-vector-icons";
-
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44; //permet de faire varier la taille de la status bar selon le téléphone
 const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier la taille de l'AppBar selon le téléphone
 // https://stackoverflow.com/a/39300715
 
 function HomeScreen(props) {
-	const [alert, setAlert] = useState(false);
-	const [DATA, setDATA] = useState([]);
-	const [initialData, setInitialData] = useState([]);
-
-	const tabBarHeight = useBottomTabBarHeight();
-	useEffect(() => {
-		props.onSubmitBottomTabHeight(tabBarHeight);
-	}, []);
-
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
 
+	const [alert, setAlert] = useState(false); //pour afficher la modal des filtres
+	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'ombre derrière la modal
+	const [typeAffichage, setTypeAffichage] = useState("icones"); //filtre accessible dans la modal, gère le type d'affichage
+	const [DATA, setDATA] = useState([]); //tableau d'objets contenant les données des recetes
+
+	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
+	//pour connaître la taille utilisée sur chaque téléphone par TabNavigator:
+	const tabBarHeight = useBottomTabBarHeight();
+	//pour envoyer cette taille dans le store et l'utiliser dans d'autres composants, notamment DrawerScreen:
+	useEffect(() => {
+		props.sendBottomTabHeight(tabBarHeight);
+	}, []);
+
+	const [initialData, setInitialData] = useState([]); //à mettre dans le store, renommer myRecipesList
+
+	//------------------------------------------------------------------
+
+	//StatusBar à laisser dans chaque page, la backgroundColor et la couleur du texte ('barStyle') peuvent être changés dans chaque page si besoin d'accorder des couleurs, cf aussi la stylesheet tout en bas
+	const MyStatusBar = ({ backgroundColor, ...props }) => (
+		<View style={[styles.statusBar, { backgroundColor }]}>
+			<SafeAreaView>
+				<StatusBar
+					translucent
+					backgroundColor={backgroundColor}
+					barStyle="dark-content"
+					{...props}
+				/>
+			</SafeAreaView>
+		</View>
+	);
+	//----------------------------- ------------------------------------Fin de StatusBar
+
+	//Début Tags
 	var tags = [
 		"entrée",
 		"plat",
@@ -57,53 +79,22 @@ function HomeScreen(props) {
 		"gastronomique",
 		"recette de fête",
 		"brunch",
-	]; //peut etre pas besoin d'en faire un useState si on ne les modifie pas ?
-	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]); //contient tous les filtres(ou chips) qui ont été selectionnées, pour les griser ou les colorer en orange grâce à un filter
+	];
+	const [selectedTagsArray, setSelectedTagsArray] = useState([]);
 
-	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'overlay "filtres"
-
-	const [typeAffichage, setTypeAffichage] = useState("icones"); //dans l'overlay filtre, gère le type d'affichage
-
-	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
-
-	const handleSearch = (input) => {
-		if (input.length !== 0) {
-			props.onSubmitSearchInput(input);
-			navigation.navigate("SearchScreen");
-		}
-	};
-	//----------------------------- ------------------------------------Début StatusBar
-	const MyStatusBar = ({ backgroundColor, ...props }) => (
-		<View style={[styles.statusBar, { backgroundColor }]}>
-			<SafeAreaView>
-				<StatusBar
-					translucent
-					backgroundColor={backgroundColor}
-					barStyle="dark-content"
-					{...props}
-				/>
-			</SafeAreaView>
-		</View>
-	);
-	//----------------------------- ------------------------------------Fin de StatusBar
-
-	//-----------------------------------------------------------------Début Chips
-
-	const handlePressedChip = async (name) => {
-		if (selectedFiltersArray.includes(name.toLowerCase())) {
-			let tempArray = selectedFiltersArray.filter(
+	const handlePressedTag = async (name) => {
+		if (selectedTagsArray.includes(name.toLowerCase())) {
+			let tempArray = selectedTagsArray.filter(
 				(x) => x !== name.toLowerCase()
 			);
-			setSelectedFiltersArray(tempArray);
+			setSelectedTagsArray(tempArray);
 		} else {
-			setSelectedFiltersArray([
-				...selectedFiltersArray,
-				name.toLowerCase(),
-			]);
+			setSelectedTagsArray([...selectedTagsArray, name.toLowerCase()]);
 		}
 	};
 
-	useEffect(() => { // apres faudra mettre initial data dans le store
+	useEffect(() => {
+		// apres faudra mettre initial data dans le store
 		//initialisation
 		async function initialFetch() {
 			var rawResponse = await fetch(
@@ -118,110 +109,69 @@ function HomeScreen(props) {
 			);
 
 			var response = await rawResponse.json();
-			console.log(response);
+
 			setDATA(response.addedRecipes);
-			setInitialData(response.addedRecipes)
+			setInitialData(response.addedRecipes);
 		}
 		initialFetch();
 	}, []);
 
-	/* useEffect(() => {
-		if
-		 async function fetchByInput() {
-			if (searchInput.length > 0) {
-			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-input-myrecipes",
-				{
-					method: "post",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: `input=${searchInput}`,
-				}
-			);
-
-			var response = await rawResponse.json();
-			console.log(response);
-			
-			// setDataByName(response.recipesByName); 
-			} else {
-
+	useEffect(() => {
+		// apres faudra mettre initial data dans le store
+		if (selectedTagsArray.length > 0 && searchInput.length === 0) {
+			let newDataSet = initialData;
+			for (let i = 0; i < selectedTagsArray.length; i++) {
+				newDataSet = newDataSet.filter((x) =>
+					x.tags.includes(selectedTagsArray[i])
+				);
 			}
+			setDATA(newDataSet);
+		} else if (selectedTagsArray.length === 0 && searchInput.length > 0) {
+			let tempDataSet = initialData;
+			let newDataSet = [];
+
+			for (let i = 0; i < tempDataSet.length; i++) {
+				let regex = new RegExp(searchInput, "i");
+				if (
+					tempDataSet[i].name.match(regex) !== null ||
+					tempDataSet[i].directions.match(regex) !== null
+				) {
+					newDataSet.push(tempDataSet[i]);
+				}
+			}
+			setDATA(newDataSet);
+		} else if (selectedTagsArray.length > 0 && searchInput.length > 0) {
+			let tempDataSet = initialData;
+			let newDataSet = [];
+
+			for (let i = 0; i < tempDataSet.length; i++) {
+				let regex = new RegExp(searchInput, "i");
+				if (
+					tempDataSet[i].name.match(regex) !== null ||
+					tempDataSet[i].directions.match(regex) !== null
+				) {
+					newDataSet.push(tempDataSet[i]);
+				}
+			}
+			for (let i = 0; i < selectedTagsArray.length; i++) {
+				newDataSet = newDataSet.filter((x) =>
+					x.tags.includes(selectedTagsArray[i])
+				);
+			}
+			setDATA(newDataSet);
+		} else if (selectedTagsArray.length === 0 && searchInput.length === 0) {
+			setDATA(initialData);
 		}
-		fetchByInput(); 
-	}, [searchInput]); */
+	}, [selectedTagsArray, searchInput]);
 
-	useEffect(() => { //tags     // apres faudra mettre initial data dans le store
-		if (selectedFiltersArray.length > 0 && searchInput.length === 0) {
-			let newDataSet = initialData
-			for (let i = 0; i < selectedFiltersArray.length; i++) {
-				newDataSet = newDataSet.filter(x => x.tags.includes(selectedFiltersArray[i]))
-			}
-			setDATA(newDataSet)
-
-		} else if (selectedFiltersArray.length === 0 && searchInput.length > 0) {
-			let tempDataSet = initialData
-			let newDataSet = []
-			console.log("------ici",tempDataSet)
-			console.log("------là", tempDataSet[0].name.match('a'))
-			console.log("searchinput", searchInput)
-			
-			for (let i=0; i<tempDataSet.length; i++) {
-				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
-					newDataSet.push(tempDataSet[i])
-				}
-			}
-			setDATA(newDataSet)
-
-		} else if (selectedFiltersArray.length > 0 && searchInput.length > 0) {
-			let tempDataSet = initialData
-			let newDataSet = []
-			
-			
-			for (let i=0; i<tempDataSet.length; i++) {
-				let regex = new RegExp(searchInput, 'i')
-				if (tempDataSet[i].name.match(regex) !== null || tempDataSet[i].directions.match(regex) !== null ) {
-					newDataSet.push(tempDataSet[i])
-				}
-			}
-			for (let i = 0; i < selectedFiltersArray.length; i++) {
-				newDataSet = newDataSet.filter(x => x.tags.includes(selectedFiltersArray[i]))
-			}
-			setDATA(newDataSet)
-
-		} else if (selectedFiltersArray.length === 0 && searchInput.length === 0) {
-			setDATA(initialData)
-		}
-
-
-
-		/* async function fetchByTags() {
-			var rawResponse = await fetch(
-				"http://192.168.1.24:3000/search/search-tags",
-				{
-					method: "post",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: `tags=${JSON.stringify(selectedFiltersArray)}`,
-				}
-			);
-
-			var response = await rawResponse.json();
-			setDATA(response.recipes);
-		}
-		fetchByTags(); */
-
-	}, [selectedFiltersArray, searchInput]);
-
-	const Chips = tags.map((x, i) => (
-		<Pressable key={i} onPress={() => handlePressedChip(x)}>
+	//Tags sur la HomeScreen
+	const TagsComponent = tags.map((x, i) => (
+		<Pressable key={i} onPress={() => handlePressedTag(x)}>
 			<View
 				style={[
 					styles.filterContainer,
 					{
-						backgroundColor: selectedFiltersArray.includes(
+						backgroundColor: selectedTagsArray.includes(
 							x.toLowerCase()
 						)
 							? "#F19066"
@@ -234,19 +184,19 @@ function HomeScreen(props) {
 		</Pressable>
 	));
 
-	//Chips de l'overlay
-	const overlayChips = tags.map((x, i) => (
+	//Tags dans la modale
+	const modalTagsComponent = tags.map((x, i) => (
 		<TouchableOpacity
 			key={i}
 			onPress={() => {
-				handlePressedChip(x);
+				handlePressedTag(x);
 			}}
 		>
 			<View
 				style={[
 					styles.filterContainer,
 					{
-						backgroundColor: selectedFiltersArray.includes(
+						backgroundColor: selectedTagsArray.includes(
 							x.toLowerCase()
 						)
 							? "#F19066"
@@ -258,150 +208,9 @@ function HomeScreen(props) {
 			</View>
 		</TouchableOpacity>
 	));
-	//-----------------------------------------------------------------Fin Chips
+	//-----------------------------------------------------------------Fin TagsComponent
 
-	//----Début Overlay qui contient les filtres
-	/* var overlay;
-	if (isOverlayVisible) {
-		overlay = (
-			
-			<View style={[styles.overlay, { height: 360 }]}>
-				<View style={{ marginVertical: 10 }}>
-					<Text style={{ alignSelf: "center" }}>
-						Type d'affichage:
-					</Text>
-					<View
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							justifyContent: "center",
-							alignContent: "center",
-							marginVertical: 10,
-						}}
-					>
-						<View
-							style={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								borderWidth: 1,
-								borderRadius: 100,
-								alignSelf: "flex-start",
-								paddingVertical: 5,
-								paddingHorizontal: 10,
-								backgroundColor:
-									typeAffichage === "liste"
-										? "#F19066"
-										: "#dfe4ea",
-							}}
-						>
-							<TouchableOpacity
-								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-								}}
-								onPress={() => {
-									setTypeAffichage("liste");
-									setIsOverlayVisible(!isOverlayVisible);
-								}}
-							>
-								<MaterialCommunityIcons
-									name="view-list"
-									size={24}
-									color="#2f3542"
-								/>
-								<Text
-									style={{
-										color: "black",
-										fontSize: 18,
-										marginLeft: 10,
-									}}
-								>
-									Liste
-								</Text>
-							</TouchableOpacity>
-						</View>
-						<Text
-							style={{
-								alignSelf: "center",
-								marginHorizontal: 10,
-							}}
-						>
-							ou
-						</Text>
-						<View
-							style={{
-								display: "flex",
-								justifyContent: "center",
-								alignItems: "center",
-								borderWidth: 1,
-
-								borderRadius: 100,
-								alignSelf: "flex-start",
-								paddingVertical: 5,
-								paddingHorizontal: 10,
-								backgroundColor:
-									typeAffichage === "icones"
-										? "#F19066"
-										: "#dfe4ea",
-							}}
-						>
-							<TouchableOpacity
-								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-								}}
-								onPress={() => {
-									setTypeAffichage("icones");
-									setIsOverlayVisible(!isOverlayVisible);
-								}}
-							>
-								<MaterialCommunityIcons
-									name="view-grid"
-									size={24}
-									color="#2f3542"
-								/>
-								<Text
-									style={{
-										color: "black",
-										fontSize: 18,
-										marginLeft: 10,
-									}}
-								>
-									Icônes
-								</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</View>
-				<Text>Filtrer par tags</Text>
-				<View
-					style={{
-						flex: 1,
-						flexDirection: "row",
-						flexWrap: "wrap",
-						alignItems: "center",
-						justifyContent: "center",
-					}}
-				>
-					{overlayChips}
-				</View>
-			</View>
-		);
-	} */
-
-	var overlayShadow;
-	if (isOverlayVisible) {
-		overlayShadow = (
-			<View style={[styles.overlayShadow, { height: "100%" }]} />
-		);
-	}
-
-	//-----------------------------------------------------------------fin Overlay qui contient les filtres
-
-	//MOdal qui remplacera l'overlay ?-----
+	//Modal qui contient tags + filtres
 	var modal = (
 		<Modal
 			transparent={true}
@@ -551,16 +360,25 @@ function HomeScreen(props) {
 								justifyContent: "center",
 							}}
 						>
-							{overlayChips}
+							{modalTagsComponent}
 						</View>
 					</View>
 				</TouchableWithoutFeedback>
 			</TouchableOpacity>
 		</Modal>
 	);
-	//-----------------fin modal
 
-	//  -----------------------------------------------------Début FlatList affichant les Cards
+	//ombre derriere la modale
+	var overlayShadow;
+	if (isOverlayVisible) {
+		overlayShadow = (
+			<View style={[styles.overlayShadow, { height: "100%" }]} />
+		);
+	}
+
+	//-------------------------------------------------------------------------fin modal
+
+	//Début FlatList affichant les Cards de receytes
 	//En React Native, il y a plusieurs étapes pour afficher des cards dans une FlatList:
 	// DATA : ce sont les données de chaque card, là c'est en dur, mais après il faudra que ce soit dynamique
 	// ITEM : c'est le composant Card, comme si on l'écrivait dans le render
@@ -595,7 +413,7 @@ function HomeScreen(props) {
 							borderTopLeftRadius: 0,
 							borderTopRightRadius: 0,
 						}}
-						source={{ uri: image }} //Android ne prend pas en charge "defaultSource"
+						source={{ uri: image }}
 					/>
 				</View>
 			</TouchableOpacity>
@@ -746,7 +564,7 @@ function HomeScreen(props) {
 						showsHorizontalScrollIndicator={false}
 						style={{}}
 					>
-						{Chips}
+						{TagsComponent}
 					</ScrollView>
 				</View>
 				{flatlist}
@@ -765,24 +583,16 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
+		sendBottomTabHeight: function (bottomTabHeight) {
 			dispatch({
-				type: "initializeBottomTabHeight",
+				type: "sendBottomTabHeight",
 				bottomTabHeight: bottomTabHeight,
-			});
-		},
-		onSubmitSearchInput: function (searchInput) {
-			dispatch({
-				type: "copyInputFromHome",
-				searchInput: searchInput,
 			});
 		},
 	};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
-
-//---------------------------------------------------------------début feuille de style
 
 const styles = StyleSheet.create({
 	statusBar: {

@@ -10,9 +10,8 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import bottomTabHeight from "./reducers/bottomTabHeight.reducer";
 import token from './reducers/token.reducer'
-import searchInput from "./reducers/searchInput.reducer";
 import { createStore, combineReducers } from "redux";
-const store = createStore(combineReducers({ bottomTabHeight, token ,searchInput}));
+const store = createStore(combineReducers({ bottomTabHeight, token }));
 
 //modules pour la navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -32,7 +31,6 @@ import AddScreen from "./screens/AddScreen";
 import FormScreen from "./screens/FormScreen";
 import PlannerScreen from "./screens/PlannerScreen";
 import RecipeSheetScreen from "./screens/RecipeSheetScreen";
-import SearchScreen from "./screens/SearchScreen";
 import ShoppingListScreen from "./screens/ShoppingListScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
@@ -431,11 +429,6 @@ export default function App() {
 					<Stack.Screen
 						name="FeedDrawer2"
 						component={FeedScreenDrawer}
-						options={{ headerShown: false }}
-					/>
-					<Stack.Screen
-						name="SearchScreen"
-						component={SearchScreen}
 						options={{ headerShown: false }}
 					/>
 					<Stack.Screen
