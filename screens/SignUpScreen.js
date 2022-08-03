@@ -13,6 +13,8 @@ import {
 	Text,
 	TextInput,
 	TouchableOpacity,
+	Pressable,
+	ImageBackground,
 } from "react-native";
 
 
@@ -33,7 +35,10 @@ function SignUpScreen(props) {
 	const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('')
 	//-----------------------------------------------------------------
 
-
+   //-----------------------------------Show password -----------------
+   const [passwordVisibility, setPasswordVisibility] = useState(true);
+   const [rightIcon, setRightIcon] = useState('eye');
+   //------------------------------------------------------------
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
 	const [userExists, setUserExists] = useState(false)
 	//--------------------------------------------------------------------------
@@ -46,7 +51,7 @@ function SignUpScreen(props) {
 	var handleSubmitSignup = async () => {
 
 		console.log('hello');
-		const data = await fetch("http://192.168.10.128:3000/users/sign-up", {
+		const data = await fetch("http://192.168.1.18:3000/users/sign-up", {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
@@ -76,6 +81,36 @@ function SignUpScreen(props) {
 		return (<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
 	})
 
+	// -------------------------------------------------------REGEX verification email -----------------------------------------------------------
+	const validateMail = (text) => {
+		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+		console.log(text, reg.test(text));
+	  };
+	//------------------------------------------------------Fin REGEX -------------------------------------------------------------------------
+
+	// -----------------------------------------------------Password show ----------------------------------------------------------------------
+	const handlePasswordVisibility = () => {
+		if (rightIcon === 'eye') {
+		  setRightIcon('eye-off');
+		  setPasswordVisibility(!passwordVisibility);
+		} else if (rightIcon === 'eye-off') {
+		  setRightIcon('eye');
+		  setPasswordVisibility(!passwordVisibility);
+		}
+	  };
+	//------------------------------------------------------fin password show ---------------------------------------------------------------
+
+	//----------------------------------------------------BOUTON -----------------------------------------------------
+	const AppButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => handleSubmitSignup()} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		</TouchableOpacity>
+	  );
+	//-------------------------------------------------Fin bouton ----------------------------------------------
+	
+
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -92,68 +127,80 @@ function SignUpScreen(props) {
 	//----------------------------- ------------------------------------Fin de StatusBar
 
 	return (
-		<View style={styles.container}>
+		<ImageBackground source={require('../assets/fork.jpg')}  style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-				<View>
+			<View style={{marginTop:100,}}>
 					<Text style={styles.baseText}>
-						HUNGRYBOOK
+						THE
 					</Text>
-				</View>
-
+					<Text style={styles.baseText}>
+						HUNGRY-BOOK
+					</Text>
+			</View>
 
 				<View style={styles.content}>
 
-					<Text style={styles.text}>nom d'utilisateur :</Text>
+					
 					<TextInput
-						style={styles.input}
+						style={styles.inputContainer}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder="francis"
+						placeholder="Pseudo"
 
 						onChangeText={(val) => setSignUpUsername(val)}
 						value={signUpUsername}
 
 					/>
-					<Text style={styles.text}>Email :</Text>
+					
 					<TextInput
-						style={styles.input}
+						style={styles.inputContainer}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='francis@gmail.com'
+						placeholder='Votre adresse E-mail'
 						keyboardType="email-address"
 
-						onChangeText={(val) => setSignUpEmail(val)}
+						onChangeText= {(val) => setSignUpEmail(val) }
 						value={signUpEmail}
 
 					/>					
-					<Text style={styles.text}>password :</Text>
+					<View style={styles.inputContainer}>
 					<TextInput
-						style={styles.input}
+						
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='password'
-						secureTextEntry={true}
+						placeholder='Votre mot de passe'
+						secureTextEntry={passwordVisibility}
 
 						onChangeText={(val) => setSignUpPassword(val)}
 						value={signUpPassword}
 
-					/>					
-					<Text style={styles.text}>confirmation password :</Text>
+					/>	
+					<Pressable onPress={handlePasswordVisibility}>
+          				<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+       			    </Pressable>
+					   </View>				
+					
+					<View style={styles.inputContainer}>
 					<TextInput
-						style={styles.input}
 						inputStyle={{ marginLeft: 10 }}
-						placeholder='confirmation password'
-						secureTextEntry={true}
+						placeholder='Confirmer votre mot de passe'
+						secureTextEntry={passwordVisibility}
 
 						onChangeText={(val) => setSignUpConfirmPassword(val)}
 						value={signUpConfirmPassword}
 
 					/>
-
+					<Pressable onPress={handlePasswordVisibility}>
+          				<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+       			    </Pressable>
+					   </View>
 					{tabErrorsSignup}
 
-					<Button
+					{/* <Button
 						title="Valider l'inscription"
 						onPress={() => handleSubmitSignup()}
-					/>
+					/> */}
+					<View style={styles.screenContainer}>
+      					<AppButton title="Créer mon compte" size="sm"/>	
+    				</View>
 			</View>
 
 
@@ -166,7 +213,7 @@ function SignUpScreen(props) {
 					<MaterialCommunityIcons
 						name="arrow-left"
 						size={28}
-						color="#2f3542"
+						color="#dfe4ea"
 						style={{
 							paddingLeft: 20,
 							paddingRight: 20,
@@ -177,7 +224,7 @@ function SignUpScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-		</View>
+		</ImageBackground>
 	);
 }
 
@@ -222,17 +269,66 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		margin:35,
 		fontSize:25,
-
 	},
-	input: {
-		height: 40,
-		margin: 10,
-		borderWidth: 1,
+	inputContainer: {
+		backgroundColor: 'white',
+		width: '100%',
+		borderRadius: 8,
+		flexDirection: 'row',
+		alignItems: 'center',
+		borderWidth: 4,
+		borderColor: '#d7d7d7'
+	},
+	inputField: {
+		padding: 14,
+		fontSize: 22,
+		width: '90%'
+	},
+	baseText:{
+		fontWeight: 'bold',
+		textAlign: 'center',
+		fontSize:50,
+		color:"#e67e22",
+		borderColor:"#fff",
+		textShadowColor:'#2c3e50',
+		textShadowOffset:{width: 3, height: 3},
+		textShadowRadius:10,
+	},
+	inputContainer: {
+		backgroundColor: '#dfe4ea',		
+		borderRadius: 15,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent:"space-between",
+		borderWidth: 0.75,
 		padding: 10,
+		height: 55,
+		margin: 10,
+		
 	},
-	text:{
-		marginLeft: 12,
-		marginTop: 12,
-	}
+	screenContainer: {
+		//flex: 1,
+		justifyContent: "center",
+		padding: 16
+	  },
+	  appButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#e67e22",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection:"row",
+		alignItems:"center",
+		justifyContent:"center",
+		marginTop:10,
+
+	  },
+	  appButtonText: {
+		fontSize: 18,
+		color: "#fff",
+		fontWeight: "bold",
+		alignSelf: "center",
+	  },
+	
 	
 });

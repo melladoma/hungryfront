@@ -13,7 +13,8 @@ import {
 	Text,
 	TextInput,
 	ImageBackground,
-	KeyboardAvoidingView
+	KeyboardAvoidingView,
+	Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -38,9 +39,14 @@ function SignInScreen(props) {
 	const [listErrorsSignin, setErrorsSignin] = useState([])
 	//--------------------------------------------------------------------------
 
+	//-----------------------------------Show password -----------------
+	const [passwordVisibility, setPasswordVisibility] = useState(true);
+	const [rightIcon, setRightIcon] = useState('eye');
+	//------------------------------------------------------------
+
 	var handleSubmitSignin = async () => {
  
-		const data = await fetch('http://192.168.10.128:3000/users/sign-in', {
+		const data = await fetch('http://192.168.1.18:3000/users/sign-in', {
 		  method: 'POST',
 		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
@@ -69,6 +75,18 @@ function SignInScreen(props) {
 	  var tabErrorsSignin = listErrorsSignin.map((error,i) => {
 		return(<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
 	  })
+
+	// -----------------------------------------------------Password show ----------------------------------------------------------------------
+	const handlePasswordVisibility = () => {
+		if (rightIcon === 'eye') {
+		  setRightIcon('eye-off');
+		  setPasswordVisibility(!passwordVisibility);
+		} else if (rightIcon === 'eye-off') {
+		  setRightIcon('eye');
+		  setPasswordVisibility(!passwordVisibility);
+		}
+	  };
+	//------------------------------------------------------fin password show ---------------------------------------------------------------
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -109,19 +127,12 @@ function SignInScreen(props) {
 			<View style={{flex : 1}}>
 			
 				<View style={{marginTop:100,}}>
-				<Text style={styles.baseText}>
+					<Text style={styles.baseText}>
 						THE
 					</Text>
-					
 					<Text style={styles.baseText}>
-						HUNGRYBOOK
+						HUNGRY-BOOK
 					</Text>
-					{/* <Button
-					color='#F19066'
-					title="S'inscrire"
-					type="solid"
-					onPress={() => navigation.navigate("SignUp")}
-				/> */}
 				</View>
 
 
@@ -130,7 +141,7 @@ function SignInScreen(props) {
 
 				
 				<TextInput
-						style={styles.input}
+						style={styles.inputContainer}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Adresse E-mail'
 						keyboardType="email-address"
@@ -141,17 +152,19 @@ function SignInScreen(props) {
 						value={signInEmail}
 
 					/>					
-					
-					<TextInput
-						style={styles.input}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='Mot de passe'
-						secureTextEntry={true}
-						
-						onChangeText={(val) => setSignInPassword(val)}
-						value={signInPassword}
-
-					/>
+					<View style={styles.inputContainer}>
+						<TextInput
+							style={styles.inputField}
+							inputStyle={{ marginLeft: 10 }}
+							placeholder='Votre mot de passe'
+							secureTextEntry={passwordVisibility}
+							onChangeText={(val) => setSignInPassword(val)}
+							value={signInPassword}
+						/>
+						<Pressable onPress={handlePasswordVisibility}>
+							<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+						</Pressable>
+					</View>
 
 					{tabErrorsSignin}
 					
@@ -209,22 +222,15 @@ const styles = StyleSheet.create({
 		margin:'15%',
 
 	},
-	input: {
-		height: 55,
-		margin: 10,
-		borderWidth: 0.75,
-		padding: 10,
-		borderRadius:15,
-		backgroundColor:"#dfe4ea",
-		
-	},
 	baseText:{
 		fontWeight: 'bold',
 		textAlign: 'center',
-		fontSize:55,
+		fontSize:50,
 		color:"#e67e22",
 		borderColor:"#fff",
-		textDecoration:"underline"
+		textShadowColor:'#2c3e50',
+		textShadowOffset:{width: 3, height: 3},
+		textShadowRadius:10,
 	},
 	text:{
 		marginLeft: 12,
@@ -255,7 +261,7 @@ const styles = StyleSheet.create({
 	  },
 	  goSignup: {
 		fontSize:18,
-		color:"#fff",
+		color:"#ffffff",
 		textAlign:"center",		
 	  },
 	  appButtonContainer1: {
@@ -276,6 +282,19 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		alignSelf: "center",
 	  },
+	  inputContainer: {
+		backgroundColor: '#dfe4ea',		
+		borderRadius: 15,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent:"space-between",
+		borderWidth: 0.75,
+		padding: 10,
+		height: 55,
+		margin: 10,
+		
+	},
+	
 
 	
 	
