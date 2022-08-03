@@ -78,6 +78,7 @@ function FormScreen(props) {
 		var response = await rawResponse.json()
 
 		var recipeToStore = response.recipeToFront
+		console.log(recipeToStore)
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {

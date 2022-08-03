@@ -35,8 +35,8 @@ function RecipeSheetScreen(props) {
 		}
 	}, [isFocused]);
 
-	if (recipeData.length > 0) {
-		let ingredientList = recipeData.ingredients.map((ingredient, i) => {
+	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
+		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
 			return (
 				<View key={i} style={styles.ligne}>
 					<Text style={{ fontSize: 19, marginLeft: 25 }}>{ingredient.name}</Text>
@@ -49,8 +49,8 @@ function RecipeSheetScreen(props) {
 		})
 	}
 
-	if (recipeData.tags.length > 0) {
-		let tag = recipeData.tags.map((data, i) => {
+	if (recipeData.tags && recipeData.tags.length > 0) {
+		var tag = recipeData.tags.map((data, i) => {
 			return (
 				<View key={i} style={styles.tagAlign}>
 					<Text style={styles.tag}>
@@ -191,7 +191,9 @@ function RecipeSheetScreen(props) {
 				<View>
 					<Image
 						style={styles.recipePicture}
-						uri={recipeData.image}
+						source={{
+							uri: recipeData.image
+						}}
 					/>
 				</View>
 
