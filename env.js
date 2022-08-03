@@ -1,1 +1,1 @@
-export const privateIP = "192.168.2.227"
+export const privateIP = "192.168.1.24"
