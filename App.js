@@ -10,8 +10,9 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import bottomTabHeight from "./reducers/bottomTabHeight.reducer";
 import token from './reducers/token.reducer'
+import recipe from './reducers/recipe.reducer'
 import { createStore, combineReducers } from "redux";
-const store = createStore(combineReducers({ bottomTabHeight, token }));
+const store = createStore(combineReducers({ bottomTabHeight, token, recipe }));
 
 //modules pour la navigation
 import { NavigationContainer } from "@react-navigation/native";
