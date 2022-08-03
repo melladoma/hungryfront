@@ -98,7 +98,6 @@ function HomeScreen(props) {
 	};
 
 	useEffect(() => {
-<<<<<<< HEAD
 		if (isFocused) {
 			async function initialFetch() {
 				var rawResponse = await fetch(
@@ -111,21 +110,6 @@ function HomeScreen(props) {
 						body: `token=${props.token}`,
 					}
 				);
-=======
-		// apres faudra mettre initial data dans le store
-		//initialisation
-		async function initialFetch() {
-			var rawResponse = await fetch(
-				`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
-				{
-					method: "post",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: `token=${props.token}`,
-				}
-			);
->>>>>>> test3mercredi
 
 				var response = await rawResponse.json();
 
