@@ -40,15 +40,12 @@ function FormScreen(props) {
 		for (let i = 0; i < numInputs; i++) {
 			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
 		}
-		let tagsCopy = [];
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
 		recipeObj.tags = [...selectedFiltersArray];
-		console.log(recipeObj)
 
 		if (image) {
 			var data = new FormData();
-
 			//attention ne fonctionne que sur jpg
 			data.append('image', {
 				uri: image,
@@ -56,11 +53,16 @@ function FormScreen(props) {
 				name: 'recipe.jpg',
 			});
 
-			var rawResponseImg = await fetch(`http://${privateIPBackend}:3000/upload-image`, {
-				method: 'POST',
+			console.log(data)
+
+			var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+				method: 'post',
 				body: data
 			})
+
+			console.log(rawResponseImg)
 			var responseImg = await rawResponseImg.json()
+
 			if (responseImg.result) {
 				recipeObj.image = responseImg.resultObj.imageUrl
 			} else {
@@ -68,11 +70,11 @@ function FormScreen(props) {
 			}
 
 		} else {
-			recipeObj.image = require("../assets/default-post-image.jpg")
+			recipeObj.image = "../assets/default-post-image.jpg"
 		}
 		//---- envoi recette en BDD 
 		let recipeData = { recipe: recipeObj, userToken: props.token }
-		var rawResponse = await fetch(`http://${privateIPBackend}:3000/validate-form`, {
+		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
 			method: 'POST',
 			headers: { 'Content-type': 'application/json; charset=UTF-8' },
 			body: JSON.stringify(recipeData)
@@ -250,11 +252,7 @@ function FormScreen(props) {
 
 
 				<Text style={styles.label}>Image</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => handleChange('image', value)}
-					value={recipe.image}
-				/>
+
 
 				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 					<Button title="Pick an image from camera roll" onPress={pickImage} />
