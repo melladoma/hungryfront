@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { privateIP } from "../env.js"
 
 import {
 	StatusBar,
@@ -51,7 +52,7 @@ function SignUpScreen(props) {
 	var handleSubmitSignup = async () => {
 
 		console.log('hello');
-		const data = await fetch("http://192.168.1.18:3000/users/sign-up", {
+		const data = await fetch(`http://${privateIP}:3000/users/sign-up`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
@@ -78,7 +79,7 @@ function SignUpScreen(props) {
 
 
 	var tabErrorsSignup = listErrorsSignup.map((error, i) => {
-		return (<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
+		return (<Text style={{ color: 'red', height: 40, margin: 10 }} key={i}>{error}</Text>)
 	})
 
 	// -------------------------------------------------------REGEX verification email -----------------------------------------------------------
@@ -139,7 +140,7 @@ function SignUpScreen(props) {
 					</Text>
 			</View>
 
-				<View style={styles.content}>
+			<View style={styles.content}>
 
 					
 					<TextInput
@@ -147,8 +148,8 @@ function SignUpScreen(props) {
 						inputStyle={{ marginLeft: 10 }}
 						placeholder="Pseudo"
 
-						onChangeText={(val) => setSignUpUsername(val)}
-						value={signUpUsername}
+					onChangeText={(val) => setSignUpUsername(val)}
+					value={signUpUsername}
 
 					/>
 					
@@ -169,8 +170,8 @@ function SignUpScreen(props) {
 						placeholder='Votre mot de passe'
 						secureTextEntry={passwordVisibility}
 
-						onChangeText={(val) => setSignUpPassword(val)}
-						value={signUpPassword}
+					onChangeText={(val) => setSignUpPassword(val)}
+					value={signUpPassword}
 
 					/>	
 					<Pressable onPress={handlePasswordVisibility}>
@@ -184,8 +185,8 @@ function SignUpScreen(props) {
 						placeholder='Confirmer votre mot de passe'
 						secureTextEntry={passwordVisibility}
 
-						onChangeText={(val) => setSignUpConfirmPassword(val)}
-						value={signUpConfirmPassword}
+					onChangeText={(val) => setSignUpConfirmPassword(val)}
+					value={signUpConfirmPassword}
 
 					/>
 					<Pressable onPress={handlePasswordVisibility}>
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		margin:'15%',
+		margin: '15%',
 
 	},
 	baseText: {

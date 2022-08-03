@@ -1,7 +1,8 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { privateIP } from "../env.js"
 
 import {
 	StatusBar,
@@ -28,7 +29,7 @@ function SignInScreen(props) {
 
 	//------------mettre les champs de saisie a vide------------------
 	const [signInEmail, setSignInEmail] = useState('')
-  	const [signInPassword, setSignInPassword] = useState('')
+	const [signInPassword, setSignInPassword] = useState('')
 	//---------------------------------------------------------------------
 
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
@@ -45,36 +46,36 @@ function SignInScreen(props) {
 	//------------------------------------------------------------
 
 	var handleSubmitSignin = async () => {
- 
-		const data = await fetch('http://192.168.1.18:3000/users/sign-in', {
-		  method: 'POST',
-		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-		  body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
+
+		const data = await fetch(`http://${privateIP}:3000/users/sign-in`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
 		})
-	
+
 		const body = await data.json()
 
 		console.log(body);
 
-		if(body.result == true){
-		  props.addToken(body.token)
-		  setUserExists(true)
-		  
-		}  else {
-		  setErrorsSignin(body.error)
-		}
-	  }
+		if (body.result == true) {
+			props.addToken(body.token)
+			setUserExists(true)
 
-	  useEffect(() => {
+		} else {
+			setErrorsSignin(body.error)
+		}
+	}
+
+	useEffect(() => {
 		if (userExists) {
 			console.log("le user existe (sign-in)");
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
-	
-	  var tabErrorsSignin = listErrorsSignin.map((error,i) => {
-		return(<Text style={{color:'red',height: 40,margin: 10}} key={i}>{error}</Text>)
-	  })
+
+	var tabErrorsSignin = listErrorsSignin.map((error, i) => {
+		return (<Text style={{ color: 'red', height: 40, margin: 10 }} key={i}>{error}</Text>)
+	})
 
 	// -----------------------------------------------------Password show ----------------------------------------------------------------------
 	const handlePasswordVisibility = () => {
@@ -200,7 +201,7 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-export default connect(null, mapDispatchToProps)(SignInScreen); 
+export default connect(null, mapDispatchToProps)(SignInScreen);
 
 //export default SignInScreen;
 
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		margin:'15%',
+		margin: '15%',
 
 	},
 	baseText:{
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
 		textShadowOffset:{width: 3, height: 3},
 		textShadowRadius:10,
 	},
-	text:{
+	text: {
 		marginLeft: 12,
 		marginTop: 12,
 	},
@@ -296,6 +297,6 @@ const styles = StyleSheet.create({
 	},
 	
 
-	
-	
+
+
 });
