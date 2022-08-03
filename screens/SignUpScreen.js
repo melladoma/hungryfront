@@ -22,6 +22,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { set } from "react-native-reanimated";
 
 
 function SignUpScreen(props) {
@@ -38,7 +39,9 @@ function SignUpScreen(props) {
 
    //-----------------------------------Show password -----------------
    const [passwordVisibility, setPasswordVisibility] = useState(true);
+   const [confirmationVisibility, setConfirmationVisibility] = useState(true);
    const [rightIcon, setRightIcon] = useState('eye');
+   const [rightIcon2, setRightIcon2] = useState('eye');
    //------------------------------------------------------------
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
 	const [userExists, setUserExists] = useState(false)
@@ -97,6 +100,16 @@ function SignUpScreen(props) {
 		} else if (rightIcon === 'eye-off') {
 		  setRightIcon('eye');
 		  setPasswordVisibility(!passwordVisibility);
+		}
+	  };
+
+	  const handleConfirmationVisibility = () => {
+		if (rightIcon2 === 'eye') {
+		  setRightIcon2('eye-off');
+		  setConfirmationVisibility(!confirmationVisibility);
+		} else if (rightIcon2 === 'eye-off') {
+		  setRightIcon2('eye');
+		  setConfirmationVisibility(!confirmationVisibility);
 		}
 	  };
 	//------------------------------------------------------fin password show ---------------------------------------------------------------
@@ -183,14 +196,14 @@ function SignUpScreen(props) {
 					<TextInput
 						inputStyle={{ marginLeft: 10 }}
 						placeholder='Confirmer votre mot de passe'
-						secureTextEntry={passwordVisibility}
+						secureTextEntry={confirmationVisibility}
 
 					onChangeText={(val) => setSignUpConfirmPassword(val)}
 					value={signUpConfirmPassword}
 
 					/>
-					<Pressable onPress={handlePasswordVisibility}>
-          				<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
+					<Pressable onPress={handleConfirmationVisibility}>
+          				<MaterialCommunityIcons name={rightIcon2} size={22} color="#232323" />
        			    </Pressable>
 					   </View>
 					{tabErrorsSignup}

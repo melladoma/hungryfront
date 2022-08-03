@@ -121,13 +121,13 @@ function SignInScreen(props) {
 	return (
 		
 		<ImageBackground source={require('../assets/eggs.jpg')}  style={styles.container} >
-		{/* <KeyboardAvoidingView */}
+		 
 			
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			
 			<View style={{flex : 1}}>
 			
-				<View style={{marginTop:100,}}>
+				<View style={{marginTop:40, marginBottom:80}}>
 					<Text style={styles.baseText}>
 						THE
 					</Text>
@@ -140,7 +140,9 @@ function SignInScreen(props) {
 				<View style={styles.content}>
 
 
-				
+				<KeyboardAvoidingView 
+		           behavior={Platform.OS === "ios" ? "padding" : "height"}
+		        >
 				<TextInput
 						style={styles.inputContainer}
 						inputStyle={{ marginLeft: 10 }}
@@ -172,9 +174,11 @@ function SignInScreen(props) {
 					<View style={styles.screenContainer}>
       					<AppButton title="Me connecter" size="sm"/>	
     				</View>
+					</KeyboardAvoidingView>
 					<View style={{marginTop:90}}>
 				<Text style={styles.goSignup}>Vous n'avez pas encore de compte ?</Text>
 					</View>
+					
 					<View style={styles.screenContainer}>
       					<SignUp title="Créer mon compte" size="sm"/>	
     				</View>
@@ -183,7 +187,7 @@ function SignInScreen(props) {
 					
 			</View>
 
-			{/* </KeyboardAvoidingView> */}
+			
 		</ImageBackground>
 		
 	);
@@ -221,6 +225,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		margin: '15%',
+		
 
 	},
 	baseText:{

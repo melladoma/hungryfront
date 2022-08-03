@@ -26,6 +26,7 @@ function RecipeSheetScreen(props) {
 	const navigation = useNavigation();
 
 	const [modalOpen, setModalOpen] = useState(false);
+	const [deleteRecipe, setDeleteRecipe] = useState([])
 	
 		let data = [{name:"Oeufs",quantity: "3p"},
 					{name:"Pain", quantity:"200g"},
@@ -49,7 +50,7 @@ function RecipeSheetScreen(props) {
 				</View>
 					  
 					)})
-					
+//-----------------------------------------------------------Boutons--------------------------------------					
 					const AppButton = ({ onPress, title }) => (
 						<TouchableOpacity onPress={() => setModalOpen(true)} style={styles.appButtonContainer}>
 						  <Text style={styles.appButtonText}>
@@ -78,8 +79,17 @@ function RecipeSheetScreen(props) {
 						</TouchableOpacity>
 					  );
 
+//----------------------------------------------------------- Fin Boutons--------------------------------------
+//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
+var handleClickDeleteMovie = async (name) => {
+    
+    setDeleteRecipe(deleteRecipe.filter(object => object.name != name))
 
-
+    const response = await fetch(`/delete-recipe/${name}`, {
+      method: 'DELETE'
+    })
+  }
+//---------------------------------------------------------- FIN DELETE RECIPE -------------------------------------------
 	return (
 	   <View style={styles.container}>
 
@@ -106,12 +116,13 @@ function RecipeSheetScreen(props) {
 						
 				/>
 			  </TouchableOpacity>
+			 
 			</Text>
 					
 {/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection ---------------------------------------------------------  */}		
               <View style={styles.ligne}>
 			  
-			   <TouchableOpacity
+			   {/* <TouchableOpacity
 						style={{}}
 						onPress={() => navigation.navigate("HomeDrawer2")}
 					>
@@ -127,7 +138,22 @@ function RecipeSheetScreen(props) {
 								zIndex: 1,
 							}}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
+					 <TouchableOpacity
+				style={{}}
+				onPress={() => {handleClickDeleteMovie(recipe.name)}}
+			  >
+				<MaterialCommunityIcons
+					name="delete"
+					size={25}
+					color="#2f3542"
+					style={{
+						paddingLeft:10,
+						marginTop:5,	
+						}}
+						
+				/>
+			  </TouchableOpacity>
 			 <Text style={styles.userName}>
 				@Francis
 			 </Text>
