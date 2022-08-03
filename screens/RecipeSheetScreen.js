@@ -27,19 +27,19 @@ function RecipeSheetScreen(props) {
 
 	const [modalOpen, setModalOpen] = useState(false);
 	
-		let data = [{name:"Oeufs",quantity: "3p"},
-					{name:"Pain", quantity:"200g"},
-					{name:"Tomates", quantity:"1kg"},
-					{name:"Courgettes", quantity:"500g"},
-					{name:"Vin blanc", quantity:"200ml"},
-					{name:"Lait", quantity:"1L"},
-					{name:"Créme", quantity:"5cl"},
-					{name:"thé", quantity:"8g"},
-					{name:"patate", quantity:"800g"},
-					{name:"carrote", quantity: "420g"}
-				   ];
+		// let data = [{name:"Oeufs",quantity: "3p"},
+		// 			{name:"Pain", quantity:"200g"},
+		// 			{name:"Tomates", quantity:"1kg"},
+		// 			{name:"Courgettes", quantity:"500g"},
+		// 			{name:"Vin blanc", quantity:"200ml"},
+		// 			{name:"Lait", quantity:"1L"},
+		// 			{name:"Créme", quantity:"5cl"},
+		// 			{name:"thé", quantity:"8g"},
+		// 			{name:"patate", quantity:"800g"},
+		// 			{name:"carrote", quantity: "420g"}
+		// 		   ];
 
-		let ingredientList = data.map((ingredient, i) => {
+		let ingredientList = props.recipe.ingredients.map((ingredient, i) => {
 				return (
 				<View key={i} style={styles.ligne}>
 					<Text style={{fontSize:19, marginLeft:25}}>{ingredient.name}</Text>
@@ -50,6 +50,29 @@ function RecipeSheetScreen(props) {
 					  
 					)})
 					
+		let tag = props.recipe.tags.map((data, i) =>{
+			return(
+			<View key={i} style={styles.tagAlign}>
+				<Text style={styles.tag}>
+					{data}                                                                         			
+				</Text>
+			</View>
+
+			)
+		})
+
+		// let instru = props.directions.map((data, i) =>{
+		// 	return(
+		// 		<View>
+		// 			<Text h1 style={styles.recipeName}>{props.recipe.name}</Text>
+		// 			<Text h1 style={styles.title}>ÉTAPE 1</Text>
+		// 			<Text style={{fontSize:20}}></Text>
+		// 		</View>
+		// 	)
+		// })
+
+
+
 					const AppButton = ({ onPress, title }) => (
 						<TouchableOpacity onPress={() => setModalOpen(true)} style={styles.appButtonContainer}>
 						  <Text style={styles.appButtonText}>
@@ -90,7 +113,7 @@ function RecipeSheetScreen(props) {
 			
 			
 			 <Text h1 style={styles.recipeName}>
-			     Tacos de Barbacoa
+			     {props.recipe.name}
 			  <TouchableOpacity
 				style={{}}
 				onPress={() => navigation.navigate('FormScreen')}
@@ -129,7 +152,7 @@ function RecipeSheetScreen(props) {
 						/>
 					</TouchableOpacity>
 			 <Text style={styles.userName}>
-				@Francis
+				{props.recipe.author}
 			 </Text>
 			 <TouchableOpacity
 						style={{}}
@@ -154,21 +177,14 @@ function RecipeSheetScreen(props) {
 			<View>
 			 <Image
 				style={styles.recipePicture}
-				source={require('../assets/barbacoa.jpg')}
+				uri={props.recipe.image}
 			/>
 			</View>
+			
 			<View style={styles.ligne}>
-				<View style={styles.tagAlign}>
-			<Text style={styles.tag}>
-			    #francis                                                                         			
-			</Text>
-			<Text style={styles.tag}>
-			    #Mexique                                                                         			
-			</Text>
-			<Text style={styles.tag}>
-				#Tacos                                                                         			
-			</Text>
-			   </View>
+
+			{tag}
+
 			<View style={styles.like}>
 			<TouchableOpacity
 					style={{}}
@@ -182,22 +198,22 @@ function RecipeSheetScreen(props) {
 					/>
 				
 			</TouchableOpacity> 
-			 <Text> 1966 </Text> 
+			 <Text>{props.recipe.likeCount}</Text> 
 			</View>
 			</View>
 {/*------------------------------------------------------------Temps de Préparation + bouton d'indentation ------------------------------------  */}
 			<View style={styles.center}>
 			<View style={styles.time}>
 				<View style={{marginLeft:8}}>
-					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>2'</Text>
+					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>2'{props.recipe.prepTime}</Text>
 					<Text>Préparation</Text>
 				</View>
 				<View>
-					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>5'</Text>
+					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>5'{props.recipe.cookTime}</Text>
 					<Text>Cuisson</Text>
 				</View>
 				<View style={{marginRight:8}}>
-					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>2</Text> 
+					<Text style={{textAlign: 'center', color:"#F19066", fontSize:24}}>2{props.recipe.servings}</Text> 
 					<Text>Personnes</Text>
 				</View>
 			</View>	
@@ -241,12 +257,11 @@ function RecipeSheetScreen(props) {
 					<View style={styles.modal}>
 						<ScrollView>
 							<View>
-									<Text h1 style={styles.recipeName}>Tacos de Barcoa</Text>
-									<Text h1 style={styles.title}>ÉTAPE 1</Text>
+									<Text h1 style={styles.recipeName}>{props.recipe.name}</Text>
 '
-									<Text style={{fontSize:20}}>A la poêle, faire dorer l'oignon émincé dans un peu d'huile d'olive.</Text>
+									<Text style={{fontSize:20}}>{props.recipe.directions}</Text>
 
-									<Text h1 style={styles.title}>ÉTAPE 2</Text>
+									{/* <Text h1 style={styles.title}>ÉTAPE 2</Text>
 
 									<Text style={{fontSize:20}}>Rajouter la viande, assaisonner et laisser cuire 5 min.</Text>
 
@@ -277,7 +292,7 @@ function RecipeSheetScreen(props) {
 									<Text h1 style={styles.title}>ÉTAPE 8</Text>
 
 									<Text style={{fontSize:20}}>Garnir les tortillas de préparation et les refermer en les roulant comme des crêpes. Disposer 1 feuille de laitue sur chaque tacos avant de servir.</Text>
-							
+							 */}
 							</View>
 							<View style={styles.screenContainer}>
       				 		     <CloseModal title="Retour à la liste des ingédients" size="sm"/>	
@@ -333,7 +348,7 @@ function RecipeSheetScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { bottomTabHeight: state.bottomTabHeight , recipe : state.recipe};
 }
 
 /*function mapDispatchToProps(dispatch) {
