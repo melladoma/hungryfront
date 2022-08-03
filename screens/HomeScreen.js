@@ -50,7 +50,7 @@ function HomeScreen(props) {
 		props.sendBottomTabHeight(tabBarHeight);
 	}, []);
 
-	//---------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------
 
 	//StatusBar à laisser dans chaque page, la backgroundColor et la couleur du texte ('barStyle') peuvent être changés dans chaque page si besoin d'accorder des couleurs, cf aussi la stylesheet tout en bas
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -65,7 +65,7 @@ function HomeScreen(props) {
 			</SafeAreaView>
 		</View>
 	);
-	//-----------------------------------------------------------------Fin de StatusBar------------------------------
+	//----------------------------- ------------------------------------Fin de StatusBar
 
 	//Début Tags
 	var tags = [
@@ -388,13 +388,13 @@ function HomeScreen(props) {
 	// Render Item : Création d'un composant "Item" à partir de ITEM que pourra lire la FlatList
 	// FlatList : C'est le conteneur de toutes les cards. FlatList permet de scroller, scroll infini, disposition des cards en flex, etc... Il faut intégrer dans ses props DATA et Render Item. Puis c'est la FlatList qu'on intègre dans le render.
 
-	var Item;
 	var flatlist;
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
-		Item = ({ image, name }) => (
+
+		const renderItem = ({ item }) => (
 			<TouchableOpacity
-				onPress={() => navigation.navigate("RecipeSheetScreen")}
+				onPress={() => handlePressOnCard(item)}
 			>
 				<View
 					style={{
@@ -406,7 +406,7 @@ function HomeScreen(props) {
 						borderWidth: 1,
 					}}
 				>
-					<Text style={{ height: "15%", padding: 5 }}>{name}</Text>
+					<Text style={{ height: "15%", padding: 5 }}>{item.name}</Text>
 					<Image
 						style={{
 							height: "85%",
@@ -416,14 +416,10 @@ function HomeScreen(props) {
 							borderTopLeftRadius: 0,
 							borderTopRightRadius: 0,
 						}}
-						source={{ uri: image }}
+						source={{ uri: item.image }}
 					/>
 				</View>
 			</TouchableOpacity>
-		);
-
-		const renderItem = ({ item }) => (
-			<Item image={item.image} name={item.name} />
 		);
 
 		flatlist = (
@@ -440,9 +436,9 @@ function HomeScreen(props) {
 	} else if (typeAffichage === "liste") {
 		//--------------------------------affichage en "liste"
 
-		Item = ({ image, name }) => (
+		const renderItem = ({ item }) => (
 			<TouchableOpacity
-				onPress={() => navigation.navigate("RecipeSheetScreen")}
+				onPress={() => handlePressOnCard(item)}
 			>
 				<View
 					style={{
@@ -466,10 +462,10 @@ function HomeScreen(props) {
 							borderTopLeftRadius: 10,
 							borderTopRightRadius: 0,
 						}}
-						source={{ uri: image }}
+						source={{ uri: item.image }}
 					/>
 					<View style={{ margin: 10 }}>
-						<Text style={{ fontSize: 20 }}>{name}</Text>
+						<Text style={{ fontSize: 20 }}>{item.name}</Text>
 						<Text style={{ fontSize: 15 }}>
 							Hum tres bonne tarte
 						</Text>
@@ -482,10 +478,6 @@ function HomeScreen(props) {
 			</TouchableOpacity>
 		);
 
-		const renderItem = ({ item }) => (
-			<Item image={item.image} name={item.name} />
-		);
-
 		flatlist = (
 			<FlatList //composant qu'on met dans le return
 				showsVerticalScrollIndicator={false}
@@ -495,6 +487,11 @@ function HomeScreen(props) {
 				keyExtractor={(item) => item._id}
 			/>
 		);
+	}
+
+	const handlePressOnCard = (recipe) => {
+		/* props.sendPressedRecipeToStore(recipe); */
+		navigation.navigate("RecipeSheetScreen")
 	}
 	//----------------------------- ------------------------------------Fin de la flatList
 
@@ -592,6 +589,12 @@ function mapDispatchToProps(dispatch) {
 				bottomTabHeight: bottomTabHeight,
 			});
 		},
+		/* sendPressedRecipeToStore: function (recipe) {
+			dispatch({
+				type: "sendBottomTabHeight",
+				recipe: recipe,
+			});
+		}, */
 	};
 }
 
