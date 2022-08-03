@@ -381,12 +381,7 @@ function HomeScreen(props) {
 
 	//-------------------------------------------------------------------------fin modal
 
-	//Début FlatList affichant les Cards de receytes
-	//En React Native, il y a plusieurs étapes pour afficher des cards dans une FlatList:
-	// DATA : ce sont les données de chaque card, là c'est en dur, mais après il faudra que ce soit dynamique
-	// ITEM : c'est le composant Card, comme si on l'écrivait dans le render
-	// Render Item : Création d'un composant "Item" à partir de ITEM que pourra lire la FlatList
-	// FlatList : C'est le conteneur de toutes les cards. FlatList permet de scroller, scroll infini, disposition des cards en flex, etc... Il faut intégrer dans ses props DATA et Render Item. Puis c'est la FlatList qu'on intègre dans le render.
+	//Début FlatList affichant les Cards de recettes
 
 	var flatlist;
 	if (typeAffichage === "icones") {
@@ -490,7 +485,7 @@ function HomeScreen(props) {
 	}
 
 	const handlePressOnCard = (recipe) => {
-		/* props.sendPressedRecipeToStore(recipe); */
+		props.sendPressedRecipeToStore(recipe);
 		navigation.navigate("RecipeSheetScreen")
 	}
 	//----------------------------- ------------------------------------Fin de la flatList
@@ -589,12 +584,13 @@ function mapDispatchToProps(dispatch) {
 				bottomTabHeight: bottomTabHeight,
 			});
 		},
-		/* sendPressedRecipeToStore: function (recipe) {
+		sendPressedRecipeToStore: function (recipe) {
+			console.log(recipe)
 			dispatch({
-				type: "sendBottomTabHeight",
+				type: "setRecipe",
 				recipe: recipe,
 			});
-		}, */
+		},
 	};
 }
 
