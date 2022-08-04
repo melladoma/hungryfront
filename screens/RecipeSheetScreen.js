@@ -39,6 +39,8 @@ function RecipeSheetScreen(props) {
 
 	const window = Dimensions.get('window');
 
+	const [wasJustLiked, setWasJustLiked] = useState(false);
+
 	useEffect(() => {
 		if (isFocused) {
 			setRecipeData(props.recipe);
@@ -51,23 +53,61 @@ function RecipeSheetScreen(props) {
 
 	let modificationPencilIcon = null;
 	let deletionTrashIcon = null;
-	let likeHeartIcon = (
+	var likeHeartIcon = (
 		<TouchableOpacity
 			style={styles.like}
 			onPress={() => {
-				/* handlePressHeartIcon(props.recipe._id) */
+				 handlePressHeartIcon(props.recipe._id, props.recipe.likeCount, props.token)
 			}}
 		>
 			<MaterialCommunityIcons
 				name="heart-outline"
 				size={25}
-				color="#ff4757"
+				color="grey"
 				style={{}}
 			/>
 
 			<Text>{recipeData.likeCount}</Text>
 		</TouchableOpacity>
 	);
+
+	if (wasJustLiked) {
+	likeHeartIcon = (
+		<View>
+				<MaterialCommunityIcons
+					name="heart"
+					size={25}
+					color="#ff4757"
+					style={{}}
+				/>
+
+				<Text>{recipeData.likeCount}</Text>
+			</View>
+	);}
+
+	//Like a Recipe
+	var handlePressHeartIcon = async (id, likeCount, token) => {
+		
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/like-recipe`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `id=${id}&likecount=${likeCount}&token=${token}`,
+			}
+		);
+
+		var response = await rawResponse.json();
+		if (response.result === 1) {
+			let newLikeCount = recipeData.likeCount + 1
+			setWasJustLiked(true)
+			setRecipeData({...recipeData, likeCount: newLikeCount})
+			
+		}
+		 
+	};
 
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
