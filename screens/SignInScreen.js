@@ -46,18 +46,24 @@ function SignInScreen(props) {
 	//------------------------------------------------------------
 
 	var handleSubmitSignin = async () => {
-		const rawResponse = await fetch(`http://${privateIP}:3000/users/sign-in`, {
-			method: "POST",
-			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`,
-		});
+		const rawResponse = await fetch(
+			`http://${privateIP}:3000/users/sign-in`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`,
+			}
+		);
 
 		const response = await rawResponse.json();
 
 		if (response.result == true) {
 			props.addToken(response.token);
-			props.addUsername(response.username)
-			props.addAvatar(response.avatar)
+			props.addUsername(response.username);
+			props.addAvatar(response.avatar);
+			props.addLikedRecipes(response.likedRecipes);
 			setUserExists(true);
 		} else {
 			setErrorsSignin(response.error);
@@ -66,7 +72,6 @@ function SignInScreen(props) {
 
 	useEffect(() => {
 		if (userExists) {
-			
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
@@ -198,11 +203,14 @@ function mapDispatchToProps(dispatch) {
 			dispatch({ type: "addToken", token: token });
 		},
 		addUsername: function (username) {
-			dispatch({ type: 'addUsername', username: username })
+			dispatch({ type: "addUsername", username: username });
 		},
 		addAvatar: function (avatar) {
-			dispatch({ type: 'addAvatar', avatar: avatar })
-		}
+			dispatch({ type: "addAvatar", avatar: avatar });
+		},
+		addLikedRecipes: function (likedRecipes) {
+			dispatch({ type: "addLikedRecipes", likedRecipes: likedRecipes });
+		},
 	};
 }
 

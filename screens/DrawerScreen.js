@@ -35,7 +35,10 @@ function DrawerScreen(props) {
 		</View>
 	);
 
-	var avatar = <Text style={{fontSize:24}}>{props.username[0].toUpperCase()}</Text>
+	var avatar = <View style={{backgroundColor: 'white', width: 60,
+	height: 60,
+	
+	borderRadius: 100, display: "flex", justifyContent:"center", alignItems:"center"}}><Text style={{fontSize:24}}>{props.username[0].toUpperCase()}</Text></View>
 	if (props.avatar !== "") {
 		avatar = (
 			<Image
@@ -43,7 +46,7 @@ function DrawerScreen(props) {
 				style={{
 					width: 60,
 					height: 60,
-
+					
 					borderRadius: 100,
 				}}
 			></Image>
@@ -70,6 +73,9 @@ function DrawerScreen(props) {
 							height: 60,
 							borderWidth: 1,
 							borderRadius: 100,
+							display: "flex",
+					justifyContent:"center",
+					alignItems:"center",
 						}}
 					>
 						{avatar}
@@ -89,14 +95,14 @@ function DrawerScreen(props) {
 								alignItems: "flex-start",
 							}}
 						>
-							<Text style={{ marginBottom: 10 }}>Francis</Text>
+							<Text style={{ marginBottom: 10, color:"white", fontSize:24 }}>Bonjour {props.username}</Text>
 							{/* <MaterialCommunityIcons
 								name="pencil"
 								size={15}
 								color="#2f3542"
 							/> */}
 						</View>
-						<View
+						{/* <View
 							style={{
 								width: "80%",
 								display: "flex",
@@ -113,12 +119,12 @@ function DrawerScreen(props) {
 								J'habite pas à Saint FRANCISco et je suis pas
 								FRANCIScain. J'aime la cuisine FRANCAISe !
 							</Text>
-							{/* <MaterialCommunityIcons
+							<MaterialCommunityIcons
 								name="pencil"
 								size={15}
 								color="#2f3542"
-							/> */}
-						</View>
+							/>
+						</View> */}
 					</View>
 				</View>
 				<View

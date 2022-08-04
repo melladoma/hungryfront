@@ -12,9 +12,10 @@ import bottomTabHeight from "./reducers/bottomTabHeight.reducer";
 import token from './reducers/token.reducer'
 import username from './reducers/username.reducer'
 import avatar from './reducers/avatar.reducer'
+import likedRecipes from './reducers/likedRecipes.reducer'
 import recipe from './reducers/recipe.reducer'
 import { createStore, combineReducers } from "redux";
-const store = createStore(combineReducers({ bottomTabHeight, token, recipe, username, avatar }));
+const store = createStore(combineReducers({ bottomTabHeight, token, recipe, username, avatar, likedRecipes }));
 
 //modules pour la navigation
 import { NavigationContainer } from "@react-navigation/native";
