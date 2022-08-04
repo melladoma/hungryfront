@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { privateIP } from "../env.js"
+import { privateIP } from "../env.js";
 
 import {
 	StatusBar,
@@ -28,62 +28,63 @@ function SignInScreen(props) {
 	const [searchInput, setSearchInput] = useState("");
 
 	//------------mettre les champs de saisie a vide------------------
-	const [signInEmail, setSignInEmail] = useState('')
-	const [signInPassword, setSignInPassword] = useState('')
+	const [signInEmail, setSignInEmail] = useState("");
+	const [signInPassword, setSignInPassword] = useState("");
 	//---------------------------------------------------------------------
 
 	//pour si l'utilisater existe lui faire un redirect sur un page (if)--------
-	const [userExists, setUserExists] = useState(false)
+	const [userExists, setUserExists] = useState(false);
 	//--------------------------------------------------------------------------
 
 	//pour si l'utilisateur existe pas lui afficher une page d'err (else)-------
-	const [listErrorsSignin, setErrorsSignin] = useState([])
+	const [listErrorsSignin, setErrorsSignin] = useState([]);
 	//--------------------------------------------------------------------------
 
 	//-----------------------------------Show password -----------------
 	const [passwordVisibility, setPasswordVisibility] = useState(true);
-	const [rightIcon, setRightIcon] = useState('eye');
+	const [rightIcon, setRightIcon] = useState("eye");
 	//------------------------------------------------------------
 
 	var handleSubmitSignin = async () => {
+		const rawResponse = await fetch(`http://${privateIP}:3000/users/sign-in`, {
+			method: "POST",
+			headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`,
+		});
 
-		const data = await fetch(`http://${privateIP}:3000/users/sign-in`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: `emailFromFront=${signInEmail}&passwordFromFront=${signInPassword}`
-		})
+		const response = await rawResponse.json();
 
-		const body = await data.json()
-
-		console.log(body);
-
-		if (body.result == true) {
-			props.addToken(body.token)
-			setUserExists(true)
-
+		if (response.result == true) {
+			props.addToken(response.token);
+			props.addUsername(response.username)
+			setUserExists(true);
 		} else {
-			setErrorsSignin(body.error)
+			setErrorsSignin(response.error);
 		}
-	}
+	};
 
 	useEffect(() => {
 		if (userExists) {
-			console.log("le user existe (sign-in)");
+			
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
 
 	var tabErrorsSignin = listErrorsSignin.map((error, i) => {
-		return (<Text style={{ color: 'red', height: 40, margin: 10 }} key={i}>{error}</Text>)
-	})
+		return (
+			<Text style={{ color: "red", height: 40, margin: 10 }} key={i}>
+				{error}
+			</Text>
+		);
+	});
 
 	// -----------------------------------------------------Password show ----------------------------------------------------------------------
 	const handlePasswordVisibility = () => {
-		if (rightIcon === 'eye') {
-			setRightIcon('eye-off');
+		if (rightIcon === "eye") {
+			setRightIcon("eye-off");
 			setPasswordVisibility(!passwordVisibility);
-		} else if (rightIcon === 'eye-off') {
-			setRightIcon('eye');
+		} else if (rightIcon === "eye-off") {
+			setRightIcon("eye");
 			setPasswordVisibility(!passwordVisibility);
 		}
 	};
@@ -104,92 +105,85 @@ function SignInScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 	const AppButton = ({ onPress, title }) => (
-		<TouchableOpacity onPress={() => handleSubmitSignin()} style={styles.appButtonContainer}>
-			<Text style={styles.appButtonText}>
-				{title}
-			</Text>
+		<TouchableOpacity
+			onPress={() => handleSubmitSignin()}
+			style={styles.appButtonContainer}
+		>
+			<Text style={styles.appButtonText}>{title}</Text>
 		</TouchableOpacity>
 	);
 	const SignUp = ({ onPress, title }) => (
-		<TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={styles.appButtonContainer1}>
-			<Text style={styles.appButtonText1}>
-				{title}
-			</Text>
+		<TouchableOpacity
+			onPress={() => navigation.navigate("SignUp")}
+			style={styles.appButtonContainer1}
+		>
+			<Text style={styles.appButtonText1}>{title}</Text>
 		</TouchableOpacity>
 	);
 
 	return (
-		
-		<ImageBackground source={require('../assets/eggs.jpg')}  style={styles.container} >
-		 
-			
+		<ImageBackground
+			source={require("../assets/eggs.jpg")}
+			style={styles.container}
+		>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
-			
-			<View style={{flex : 1}}>
-			
-				<View style={{marginTop:40, marginBottom:80}}>
-					<Text style={styles.baseText}>
-						THE
-					</Text>
-					<Text style={styles.baseText}>
-						HUNGRY-BOOK
-					</Text>
+
+			<View style={{ flex: 1 }}>
+				<View style={{ marginTop: 40, marginBottom: 80 }}>
+					<Text style={styles.baseText}>THE</Text>
+					<Text style={styles.baseText}>HUNGRY-BOOK</Text>
 				</View>
 
-
 				<View style={styles.content}>
-
-
-				<KeyboardAvoidingView 
-		           behavior={Platform.OS === "ios" ? "padding" : "height"}
-		        >
-				<TextInput
-						style={styles.inputContainer}
-						inputStyle={{ marginLeft: 10 }}
-						placeholder='Adresse E-mail'
-						keyboardType="email-address"
-						overflow="hidden"
-						keyboardAppearance="dark"
-
-						onChangeText={(val) => setSignInEmail(val)}
-						value={signInEmail}
-
-					/>
-					<View style={styles.inputContainer}>
+					<KeyboardAvoidingView
+						behavior={Platform.OS === "ios" ? "padding" : "height"}
+					>
 						<TextInput
-							style={styles.inputField}
+							style={styles.inputContainer}
 							inputStyle={{ marginLeft: 10 }}
-							placeholder='Votre mot de passe'
-							secureTextEntry={passwordVisibility}
-							onChangeText={(val) => setSignInPassword(val)}
-							value={signInPassword}
+							placeholder="Adresse E-mail"
+							keyboardType="email-address"
+							overflow="hidden"
+							keyboardAppearance="dark"
+							onChangeText={(val) => setSignInEmail(val)}
+							value={signInEmail}
 						/>
-						<Pressable onPress={handlePasswordVisibility}>
-							<MaterialCommunityIcons name={rightIcon} size={22} color="#232323" />
-						</Pressable>
-					</View>
+						<View style={styles.inputContainer}>
+							<TextInput
+								style={styles.inputField}
+								inputStyle={{ marginLeft: 10 }}
+								placeholder="Votre mot de passe"
+								secureTextEntry={passwordVisibility}
+								onChangeText={(val) => setSignInPassword(val)}
+								value={signInPassword}
+							/>
+							<Pressable onPress={handlePasswordVisibility}>
+								<MaterialCommunityIcons
+									name={rightIcon}
+									size={22}
+									color="#232323"
+								/>
+							</Pressable>
+						</View>
 
-					{tabErrorsSignin}
+						{tabErrorsSignin}
 
-					<View style={styles.screenContainer}>
-      					<AppButton title="Me connecter" size="sm"/>	
-    				</View>
+						<View style={styles.screenContainer}>
+							<AppButton title="Me connecter" size="sm" />
+						</View>
 					</KeyboardAvoidingView>
-					<View style={{marginTop:90}}>
-				<Text style={styles.goSignup}>Vous n'avez pas encore de compte ?</Text>
+					<View style={{ marginTop: 90 }}>
+						<Text style={styles.goSignup}>
+							Vous n'avez pas encore de compte ?
+						</Text>
 					</View>
-					
+
 					<View style={styles.screenContainer}>
 						<SignUp title="Créer mon compte" size="sm" />
 					</View>
-
 				</View>
-
 			</View>
-
-			
 		</ImageBackground>
-
 	);
 }
 
@@ -200,9 +194,12 @@ function SignInScreen(props) {
 function mapDispatchToProps(dispatch) {
 	return {
 		addToken: function (token) {
-			dispatch({ type: 'addToken', token: token })
+			dispatch({ type: "addToken", token: token });
+		},
+		addUsername: function (username) {
+			dispatch({ type: 'addUsername', username: username })
 		}
-	}
+	};
 }
 
 export default connect(null, mapDispatchToProps)(SignInScreen);
@@ -224,17 +221,15 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 		justifyContent: "center",
-		margin: '15%',
-		
-
+		margin: "15%",
 	},
 	baseText: {
-		fontWeight: 'bold',
-		textAlign: 'center',
+		fontWeight: "bold",
+		textAlign: "center",
 		fontSize: 50,
 		color: "#e67e22",
 		borderColor: "#fff",
-		textShadowColor: '#2c3e50',
+		textShadowColor: "#2c3e50",
 		textShadowOffset: { width: 3, height: 3 },
 		textShadowRadius: 10,
 	},
@@ -245,7 +240,7 @@ const styles = StyleSheet.create({
 	screenContainer: {
 		//flex: 1,
 		justifyContent: "center",
-		padding: 16
+		padding: 16,
 	},
 	appButtonContainer: {
 		elevation: 8,
@@ -257,7 +252,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: 10,
-
 	},
 	appButtonText: {
 		fontSize: 18,
@@ -279,8 +273,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-
-
 	},
 	appButtonText1: {
 		fontSize: 18,
@@ -289,19 +281,14 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 	},
 	inputContainer: {
-		backgroundColor: '#dfe4ea',
+		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 		justifyContent: "space-between",
 		borderWidth: 0.75,
 		padding: 10,
 		height: 55,
 		margin: 10,
-
 	},
-
-
-
-
 });

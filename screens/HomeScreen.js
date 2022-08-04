@@ -115,6 +115,7 @@ function HomeScreen(props) {
 
 				setDATA(response.addedRecipes);
 				setInitialData(response.addedRecipes);
+				console.log(response.addedRecipes, "---------------------------------------")
 			}
 			initialFetch();
 		}

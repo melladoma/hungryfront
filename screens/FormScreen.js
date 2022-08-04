@@ -75,7 +75,7 @@ function FormScreen(props) {
 		}
 		//---- envoi recette en BDD 
 		setModalOpen(true)
-		let recipeData = { recipe: recipeObj, userToken: props.token }
+		let recipeData = { recipe: recipeObj, userToken: props.token, userName: props.username }
 		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
 			method: 'POST',
 			headers: { 'Content-type': 'application/json; charset=UTF-8' },
@@ -83,8 +83,8 @@ function FormScreen(props) {
 		})
 		var response = await rawResponse.json()
 
-		var recipeToStore = response.recipeToFront
-		console.log(recipeToStore)
+		var recipeToStore = response.recipeSaved
+		console.log(response.recipeSaved, "--------")
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {
@@ -464,7 +464,7 @@ function FormScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, token: state.token };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
 }
 
 function mapDispatchToProps(dispatch) {
