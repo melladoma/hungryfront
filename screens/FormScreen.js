@@ -322,7 +322,7 @@ function FormScreen(props) {
 					placeholderTextColor={"#d35400"}
 				/>
 			
-				</View>
+			</View>
 				<View style={{
 					alignItems:"center",
 					justifyContent:"center",
