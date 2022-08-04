@@ -57,6 +57,7 @@ function SignInScreen(props) {
 		if (response.result == true) {
 			props.addToken(response.token);
 			props.addUsername(response.username)
+			props.addAvatar(response.avatar)
 			setUserExists(true);
 		} else {
 			setErrorsSignin(response.error);
@@ -198,6 +199,9 @@ function mapDispatchToProps(dispatch) {
 		},
 		addUsername: function (username) {
 			dispatch({ type: 'addUsername', username: username })
+		},
+		addAvatar: function (avatar) {
+			dispatch({ type: 'addAvatar', avatar: avatar })
 		}
 	};
 }

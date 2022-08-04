@@ -34,6 +34,8 @@ function RecipeSheetScreen(props) {
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
 
+	const [wasJustLiked, setWasJustLiked] = useState(false);
+
 	useEffect(() => {
 		if (isFocused) {
 			setRecipeData(props.recipe);
@@ -46,23 +48,61 @@ function RecipeSheetScreen(props) {
 
 	let modificationPencilIcon = null;
 	let deletionTrashIcon = null;
-	let likeHeartIcon = (
+	var likeHeartIcon = (
 		<TouchableOpacity
 			style={{}}
 			onPress={() => {
-				/* handlePressHeartIcon(props.recipe._id) */
+				 handlePressHeartIcon(props.recipe._id, props.recipe.likeCount, props.token)
 			}}
 		>
 			<MaterialCommunityIcons
 				name="heart-outline"
 				size={25}
-				color="#ff4757"
+				color="grey"
 				style={{}}
 			/>
 
 			<Text>{recipeData.likeCount}</Text>
 		</TouchableOpacity>
 	);
+
+	if (wasJustLiked) {
+	likeHeartIcon = (
+		<View>
+				<MaterialCommunityIcons
+					name="heart"
+					size={25}
+					color="#ff4757"
+					style={{}}
+				/>
+
+				<Text>{recipeData.likeCount}</Text>
+			</View>
+	);}
+
+	//Like a Recipe
+	var handlePressHeartIcon = async (id, likeCount, token) => {
+		
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/like-recipe`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `id=${id}&likecount=${likeCount}&token=${token}`,
+			}
+		);
+
+		var response = await rawResponse.json();
+		if (response.result === 1) {
+			let newLikeCount = recipeData.likeCount + 1
+			setWasJustLiked(true)
+			setRecipeData({...recipeData, likeCount: newLikeCount})
+			
+		}
+		 
+	};
 
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
@@ -182,6 +222,8 @@ function RecipeSheetScreen(props) {
 	);
 
 	//----------------------------------------------------------- Fin Boutons--------------------------------------
+	
+	
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
 	var handlePressTrashIcon = async (id) => {
 		var rawResponse = await fetch(
@@ -452,9 +494,16 @@ const styles = StyleSheet.create({
 	tag: {
 		width: 75,
 		backgroundColor: "#F19066",
-		borderRadius: 10,
+		borderRadius: 100,
 		marginLeft: 5,
 		textAlign: "center",
+		borderWidth: 1
+	},
+	tagAlign: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: 100,
 	},
 	ligne: {
 		flexDirection: "row",
@@ -468,11 +517,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginRight: 4,
 	},
-	tagAlign: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-	},
+	
 	time: {
 		width: 350,
 		height: 80,

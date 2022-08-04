@@ -35,11 +35,11 @@ function DrawerScreen(props) {
 		</View>
 	);
 
-	var avatar = "premiereLettreNomDutilisateur";
-	if ("il a fourni une image") {
+	var avatar = <Text style={{fontSize:24}}>{props.username[0].toUpperCase()}</Text>
+	if (props.avatar !== "") {
 		avatar = (
 			<Image
-				source={require("../assets/adaptive-icon.png")}
+				source={{ uri: props.avatar }}
 				style={{
 					width: 60,
 					height: 60,
@@ -48,7 +48,7 @@ function DrawerScreen(props) {
 				}}
 			></Image>
 		);
-	}
+	} 
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -249,7 +249,7 @@ function DrawerScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username, avatar: state.avatar };
 }
 
 /*function mapDispatchToProps(dispatch) {
