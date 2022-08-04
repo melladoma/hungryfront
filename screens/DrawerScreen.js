@@ -249,7 +249,7 @@ function DrawerScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
 }
 
 /*function mapDispatchToProps(dispatch) {

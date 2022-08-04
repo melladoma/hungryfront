@@ -54,28 +54,27 @@ function SignUpScreen(props) {
 	//le chemain du front au back
 	var handleSubmitSignup = async () => {
 
-		console.log('hello');
-		const data = await fetch(`http://${privateIP}:3000/users/sign-up`, {
+		const rawResponse = await fetch(`http://${privateIP}:3000/users/sign-up`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: `usernameFromFront=${signUpUsername}&emailFromFront=${signUpEmail}&passwordFromFront=${signUpPassword}&confirmPasswordFromFront=${signUpConfirmPassword}`
 		})
 
 		//
-		const body = await data.json()
-		console.log(body);
-		if (body.result == true) {
-			props.addToken(body.token)
+		const response = await rawResponse.json()
+	
+		if (response.result == true) {
+			props.addToken(response.token)
+			props.addUsername(response.username)
 			setUserExists(true)
 
 		} else {
-			setErrorsSignup(body.error)
+			setErrorsSignup(response.error)
 		}
 		//-----------------------------------------------------------------
 	}
 	useEffect(() => {
 		if (userExists) {
-			console.log("le user existe (sign-up)");
 			navigation.navigate("HomeDrawer2");
 		}
 	}, [userExists]);
@@ -250,6 +249,9 @@ function mapDispatchToProps(dispatch) {
 	return {
 		addToken: function (token) {
 			dispatch({ type: 'addToken', token: token })
+		},
+		addUsername: function (username) {
+			dispatch({ type: 'addUsername', username: username })
 		}
 	}
 }
