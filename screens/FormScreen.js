@@ -35,6 +35,8 @@ function FormScreen(props) {
 	// ETAT OBJET RECIPE
 	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "" })
 	const isFocused = useIsFocused();
+	const [nameError, setNameError] = useState(null)
+	const [numberError, setNumberError] = useState(null)
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
@@ -49,6 +51,7 @@ function FormScreen(props) {
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
 	var handleSubmitForm = async function () {
+
 		let recipeObj = { ...recipe };
 
 		//------recup du multi champs ingredients et push dans l'objet recipe
@@ -60,52 +63,65 @@ function FormScreen(props) {
 		recipeObj.privateStatus = !isEnabled;
 		recipeObj.tags = [...selectedFiltersArray];
 
-		if (image) {
-			var data = new FormData();
-			//attention ne fonctionne que sur jpg
-			data.append('image', {
-				uri: image,
-				type: 'image/jpeg',
-				name: 'recipe.jpg',
-			});
+		//verif si champs vides
+		if (recipeObj.ingredients.length === 0 || recipeObj.cookTime === "" || recipeObj.prepTime === "" || recipeObj.name === "" || recipeObj.directions === "" || recipeObj.servings === "") {
+			setNameError("Veuillez remplir tous les champs")
+		} else {
+			let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/)
+			recipeObj.prepTime = parseInt(prepTimeClean[0]);
+			let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/)
+			recipeObj.cookTime = parseInt(cookTimeClean[0]);
 
-			var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
-				method: 'post',
-				body: data
-			})
+			if (image) {
+				var data = new FormData();
+				//attention ne fonctionne que sur jpg
+				data.append('image', {
+					uri: image,
+					type: 'image/jpeg',
+					name: 'recipe.jpg',
+				});
 
-			var responseImg = await rawResponseImg.json()
+				var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+					method: 'post',
+					body: data
+				})
 
-			if (responseImg.result) {
-				recipeObj.image = responseImg.resultObj.imageUrl
+				var responseImg = await rawResponseImg.json()
+
+				if (responseImg.result) {
+					recipeObj.image = responseImg.resultObj.imageUrl
+				} else {
+					recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
+				}
+
 			} else {
 				recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 			}
 
-		} else {
-			recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
+			//---- envoi recette en BDD 
+			setModalOpen(true)
+			let recipeData = { recipe: recipeObj, userToken: props.token, userName: props.username }
+			var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
+				method: 'POST',
+				headers: { 'Content-type': 'application/json; charset=UTF-8' },
+				body: JSON.stringify(recipeData)
+			})
+			var response = await rawResponse.json()
+
+			var recipeToStore = response.recipeSaved
+			console.log(response.recipeSaved, "--------")
+
+			//---------envoi recipe traitee Backend dans store
+			if (recipeToStore) {
+				props.setRecipe(recipeToStore)
+			}
+
+			setModalOpen(false);
+			// redirection vers fiche recette
+			navigation.navigate("RecipeSheetScreen")
+
 		}
-		//---- envoi recette en BDD 
-		setModalOpen(true)
-		let recipeData = { recipe: recipeObj, userToken: props.token, userName: props.username }
-		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
-			method: 'POST',
-			headers: { 'Content-type': 'application/json; charset=UTF-8' },
-			body: JSON.stringify(recipeData)
-		})
-		var response = await rawResponse.json()
 
-		var recipeToStore = response.recipeSaved
-		console.log(response.recipeSaved, "--------")
-
-		//---------envoi recipe traitee Backend dans store
-		if (recipeToStore) {
-			props.setRecipe(recipeToStore)
-		}
-
-		setModalOpen(false);
-		// redirection vers fiche recette
-		navigation.navigate("RecipeSheetScreen")
 
 	}
 
@@ -211,7 +227,7 @@ function FormScreen(props) {
 	// ----------------------------------FIN INPUTS INGREDIENTS
 
 	//----------------------------------------SWITCH publication publique
-	const [isEnabled, setIsEnabled] = useState(false);
+	const [isEnabled, setIsEnabled] = useState(true);
 	const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 	//------------------------------------fin SWITCH publication publique
 
@@ -315,22 +331,21 @@ function FormScreen(props) {
 
 				</View>
 
-
+				<Text style={styles.label}>Temps (en minutes)</Text>
 				<View style={styles.align}>
-
 					<TextInput
 						style={styles.inputDuo}
 						onChangeText={(value) => handleChange('prepTime', value)}
 						value={recipe.prepTime}
-						placeholder={"Temps de préparation"}
+						placeholder={"Préparation (ex: 10 min)"}
 						placeholderTextColor={"#d35400"}
-
 					/>
+
 					<TextInput
 						style={styles.inputDuo}
 						onChangeText={(value) => handleChange('cookTime', value)}
 						value={recipe.cookTime}
-						placeholder={"Temps de cuisson"}
+						placeholder={"Cuisson (ex: 90 min)"}
 						placeholderTextColor={"#d35400"}
 					/>
 
@@ -416,8 +431,10 @@ function FormScreen(props) {
 				</View>
 
 				<View style={styles.screenContainer}>
+					{!!nameError && (
+						<Text style={{ color: "red", textAlign: "center" }}>{nameError}</Text>
+					)}
 					<ValidateForm title="Valider ma recette" size="sm" />
-
 				</View>
 
 				<Modal visible={modalOpen}>
@@ -431,7 +448,6 @@ function FormScreen(props) {
 						/>
 					</View>
 				</Modal>
-
 
 			</ScrollView >
 
