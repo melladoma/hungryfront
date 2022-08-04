@@ -24,6 +24,8 @@ import {
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import ScrollPicker from 'react-native-wheel-scrollview-picker';
+
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
@@ -41,6 +43,9 @@ function RecipeSheetScreen(props) {
 	);
 
 	const window = Dimensions.get("window");
+
+	//cree un etat avec le nombre de personne que le mec a mit dans le formulaire
+	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
 
 	useEffect(() => {
 		if (isFocused) {
@@ -187,6 +192,11 @@ function RecipeSheetScreen(props) {
 
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
 		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
+			//transforme le string de la quantity en INT
+			var finalQuantity=parseInt(ingredient.quantity)
+			//et la je le remplace
+			var grammes=ingredient.quantity.replace(finalQuantity,"")
+
 			return (
 				<View key={i} style={styles.ligne}>
 					<Text style={{ fontSize: 19, marginLeft: 25 }}>
@@ -194,7 +204,10 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<View>
 						<Text style={{ fontSize: 19, marginRight: 18 }}>
-							{ingredient.quantity}
+							{/* je divise la quantity par le nombre de personne qui a etais mit dans le formlaire (sa donne 1)
+								et apres je le multipli par le nombre de personne que j'ai set (et je let un Math pour mettre
+								un chiffre arrondi) */}
+							{Math.round((finalQuantity/recipeData.servings)*nbPersonne)}{grammes}
 						</Text>
 					</View>
 				</View>
@@ -335,6 +348,35 @@ function RecipeSheetScreen(props) {
 		}
 	};
 	//---------------------------------------------------------- FIN DELETE RECIPE -------------------------------------------
+	
+	const [plus, setPlus] = useState(false)
+
+	var plusPersonne
+	if (plus) {
+		
+		plusPersonne = (
+			<ScrollPicker
+				//avoir le tableau jusqu'a 100 ....
+				dataSource={[...Array(21).keys()]}
+				//mettre le compteur par defaut au nombre de personne que le mec a mit dans le formulaire
+				selectedIndex={nbPersonne}
+				onValueChange={(data, selectedIndex) => {
+					//data = la valeur que la scrollPicker renvoi et on le set dans un etat 
+					setNbPersonne(data)
+					setPlus(false)
+					
+					//console.log(data)
+				}}
+				wrapperHeight={180}
+				wrapperWidth={150}
+				wrapperColor='#FFFFFF'
+				itemHeight={60}
+				highlightColor='#f19066'
+				highlightBorderWidth={3}
+			/>
+		)
+	}
+
 	return (
 		<View style={styles.container}>
 			{/*-----------------------------------------------------Nom de recette + edit ---------------------------------------------------------  */}
@@ -416,6 +458,7 @@ function RecipeSheetScreen(props) {
 								{recipeData.cookTime}
 							</Text>
 							<Text>Cuisson</Text>
+							
 						</View>
 						<View style={{ marginRight: 8 }}>
 							<Text
@@ -425,12 +468,34 @@ function RecipeSheetScreen(props) {
 									fontSize: 24,
 								}}
 							>
-								{recipeData.servings}
+								{/* au lieu de lui mettre un recipeData.servings je lui met le nombre de personne mais ca va toujours
+									garder le nombre de personne quil a mit dans le formulaire prck dans l'etat je lai mit par defaut
+									au nombre de personne quil a mit dans le formulaire (recipeData.servings) */}
+								{nbPersonne}
+
 							</Text>
+
 							<Text>Personnes</Text>
+
 						</View>
+						
 					</View>
+							<MaterialCommunityIcons
+								name="plus-circle"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+								onPress={() => setPlus(true)}
+							/>
+					
 				</View>
+				{plusPersonne}
 
 				{/*--------------------------------------------------------------List des ingrédients ---------------------------------------------------------*/}
 				<View style={styles.ligne}>
@@ -483,6 +548,10 @@ function RecipeSheetScreen(props) {
 								<Text style={{ fontSize: 20 }}>
 									{recipeData.directions}
 								</Text>
+								{/* pour dire que les instruction sont pour le nombre de personne qui a etait mit dans le formulaire */}
+								{/* <Text style={{ fontSize: 20 }}>
+									(cette instruction est pour {recipeData.servings} personne)
+								</Text> */}
 							</View>
 							<View style={styles.screenContainer}>
 								<CloseModal
