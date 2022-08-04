@@ -19,12 +19,17 @@ import {
 	ScrollView,
 	Pressable,
 	Switch,
-	KeyboardAvoidingView, Image
+	KeyboardAvoidingView,
+	Image, 
+	ImageBackground,
+	Modal
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
 function FormScreen(props) {
+
+	const [modalOpen, setModalOpen] = useState(false);
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
@@ -69,6 +74,7 @@ function FormScreen(props) {
 			recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 		}
 		//---- envoi recette en BDD 
+		setModalOpen(true)
 		let recipeData = { recipe: recipeObj, userToken: props.token }
 		var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
 			method: 'POST',
@@ -86,6 +92,7 @@ function FormScreen(props) {
 
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
+		
 	}
 
 	//-----------------------FIN FONCTION DE SOUMISSION DU FORMULAIRE
@@ -154,25 +161,27 @@ function FormScreen(props) {
 	for (let i = 0; i < numInputs; i++) {
 		inputsIngredients.push(
 			<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-				<Text style={{ marginLeft: 10 }}>{i + 1}.</Text>
+				<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
 				<TextInput
 					style={styles.input}
 					onChangeText={value => setInputValue(i, value)}
 					value={refInputs.current[i]}
 					placeholder="ex: lait"
+					placeholderTextColor={"#d35400"}
 				/>
 				<TextInput
 					style={styles.input}
 					onChangeText={value => setInputQuantity(i, value)}
 					value={refInputsQuantity.current[i]}
 					placeholder="20cL"
+					placeholderTextColor={"#d35400"}
 				/>
 				{/* To remove the input */}
 				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
 					<MaterialCommunityIcons
 						name="close"
 						size={25}
-						color="#2f3542"
+						color="#fff"
 						style={{
 							paddingLeft: 20,
 							paddingRight: 20,
@@ -193,7 +202,7 @@ function FormScreen(props) {
 	//------------------------------------fin SWITCH publication publique
 
 	//------------------------------------------TAG LIST
-	var tags = ["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "recette de fête", "brunch"]
+	var tags = ["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique","brunch", "recette de fête" ]
 	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
 	const handlePressedChip = (name) => {
 		if (selectedFiltersArray.includes(name)) {
@@ -229,56 +238,104 @@ function FormScreen(props) {
 		</View>
 	);
 	//-----------------------------------------------------------------Fin de StatusBar
+	const AppButton = ({ onPress, title }) => (
+		<TouchableOpacity onPress={pickImage} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		  <MaterialCommunityIcons
+			name="image-multiple"
+			size={28}
+			color="#ffffff"
+			onPress={pickImage} 
+		/>
+		</TouchableOpacity>
+	  );
 
+	  const ValidateForm = ({ onPress, title }) => (
+		<TouchableOpacity onPress={() => handleSubmitForm()} style={styles.appButtonContainer}>
+		  <Text style={styles.appButtonText}>
+			{title}
+		  </Text>
+		</TouchableOpacity>
+	  );
 	//------------------------------------------------------RETURN------------------------------------------
 
 	return (
-		<View style={styles.container}>
+		<ImageBackground source={require('../assets/gold.jpg')}  style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
 				<View style={styles.title}>
-					<Text style={{ fontSize: 24, textAlign: "center" }} >Saisir la recette</Text>
+					<Text style={{ 
+						fontSize: 24,
+						textAlign: "center",
+					    }} 
+					>Ma nouvelle recette</Text>
 				</View>
 
 
-				<Text style={styles.label}>Nom de la recette</Text>
+				{/* <Text style={styles.label}>Nom de la recette</Text> */}
 				<TextInput
 					style={styles.input}
 					onChangeText={(value) => handleChange('name', value)}
 					value={recipe.name}
+					placeholder={"Nom de la recette"}
+					placeholderTextColor={"#d35400"}
 				/>
 
 
-				<Text style={styles.label}>Image</Text>
-
-
-				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-					<Button title="Pick an image from camera roll" onPress={pickImage} />
-					{image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+				{/* <Text style={styles.label}>Image</Text> */}
+			{/* <View style={styles.align}> */}
+				<View style={styles.screenContainer}>
+					<AppButton title="Ajouter une photo" size="sm" />
+					{image && 
+					<View style={styles.alignImage}>
+					<Image source={{ uri: image }} 
+					style={{ 
+						width: 400,
+						height: 250,						
+					 }} />
+					 </View>
+					 }
+				
 				</View>
+				
 
-
-				<Text style={styles.label}>Temps de préparation</Text>
+             <View style={styles.align}>
+				
 				<TextInput
-					style={styles.input}
+					style={styles.inputDuo}
 					onChangeText={(value) => handleChange('prepTime', value)}
 					value={recipe.prepTime}
+					placeholder={"Temps de préparation"}
+					placeholderTextColor={"#d35400"}
+					
 				/>
-
-				<Text style={styles.label}>Temps de cuisson</Text>
 				<TextInput
-					style={styles.input}
+					style={styles.inputDuo}
 					onChangeText={(value) => handleChange('cookTime', value)}
 					value={recipe.cookTime}
+					placeholder={"Temps de cuisson"}
+					placeholderTextColor={"#d35400"}
 				/>
-
-				<Text style={styles.label}>Nombre de personnes</Text>
+			
+				</View>
+				<View style={{
+					alignItems:"center",
+					justifyContent:"center",
+				}}>
 				<TextInput
-					style={styles.input}
+					style={styles.inputSolo}
 					onChangeText={(value) => handleChange('servings', value)}
 					value={recipe.servings}
+					placeholder={"Nombre de personnes"}
+					placeholderTextColor={"#d35400"}
 				/>
+				</View>
+				{/* <Text style={styles.label}>Nombre de personnes</Text> */}
+				
+				
 
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
@@ -287,14 +344,14 @@ function FormScreen(props) {
 					<MaterialCommunityIcons
 						name="plus"
 						size={25}
-						color="#2f3542"
+						color="#fff"
 						style={{
 							paddingTop: 10,
 							paddingBottom: 10,
 							zIndex: 1,
 						}}
 					/>
-					<Text style={{ fontWeight: 'bold' }}> Ajouter un ingrédient</Text>
+					<Text style={{ fontWeight: 'bold', color:"#fff" }}> Ajouter un ingrédient</Text>
 				</Pressable>
 
 				{/* FIN MULTIPLE INPUTS */}
@@ -310,6 +367,10 @@ function FormScreen(props) {
 						margin: 12,
 						borderWidth: 1,
 						padding: 10,
+						backgroundColor: "#dfe4ea",
+						borderWidth:0.7,
+						borderRadius: 10
+						
 					}}
 					multiline
 					onChangeText={(value) => handleChange('directions', value)}
@@ -326,12 +387,12 @@ function FormScreen(props) {
 
 
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10, marginBottom: 10 }}>
-					<Text>Partager sur le feed Hungry: </Text>
+					<Text style={styles.label}>Partager sur le feed Hungry: </Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ marginLeft: 10 }}>{isEnabled ? "Oui" : "Non"}</Text>
+						<Text style={{ marginLeft: 10, color:"#fff" }}>{isEnabled ? "Oui" : "Non"}</Text>
 						<Switch
 							style={{ marginRight: 10, marginLeft: 10 }}
-							trackColor={{ false: "#2F3542", true: "#81b0ff" }}
+							trackColor={{ false: "#2F3542", true: "#d35400" }}
 							thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
 							ios_backgroundColor="#3e3e3e"
 							onValueChange={toggleSwitch}
@@ -339,14 +400,25 @@ function FormScreen(props) {
 						/>
 					</View>
 				</View>
+				
+				<View style={styles.screenContainer}>
+					<ValidateForm title="Valider ma recette" size="sm" />
+				
+				</View>
 
+				<Modal visible={modalOpen}>
+				<View style={{ justifyContent: 'center', flex: 1 }}>
+							<Image style={{
 
-				<TouchableOpacity
-					style={styles.button}
-					title="Valider le formulaire"
-					onPress={() => handleSubmitForm()}
-				><Text style={styles.text}>Valider le formulaire</Text></TouchableOpacity>
+							}} 
+							source={require("../assets/chef.gif")}
+							resizeMode="contain"
+							resizeMethod="resize"
+							/>
+				</View>
+				</Modal>
 
+				
 			</ScrollView >
 
 
@@ -386,7 +458,7 @@ function FormScreen(props) {
 					{/* ------------------------------------Fin du formulaire */}
 				</View>
 			</View>
-		</View >
+		</ImageBackground>
 	);
 }
 
@@ -414,6 +486,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -443,9 +516,74 @@ const styles = StyleSheet.create({
 		margin: 12,
 		borderWidth: 1,
 		padding: 10,
+		backgroundColor: "#dfe4ea",
+		borderRadius:15,
+		borderWidth: 0.6,
+		
+	},
+	inputSolo: {
+		height: 40,
+		margin: 12,
+		borderWidth: 1,
+		padding: 10,
+		backgroundColor: "#dfe4ea",
+		borderRadius:15,
+		borderWidth: 0.6,
+		
+		
+	},
+	inputDuo: {
+		height: 40,
+		margin: 12,
+		borderWidth: 1,
+		padding: 10,
+		backgroundColor: "#dfe4ea",
+		borderRadius:15,
+		borderWidth: 0.6,
+		width:180,
+		
 	},
 	label: {
-		marginLeft: 10
+		marginLeft: 10,
+		color:"#fff",
+		fontSize: 16,
 
-	}
+	},
+	screenContainer: {
+		//flex: 1,
+		justifyContent: "center",
+		padding: 16
+	},
+	appButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#2F3542",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 10,
+		
+
+	},
+	appButtonText: {
+		fontSize: 18,
+		color: "#fff",
+		fontWeight: "bold",
+		alignSelf: "center",
+	},
+	 align: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+
+	},
+	alignImage: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginTop:20
+
+	},
 });
