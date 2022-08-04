@@ -235,8 +235,8 @@ function RecipeSheetScreen(props) {
 				wrapperWidth={150}
 				wrapperColor='#FFFFFF'
 				itemHeight={60}
-				highlightColor='#d8d8d8'
-				highlightBorderWidth={2}
+				highlightColor='#f19066'
+				highlightBorderWidth={3}
 			/>
 		)
 	}
@@ -336,6 +336,7 @@ function RecipeSheetScreen(props) {
 								{recipeData.cookTime}
 							</Text>
 							<Text>Cuisson</Text>
+							
 						</View>
 						<View style={{ marginRight: 8 }}>
 							<Text
@@ -349,14 +350,30 @@ function RecipeSheetScreen(props) {
 									garder le nombre de personne quil a mit dans le formulaire prck dans l'etat je lai mit par defaut
 									au nombre de personne quil a mit dans le formulaire (recipeData.servings) */}
 								{nbPersonne}
-		
+
 							</Text>
-							<Text onPress={() => setPlus(true)}>Personnes</Text>
-							
+
+							<Text>Personnes</Text>
+
 						</View>
-						{plusPersonne}
+						
 					</View>
+							<MaterialCommunityIcons
+								name="plus-circle"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+								onPress={() => setPlus(true)}
+							/>
+					
 				</View>
+				{plusPersonne}
 
 				{/*--------------------------------------------------------------List des ingrédients ---------------------------------------------------------*/}
 				<View style={styles.ligne}>
