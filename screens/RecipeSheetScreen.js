@@ -20,6 +20,7 @@ import {
 	Image,
 	ScrollView,
 	Modal,
+	Dimensions
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -28,11 +29,15 @@ TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 function RecipeSheetScreen(props) {
 	const navigation = useNavigation();
-	const [modalOpen, setModalOpen] = useState(false);
-	const [deleteRecipe, setDeleteRecipe] = useState([]);
+	
 	const isFocused = useIsFocused();
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
+	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [shadow, setShadow] = useState(false);
+
+	const window = Dimensions.get('window');
 
 	useEffect(() => {
 		if (isFocused) {
@@ -48,7 +53,7 @@ function RecipeSheetScreen(props) {
 	let deletionTrashIcon = null;
 	let likeHeartIcon = (
 		<TouchableOpacity
-			style={{}}
+			style={styles.like}
 			onPress={() => {
 				/* handlePressHeartIcon(props.recipe._id) */
 			}}
@@ -86,7 +91,9 @@ function RecipeSheetScreen(props) {
 			<TouchableOpacity
 				style={{}}
 				onPress={() => {
-					handlePressTrashIcon(props.recipe._id);
+					setDeleteModalOpen(true)
+					setShadow(true)
+					// handlePressTrashIcon(props.recipe._id);
 				}}
 			>
 				<MaterialCommunityIcons
@@ -102,7 +109,7 @@ function RecipeSheetScreen(props) {
 		);
 
 		likeHeartIcon = (
-			<View>
+			<View style={styles.like}>
 				<MaterialCommunityIcons
 					name="heart"
 					size={25}
@@ -113,8 +120,25 @@ function RecipeSheetScreen(props) {
 				<Text>{recipeData.likeCount}</Text>
 			</View>
 		);
+// ------------------------------------------------------------------A remplacer par ajouter dans ma collection ---------------------------------------------------------
+	}else{
+		deletionTrashIcon = (
+			<TouchableOpacity
+			style={{}}
+		>
+			<MaterialCommunityIcons
+				name="book-plus"
+				size={25}
+				color="#2f3542"
+				style={{
+					paddingLeft: 10,
+					marginTop: 5,
+				}}
+			/>
+		</TouchableOpacity>
+			);
 	}
-
+// ------------------------------------------------------------------ FIN A remplacer par ajouter dans ma collection ---------------------------------------------------------
 	//ce que je veux afficher ou pas:
 	/*  -le crayon et la poubelle sont là, et coeur pas cliquable et déjà 1 like, si ça vient de HomeScreen et FormScreen car c'est donc ma recette
 	-pas de crayon, ni poubelle si ça vient de FeedScreen, coeur cliquable (car a priori mes recettes s'affichent pas dans le feed)
@@ -144,14 +168,14 @@ function RecipeSheetScreen(props) {
 	if (recipeData.tags && recipeData.tags.length > 0) {
 		var tag = recipeData.tags.map((data, i) => {
 			return (
-				<View key={i} style={styles.tagAlign}>
-					<Text style={styles.tag}>{data}</Text>
+				<View style={styles.tag} key={i}>
+					<Text>{data}</Text>
 				</View>
 			);
 		});
 	}
-
-	const AppButton = ({ onPress, title }) => (
+// --------------------------------------------------------Boutons-------------------------------------------------
+	const OpenModal = ({ onPress, title }) => (
 		<TouchableOpacity
 			onPress={() => setModalOpen(true)}
 			style={styles.appButtonContainer}
@@ -179,9 +203,89 @@ function RecipeSheetScreen(props) {
 				onPress={() => setModalOpen(false)}
 			/>
 		</TouchableOpacity>
+		
 	);
 
-	//----------------------------------------------------------- Fin Boutons--------------------------------------
+	const PictureFullSize = ({ onPress}) => (
+		<Image
+						style={styles.fullSizePicture}
+						source={{
+							uri: recipeData.image,
+						}}
+		/>
+	)
+
+	// -----------------------------------------------------------Fin Boutons ----------------------------------------------------------------
+
+	// --------------------------------------------------------Modales-------------------------------------------------
+	var DeleteModalVerif = (
+		<Modal visible={deleteModalOpen}
+				animationType="slide"
+				transparent={true}
+				style={styles.deleteModal}
+				
+				>
+				<View
+						style={{
+							alignItems: "center",
+
+							// borderBottomLeftRadius: 20,
+							// borderBottomRightRadius: 20,
+							borderRadius:100,
+							backgroundColor: "#fff",
+							width: "90%",
+							height: 360,
+							marginTop:"50%",
+							marginLeft:"5%"
+							
+						}}
+					>
+						<Text
+						style={{fontSize:20,
+								alignSelf:"center",
+								textAlign:"center",
+								marginTop:"30%"
+								}}>
+							Êtes-vous certain de vouloir supprimer cette recettes ?
+						</Text>
+						<View style={styles.deleteButton}>
+					<TouchableOpacity
+					style={styles.deleteButtonContainer}
+					onPress={() => {
+					handlePressTrashIcon(props.recipe._id);
+					setShadow(false)
+					}}
+					>
+					<Text
+						style={styles.appButtonText}>
+						Oui
+					</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+					style={styles.deleteButtonContainer}
+					onPress={() => {
+						setDeleteModalOpen(false)
+						setShadow(false)
+						}}
+					> 
+					<Text
+					style={styles.appButtonText}>
+					Non
+					</Text> 
+					</TouchableOpacity>
+					</View>
+				</View>
+		</Modal>
+	)
+	var overlayShadow;
+	if (shadow) {
+		overlayShadow = (
+			<View style={[styles.overlayShadow, { height: "100%" }]} />
+		);
+	}
+//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
+
+	
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
 	var handlePressTrashIcon = async (id) => {
 		var rawResponse = await fetch(
@@ -209,27 +313,12 @@ function RecipeSheetScreen(props) {
 					{modificationPencilIcon}
 				</Text>
 
-				{/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection ---------------------------------------------------------  */}
+				{/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection + poubelle ---------------------------------------------------------  */}
 				<View style={styles.ligne}>
-					{/* <TouchableOpacity
-						style={{}}
-						onPress={() => navigation.navigate("HomeDrawer2")}
-					>
-						<MaterialCommunityIcons
-							name="book-plus"
-							size={28}
-							color="#2f3542"
-							style={{
-								paddingLeft: 20,
-								paddingRight: 20,
-								paddingTop: 10,
-								paddingBottom: 10,
-								zIndex: 1,
-							}}
-						/>
-					</TouchableOpacity> */}
+					
 
 					{deletionTrashIcon}
+					
 
 					<Text style={styles.userName}>
 						{recipeData.author.username}
@@ -254,19 +343,28 @@ function RecipeSheetScreen(props) {
 				</View>
 				{/* ------------------------------------------------------------Image + tag------------------------------------------------- */}
 				<View>
-					<Image
+				<Image
 						style={styles.recipePicture}
 						source={{
 							uri: recipeData.image,
 						}}
-					/>
+						onPress={PictureFullSize}
+						
+				/>
 				</View>
-
-				<View style={styles.ligne}>
-					{tag}
-
+				<ScrollView
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						style={{}}
+					>
+				<View style={{flexDirection:"row"}}>
+					<View style={styles.tagligne}>
+						{tag}
+					</View>
+				</View>
+				</ScrollView>
 					<View style={styles.like}>{likeHeartIcon}</View>
-				</View>
+				
 
 				{/*------------------------------------------------------------Temps de Préparation + bouton d'indentation ------------------------------------  */}
 				<View style={styles.center}>
@@ -341,16 +439,18 @@ function RecipeSheetScreen(props) {
 						/>
 					</TouchableOpacity>
 				</View>
-				<ScrollView style={{ height: 200 }}>
+				<ScrollView style={{ height: 140 }}>
 					{ingredientList}
 				</ScrollView>
 
 				{/*---------------------------------------------------------------------Modale recette pas a pas ----------------------------------------------------------  */}
 
 				<View style={styles.screenContainer}>
-					<AppButton title="Commencer à cuisiner" size="sm" />
+					<OpenModal title="Commencer à cuisiner" size="sm" />
 				</View>
-				<Modal visible={modalOpen}>
+				<Modal visible={modalOpen}
+					   animationType="slide"
+				>
 					<View style={styles.modal}>
 						<ScrollView>
 							<View>
@@ -374,7 +474,7 @@ function RecipeSheetScreen(props) {
 
 				{/* -----------------------------------------------------Commentaires----------------------------------------------------------------- */}
 
-				<View style={styles.tagAlign}>
+				<View style={styles.like}>
 					<Text style={{ fontSize: 18 }}>Commentaires</Text>
 					<MaterialCommunityIcons
 						name="comment"
@@ -403,6 +503,8 @@ function RecipeSheetScreen(props) {
 					/>
 				</TouchableOpacity>
 			</ScrollView>
+			{DeleteModalVerif}
+			{overlayShadow}
 		</View>
 	);
 }
@@ -441,20 +543,25 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 	},
 	userName: {
-		fontSize: 15,
+		fontSize: 20,
 		marginBottom: 5,
 		marginTop: 2,
+		textAlign: "center",
+		alignSelf: "center",
 	},
 	recipePicture: {
-		width: 450,
-		height: 170,
+		width: 420,
+		height: 200,
 	},
-	tag: {
-		width: 75,
+	tag: {			
 		backgroundColor: "#F19066",
-		borderRadius: 10,
+		borderRadius: 100,
 		marginLeft: 5,
 		textAlign: "center",
+		alignSelf: "center",
+		paddingVertical: 1,
+		paddingHorizontal: 10,
+		// flexDirection: "row",
 	},
 	ligne: {
 		flexDirection: "row",
@@ -462,16 +569,19 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginTop: 5,
 	},
+	tagligne: {
+		flexDirection: "row",
+		alignItems: "center",
+		// justifyContent: "space-between",
+		marginTop: 5,
+		
+		
+	},
 	like: {
 		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginRight: 4,
-	},
-	tagAlign: {
-		flexDirection: "row",
-		alignItems: "center",
+		// alignItems: "",
 		justifyContent: "center",
+		marginTop: 5,
 	},
 	time: {
 		width: 350,
@@ -504,7 +614,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		marginTop: 10,
+		// marginTop: 10,
 	},
 	appButtonText: {
 		fontSize: 18,
@@ -522,5 +632,47 @@ const styles = StyleSheet.create({
 	step: {
 		fontSize: 18,
 		textAlign: "justify",
+	},
+	fullSizePicture:{
+		width: window.width/2,
+		height: window.height/2,
+		resizeMode: "contain",
+		alignSelf: "center",
+		borderWidth: 1,
+		borderRadius: 20,
+	},
+	deleteModal: {
+		width:150,
+		height:150
+	},
+	overlayShadow: {
+		flex: 1,
+		position: "absolute",
+		left: 0,
+		top: 0,
+		opacity: 0.6,
+
+		backgroundColor: "black",
+		width: "100%",
+		height:"100%"
+	},
+	deleteButton: {
+		flexDirection: "row",
+		
+		justifyContent: "center",
+		marginTop: 40,
+		alignItems:"center"
+	},
+	deleteButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#2F3542",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		// marginRight:25,
+		width:100
 	},
 });

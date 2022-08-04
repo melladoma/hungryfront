@@ -93,6 +93,7 @@ function FormScreen(props) {
 		setModalOpen(false)
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
+
 		
 	}
 
@@ -581,9 +582,9 @@ const styles = StyleSheet.create({
 
 	},
 	alignImage: {
-		flexDirection: "row",
+		// flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "space-between",
+		// justifyContent: "space-between",
 		marginTop:20
 
 	},
