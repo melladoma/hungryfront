@@ -90,7 +90,7 @@ function FormScreen(props) {
 		if (recipeToStore) {
 			props.setRecipe(recipeToStore)
 		}
-
+		setModalOpen(false)
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
 		

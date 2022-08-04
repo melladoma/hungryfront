@@ -54,7 +54,7 @@ function RecipeSheetScreen(props) {
 			}}
 		>
 			<MaterialCommunityIcons
-				name="heart"
+				name="heart-outline"
 				size={25}
 				color="#ff4757"
 				style={{}}
