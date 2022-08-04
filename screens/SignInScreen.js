@@ -56,8 +56,10 @@ function SignInScreen(props) {
 
 		if (response.result == true) {
 			props.addToken(response.token);
+			console.log(response.token)
 			props.addUsername(response.username)
 			props.addAvatar(response.avatar)
+			props.addLikedRecipes(response.likedRecipes)
 			setUserExists(true);
 		} else {
 			setErrorsSignin(response.error);
@@ -202,7 +204,10 @@ function mapDispatchToProps(dispatch) {
 		},
 		addAvatar: function (avatar) {
 			dispatch({ type: 'addAvatar', avatar: avatar })
-		}
+		},
+		addLikedRecipes: function (likedRecipes) {
+			dispatch({ type: 'addLikedRecipes', likedRecipes: likedRecipes })
+		},
 	};
 }
 

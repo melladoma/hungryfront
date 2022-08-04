@@ -20,7 +20,7 @@ import {
 	Image,
 	ScrollView,
 	Modal,
-	Dimensions
+	Dimensions,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -29,17 +29,17 @@ TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
 function RecipeSheetScreen(props) {
 	const navigation = useNavigation();
-	
+
 	const isFocused = useIsFocused();
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [shadow, setShadow] = useState(false);
+	const [likedRecipesList, setLikedRecipesList] = useState(props.likedRecipes)
+console.log("deuxieme",likedRecipesList )
 
-	const window = Dimensions.get('window');
-
-	const [wasJustLiked, setWasJustLiked] = useState(false);
+	const window = Dimensions.get("window");
 
 	useEffect(() => {
 		if (isFocused) {
@@ -52,12 +52,29 @@ function RecipeSheetScreen(props) {
 	}, [isFocused]);
 
 	let modificationPencilIcon = null;
-	let deletionTrashIcon = null;
+	let deletionTrashIcon = (
+		<TouchableOpacity style={{}}>
+			<MaterialCommunityIcons
+				name="book-plus"
+				size={25}
+				color="#2f3542"
+				style={{
+					paddingLeft: 10,
+					marginTop: 5,
+				}}
+			/>
+		</TouchableOpacity>
+	);
+	
 	var likeHeartIcon = (
 		<TouchableOpacity
 			style={styles.like}
 			onPress={() => {
-				 handlePressHeartIcon(props.recipe._id, props.recipe.likeCount, props.token)
+				handlePressHeartIcon(
+					props.recipe._id,
+					props.token,
+					console.log(props.token, "------")
+				);
 			}}
 		>
 			<MaterialCommunityIcons
@@ -71,9 +88,10 @@ function RecipeSheetScreen(props) {
 		</TouchableOpacity>
 	);
 
-	if (wasJustLiked) {
-	likeHeartIcon = (
-		<View>
+	if (likedRecipesList.includes(recipeData._id)) {
+		
+		likeHeartIcon = (
+			<View>
 				<MaterialCommunityIcons
 					name="heart"
 					size={25}
@@ -81,13 +99,13 @@ function RecipeSheetScreen(props) {
 					style={{}}
 				/>
 
-				<Text>{recipeData.likeCount}</Text>
+				<Text>{Number(recipeData.likeCount)}</Text>
 			</View>
-	);}
+		);
+	}
 
 	//Like a Recipe
-	var handlePressHeartIcon = async (id, likeCount, token) => {
-		
+	var handlePressHeartIcon = async (id, token) => {
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/like-recipe`,
 			{
@@ -95,18 +113,15 @@ function RecipeSheetScreen(props) {
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				body: `id=${id}&likecount=${likeCount}&token=${token}`,
+				body: `id=${id}&token=${token}`,
 			}
 		);
 
 		var response = await rawResponse.json();
-		if (response.result === 1) {
-			let newLikeCount = recipeData.likeCount + 1
-			setWasJustLiked(true)
-			setRecipeData({...recipeData, likeCount: newLikeCount})
-			
-		}
-		 
+
+		setLikedRecipesList(response.likedRecipes);
+	
+		setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
 	};
 
 	if (isThisRecipeMine) {
@@ -131,8 +146,8 @@ function RecipeSheetScreen(props) {
 			<TouchableOpacity
 				style={{}}
 				onPress={() => {
-					setDeleteModalOpen(true)
-					setShadow(true)
+					setDeleteModalOpen(true);
+					setShadow(true);
 					// handlePressTrashIcon(props.recipe._id);
 				}}
 			>
@@ -147,7 +162,7 @@ function RecipeSheetScreen(props) {
 				/>
 			</TouchableOpacity>
 		);
-
+		console.log(typeof recipeData.likeCount, "ttttttttttttttttt")
 		likeHeartIcon = (
 			<View style={styles.like}>
 				<MaterialCommunityIcons
@@ -160,25 +175,10 @@ function RecipeSheetScreen(props) {
 				<Text>{recipeData.likeCount}</Text>
 			</View>
 		);
-// ------------------------------------------------------------------A remplacer par ajouter dans ma collection ---------------------------------------------------------
-	}else{
-		deletionTrashIcon = (
-			<TouchableOpacity
-			style={{}}
-		>
-			<MaterialCommunityIcons
-				name="book-plus"
-				size={25}
-				color="#2f3542"
-				style={{
-					paddingLeft: 10,
-					marginTop: 5,
-				}}
-			/>
-		</TouchableOpacity>
-			);
 	}
-// ------------------------------------------------------------------ FIN A remplacer par ajouter dans ma collection ---------------------------------------------------------
+	// ------------------------------------------------------------------A remplacer par ajouter dans ma collection ---------------------------------------------------------
+
+	// ------------------------------------------------------------------ FIN A remplacer par ajouter dans ma collection ---------------------------------------------------------
 	//ce que je veux afficher ou pas:
 	/*  -le crayon et la poubelle sont là, et coeur pas cliquable et déjà 1 like, si ça vient de HomeScreen et FormScreen car c'est donc ma recette
 	-pas de crayon, ni poubelle si ça vient de FeedScreen, coeur cliquable (car a priori mes recettes s'affichent pas dans le feed)
@@ -214,7 +214,7 @@ function RecipeSheetScreen(props) {
 			);
 		});
 	}
-// --------------------------------------------------------Boutons-------------------------------------------------
+	// --------------------------------------------------------Boutons-------------------------------------------------
 	const OpenModal = ({ onPress, title }) => (
 		<TouchableOpacity
 			onPress={() => setModalOpen(true)}
@@ -243,89 +243,82 @@ function RecipeSheetScreen(props) {
 				onPress={() => setModalOpen(false)}
 			/>
 		</TouchableOpacity>
-		
 	);
 
-	const PictureFullSize = ({ onPress}) => (
+	const PictureFullSize = ({ onPress }) => (
 		<Image
-						style={styles.fullSizePicture}
-						source={{
-							uri: recipeData.image,
-						}}
+			style={styles.fullSizePicture}
+			source={{
+				uri: recipeData.image,
+			}}
 		/>
-	)
+	);
 
 	// -----------------------------------------------------------Fin Boutons ----------------------------------------------------------------
 
 	// --------------------------------------------------------Modales-------------------------------------------------
 	var DeleteModalVerif = (
-		<Modal visible={deleteModalOpen}
-				animationType="slide"
-				transparent={true}
-				style={styles.deleteModal}
-				
-				>
-				<View
-						style={{
-							alignItems: "center",
+		<Modal
+			visible={deleteModalOpen}
+			animationType="slide"
+			transparent={true}
+			style={styles.deleteModal}
+		>
+			<View
+				style={{
+					alignItems: "center",
 
-							// borderBottomLeftRadius: 20,
-							// borderBottomRightRadius: 20,
-							borderRadius:100,
-							backgroundColor: "#fff",
-							width: "90%",
-							height: 360,
-							marginTop:"50%",
-							marginLeft:"5%"
-							
-						}}
-					>
-						<Text
-						style={{fontSize:20,
-								alignSelf:"center",
-								textAlign:"center",
-								marginTop:"30%"
-								}}>
-							Êtes-vous certain de vouloir supprimer cette recettes ?
-						</Text>
-						<View style={styles.deleteButton}>
-					<TouchableOpacity
-					style={styles.deleteButtonContainer}
-					onPress={() => {
-					handlePressTrashIcon(props.recipe._id);
-					setShadow(false)
+					// borderBottomLeftRadius: 20,
+					// borderBottomRightRadius: 20,
+					borderRadius: 100,
+					backgroundColor: "#fff",
+					width: "90%",
+					height: 360,
+					marginTop: "50%",
+					marginLeft: "5%",
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 20,
+						alignSelf: "center",
+						textAlign: "center",
+						marginTop: "30%",
 					}}
+				>
+					Êtes-vous certain de vouloir supprimer cette recettes ?
+				</Text>
+				<View style={styles.deleteButton}>
+					<TouchableOpacity
+						style={styles.deleteButtonContainer}
+						onPress={() => {
+							handlePressTrashIcon(props.recipe._id);
+							setShadow(false);
+						}}
 					>
-					<Text
-						style={styles.appButtonText}>
-						Oui
-					</Text>
+						<Text style={styles.appButtonText}>Oui</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
-					style={styles.deleteButtonContainer}
-					onPress={() => {
-						setDeleteModalOpen(false)
-						setShadow(false)
+						style={styles.deleteButtonContainer}
+						onPress={() => {
+							setDeleteModalOpen(false);
+							setShadow(false);
 						}}
-					> 
-					<Text
-					style={styles.appButtonText}>
-					Non
-					</Text> 
+					>
+						<Text style={styles.appButtonText}>Non</Text>
 					</TouchableOpacity>
-					</View>
 				</View>
+			</View>
 		</Modal>
-	)
+	);
 	var overlayShadow;
 	if (shadow) {
 		overlayShadow = (
 			<View style={[styles.overlayShadow, { height: "100%" }]} />
 		);
 	}
-//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
+	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
 
-	
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
 	var handlePressTrashIcon = async (id) => {
 		var rawResponse = await fetch(
@@ -340,7 +333,9 @@ function RecipeSheetScreen(props) {
 		);
 
 		var response = await rawResponse.json();
-		response.result === true ? navigation.goBack() : navigation.goBack(); //REMPLACER PAR :faire apparaitre modal qui dit qu'il y a eu une erreur !!!!!!!!!!!
+		if (response.result === true) {
+			navigation.navigate("HomeDrawer2");
+		}
 	};
 	//---------------------------------------------------------- FIN DELETE RECIPE -------------------------------------------
 	return (
@@ -355,10 +350,7 @@ function RecipeSheetScreen(props) {
 
 				{/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection + poubelle ---------------------------------------------------------  */}
 				<View style={styles.ligne}>
-					
-
 					{deletionTrashIcon}
-					
 
 					<Text style={styles.userName}>
 						{recipeData.author.username}
@@ -383,30 +375,25 @@ function RecipeSheetScreen(props) {
 				</View>
 				{/* ------------------------------------------------------------Image + tag------------------------------------------------- */}
 				<View>
-				<Image
+					<Image
 						style={styles.recipePicture}
 						source={{
 							uri: recipeData.image,
 						}}
 						onPress={PictureFullSize}
-						
-				/>
+					/>
 				</View>
 				<ScrollView
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						style={{}}
-					>
-				<View style={{flexDirection:"row"}}>
-					<View style={styles.tagligne}>
-						{tag}
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					style={{}}
+				>
+					<View style={{ flexDirection: "row" }}>
+						<View style={styles.tagligne}>{tag}</View>
 					</View>
-				</View>
 				</ScrollView>
-					<View style={styles.like}>{likeHeartIcon}</View>
-				
+				<View style={styles.like}>{likeHeartIcon}</View>
 
-				{/*------------------------------------------------------------Temps de Préparation + bouton d'indentation ------------------------------------  */}
 				<View style={styles.center}>
 					<View style={styles.time}>
 						<View style={{ marginLeft: 8 }}>
@@ -488,9 +475,7 @@ function RecipeSheetScreen(props) {
 				<View style={styles.screenContainer}>
 					<OpenModal title="Commencer à cuisiner" size="sm" />
 				</View>
-				<Modal visible={modalOpen}
-					   animationType="slide"
-				>
+				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
 						<ScrollView>
 							<View>
@@ -528,7 +513,7 @@ function RecipeSheetScreen(props) {
 
 				<TouchableOpacity
 					style={{}}
-					onPress={() => navigation.navigate("HomeDrawer2")}
+					onPress={() => navigation.navigate("Home")}
 				>
 					<MaterialCommunityIcons
 						name="arrow-left"
@@ -554,6 +539,7 @@ function mapStateToProps(state) {
 		bottomTabHeight: state.bottomTabHeight,
 		recipe: state.recipe,
 		token: state.token,
+		likedRecipes: state.likedRecipes
 	};
 }
 
@@ -593,7 +579,7 @@ const styles = StyleSheet.create({
 		width: 420,
 		height: 200,
 	},
-	tag: {			
+	tag: {
 		backgroundColor: "#F19066",
 		borderRadius: 100,
 		marginLeft: 5,
@@ -614,8 +600,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		// justifyContent: "space-between",
 		marginTop: 5,
-		
-		
 	},
 	like: {
 		flexDirection: "row",
@@ -673,17 +657,17 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		textAlign: "justify",
 	},
-	fullSizePicture:{
-		width: window.width/2,
-		height: window.height/2,
+	fullSizePicture: {
+		width: window.width / 2,
+		height: window.height / 2,
 		resizeMode: "contain",
 		alignSelf: "center",
 		borderWidth: 1,
 		borderRadius: 20,
 	},
 	deleteModal: {
-		width:150,
-		height:150
+		width: 150,
+		height: 150,
 	},
 	overlayShadow: {
 		flex: 1,
@@ -694,14 +678,14 @@ const styles = StyleSheet.create({
 
 		backgroundColor: "black",
 		width: "100%",
-		height:"100%"
+		height: "100%",
 	},
 	deleteButton: {
 		flexDirection: "row",
-		
+
 		justifyContent: "center",
 		marginTop: 40,
-		alignItems:"center"
+		alignItems: "center",
 	},
 	deleteButtonContainer: {
 		elevation: 8,
@@ -713,6 +697,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		// marginRight:25,
-		width:100
+		width: 100,
 	},
 });
