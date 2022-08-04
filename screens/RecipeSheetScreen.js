@@ -36,8 +36,9 @@ function RecipeSheetScreen(props) {
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [shadow, setShadow] = useState(false);
-	const [likedRecipesList, setLikedRecipesList] = useState(props.likedRecipes)
-console.log("deuxieme",likedRecipesList )
+	const [likedRecipesList, setLikedRecipesList] = useState(
+		props.likedRecipes
+	);
 
 	const window = Dimensions.get("window");
 
@@ -65,16 +66,12 @@ console.log("deuxieme",likedRecipesList )
 			/>
 		</TouchableOpacity>
 	);
-	
+
 	var likeHeartIcon = (
 		<TouchableOpacity
 			style={styles.like}
 			onPress={() => {
-				handlePressHeartIcon(
-					props.recipe._id,
-					props.token,
-					console.log(props.token, "------")
-				);
+				handlePressHeartIcon(props.recipe._id, props.token);
 			}}
 		>
 			<MaterialCommunityIcons
@@ -89,9 +86,8 @@ console.log("deuxieme",likedRecipesList )
 	);
 
 	if (likedRecipesList.includes(recipeData._id)) {
-		
 		likeHeartIcon = (
-			<View>
+			<View style={styles.like}>
 				<MaterialCommunityIcons
 					name="heart"
 					size={25}
@@ -120,7 +116,8 @@ console.log("deuxieme",likedRecipesList )
 		var response = await rawResponse.json();
 
 		setLikedRecipesList(response.likedRecipes);
-	
+		props.addLikedRecipes(response.likedRecipes);
+
 		setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
 	};
 
@@ -162,7 +159,7 @@ console.log("deuxieme",likedRecipesList )
 				/>
 			</TouchableOpacity>
 		);
-		console.log(typeof recipeData.likeCount, "ttttttttttttttttt")
+
 		likeHeartIcon = (
 			<View style={styles.like}>
 				<MaterialCommunityIcons
@@ -539,19 +536,25 @@ function mapStateToProps(state) {
 		bottomTabHeight: state.bottomTabHeight,
 		recipe: state.recipe,
 		token: state.token,
-		likedRecipes: state.likedRecipes
+		likedRecipes: state.likedRecipes,
 	};
 }
 
-/*function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
 	return {
 		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+			dispatch({
+				type: "initializeBottomTabHeight",
+				bottomTabHeight: bottomTabHeight,
+			});
+		},
+		addLikedRecipes: function (likedRecipes) {
+			dispatch({ type: "addLikedRecipes", likedRecipes: likedRecipes });
 		},
 	};
-}*/
+}
 
-export default connect(mapStateToProps, null)(RecipeSheetScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeSheetScreen);
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
@@ -603,6 +606,7 @@ const styles = StyleSheet.create({
 	},
 	like: {
 		flexDirection: "row",
+		alignItems: "center",
 		// alignItems: "",
 		justifyContent: "center",
 		marginTop: 5,
