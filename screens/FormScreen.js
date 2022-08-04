@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { connect } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import * as ImagePicker from 'expo-image-picker';
@@ -20,7 +20,7 @@ import {
 	Pressable,
 	Switch,
 	KeyboardAvoidingView,
-	Image, 
+	Image,
 	ImageBackground,
 	Modal
 } from "react-native";
@@ -33,12 +33,24 @@ function FormScreen(props) {
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
-	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [] })
+	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "" })
+	const isFocused = useIsFocused();
+
+	//RECUPERATION DU STORE SI EXISTE
+	useEffect(() => {
+		if (isFocused) {
+			if (props.recipe._id) {
+				setRecipe(props.recipe);
+			}
+		}
+	}, [isFocused]);
+
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
 	var handleSubmitForm = async function () {
-		let recipeObj = recipe;
+		let recipeObj = { ...recipe };
+
 		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
 		for (let i = 0; i < numInputs; i++) {
@@ -91,9 +103,10 @@ function FormScreen(props) {
 			props.setRecipe(recipeToStore)
 		}
 
+		setModalOpen(false);
 		// redirection vers fiche recette
 		navigation.navigate("RecipeSheetScreen")
-		
+
 	}
 
 	//-----------------------FIN FONCTION DE SOUMISSION DU FORMULAIRE
@@ -203,7 +216,7 @@ function FormScreen(props) {
 	//------------------------------------fin SWITCH publication publique
 
 	//------------------------------------------TAG LIST
-	var tags = ["entrée", "plat", "dessert", "amuse-bouche", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique","brunch", "recette de fête" ]
+	var tags = ["entrée", "plat", "dessert", "apéro", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "brunch", "festif"]
 	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
 	const handlePressedChip = (name) => {
 		if (selectedFiltersArray.includes(name)) {
@@ -241,37 +254,37 @@ function FormScreen(props) {
 	//-----------------------------------------------------------------Fin de StatusBar
 	const AppButton = ({ onPress, title }) => (
 		<TouchableOpacity onPress={pickImage} style={styles.appButtonContainer}>
-		  <Text style={styles.appButtonText}>
-			{title}
-		  </Text>
-		  <MaterialCommunityIcons
-			name="image-multiple"
-			size={28}
-			color="#ffffff"
-			onPress={pickImage} 
-		/>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
+			<MaterialCommunityIcons
+				name="image-multiple"
+				size={28}
+				color="#ffffff"
+				onPress={pickImage}
+			/>
 		</TouchableOpacity>
-	  );
+	);
 
-	  const ValidateForm = ({ onPress, title }) => (
+	const ValidateForm = ({ onPress, title }) => (
 		<TouchableOpacity onPress={() => handleSubmitForm()} style={styles.appButtonContainer}>
-		  <Text style={styles.appButtonText}>
-			{title}
-		  </Text>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
 		</TouchableOpacity>
-	  );
+	);
 	//------------------------------------------------------RETURN------------------------------------------
 
 	return (
-		<ImageBackground source={require('../assets/gold.jpg')}  style={styles.container} >
+		<ImageBackground source={require('../assets/gold.jpg')} style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
 				<View style={styles.title}>
-					<Text style={{ 
+					<Text style={{
 						fontSize: 24,
 						textAlign: "center",
-					    }} 
+					}}
 					>Ma nouvelle recette</Text>
 				</View>
 
@@ -287,56 +300,56 @@ function FormScreen(props) {
 
 
 				{/* <Text style={styles.label}>Image</Text> */}
-			{/* <View style={styles.align}> */}
+				{/* <View style={styles.align}> */}
 				<View style={styles.screenContainer}>
 					<AppButton title="Ajouter une photo" size="sm" />
-					{image && 
-					<View style={styles.alignImage}>
-					<Image source={{ uri: image }} 
-					style={{ 
-						width: 400,
-						height: 250,						
-					 }} />
-					 </View>
-					 }
-				
-				</View>
-				
+					{image &&
+						<View style={styles.alignImage}>
+							<Image source={{ uri: image }}
+								style={{
+									width: 400,
+									height: 250,
+								}} />
+						</View>
+					}
 
-             <View style={styles.align}>
-				
-				<TextInput
-					style={styles.inputDuo}
-					onChangeText={(value) => handleChange('prepTime', value)}
-					value={recipe.prepTime}
-					placeholder={"Temps de préparation"}
-					placeholderTextColor={"#d35400"}
-					
-				/>
-				<TextInput
-					style={styles.inputDuo}
-					onChangeText={(value) => handleChange('cookTime', value)}
-					value={recipe.cookTime}
-					placeholder={"Temps de cuisson"}
-					placeholderTextColor={"#d35400"}
-				/>
-			
+				</View>
+
+
+				<View style={styles.align}>
+
+					<TextInput
+						style={styles.inputDuo}
+						onChangeText={(value) => handleChange('prepTime', value)}
+						value={recipe.prepTime}
+						placeholder={"Temps de préparation"}
+						placeholderTextColor={"#d35400"}
+
+					/>
+					<TextInput
+						style={styles.inputDuo}
+						onChangeText={(value) => handleChange('cookTime', value)}
+						value={recipe.cookTime}
+						placeholder={"Temps de cuisson"}
+						placeholderTextColor={"#d35400"}
+					/>
+
 				</View>
 				<View style={{
-					alignItems:"center",
-					justifyContent:"center",
+					alignItems: "center",
+					justifyContent: "center",
 				}}>
-				<TextInput
-					style={styles.inputSolo}
-					onChangeText={(value) => handleChange('servings', value)}
-					value={recipe.servings}
-					placeholder={"Nombre de personnes"}
-					placeholderTextColor={"#d35400"}
-				/>
+					<TextInput
+						style={styles.inputSolo}
+						onChangeText={(value) => handleChange('servings', value)}
+						value={recipe.servings}
+						placeholder={"Nombre de personnes"}
+						placeholderTextColor={"#d35400"}
+					/>
 				</View>
 				{/* <Text style={styles.label}>Nombre de personnes</Text> */}
-				
-				
+
+
 
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
@@ -352,7 +365,7 @@ function FormScreen(props) {
 							zIndex: 1,
 						}}
 					/>
-					<Text style={{ fontWeight: 'bold', color:"#fff" }}> Ajouter un ingrédient</Text>
+					<Text style={{ fontWeight: 'bold', color: "#fff" }}> Ajouter un ingrédient</Text>
 				</Pressable>
 
 				{/* FIN MULTIPLE INPUTS */}
@@ -369,9 +382,9 @@ function FormScreen(props) {
 						borderWidth: 1,
 						padding: 10,
 						backgroundColor: "#dfe4ea",
-						borderWidth:0.7,
+						borderWidth: 0.7,
 						borderRadius: 10
-						
+
 					}}
 					multiline
 					onChangeText={(value) => handleChange('directions', value)}
@@ -390,7 +403,7 @@ function FormScreen(props) {
 				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10, marginBottom: 10 }}>
 					<Text style={styles.label}>Partager sur le feed Hungry: </Text>
 					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text style={{ marginLeft: 10, color:"#fff" }}>{isEnabled ? "Oui" : "Non"}</Text>
+						<Text style={{ marginLeft: 10, color: "#fff" }}>{isEnabled ? "Oui" : "Non"}</Text>
 						<Switch
 							style={{ marginRight: 10, marginLeft: 10 }}
 							trackColor={{ false: "#2F3542", true: "#d35400" }}
@@ -401,25 +414,25 @@ function FormScreen(props) {
 						/>
 					</View>
 				</View>
-				
+
 				<View style={styles.screenContainer}>
 					<ValidateForm title="Valider ma recette" size="sm" />
-				
+
 				</View>
 
 				<Modal visible={modalOpen}>
-				<View style={{ justifyContent: 'center', flex: 1 }}>
-							<Image style={{
+					<View style={{ justifyContent: 'center', flex: 1 }}>
+						<Image style={{
 
-							}} 
+						}}
 							source={require("../assets/chef.gif")}
 							resizeMode="contain"
 							resizeMethod="resize"
-							/>
-				</View>
+						/>
+					</View>
 				</Modal>
 
-				
+
 			</ScrollView >
 
 
@@ -464,7 +477,7 @@ function FormScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username, recipe: state.recipe };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -487,7 +500,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		
+
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -518,9 +531,9 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 		backgroundColor: "#dfe4ea",
-		borderRadius:15,
+		borderRadius: 15,
 		borderWidth: 0.6,
-		
+
 	},
 	inputSolo: {
 		height: 40,
@@ -528,10 +541,10 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 		backgroundColor: "#dfe4ea",
-		borderRadius:15,
+		borderRadius: 15,
 		borderWidth: 0.6,
-		
-		
+
+
 	},
 	inputDuo: {
 		height: 40,
@@ -539,14 +552,14 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
 		backgroundColor: "#dfe4ea",
-		borderRadius:15,
+		borderRadius: 15,
 		borderWidth: 0.6,
-		width:180,
-		
+		width: 180,
+
 	},
 	label: {
 		marginLeft: 10,
-		color:"#fff",
+		color: "#fff",
 		fontSize: 16,
 
 	},
@@ -565,7 +578,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: 10,
-		
+
 
 	},
 	appButtonText: {
@@ -574,7 +587,7 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		alignSelf: "center",
 	},
-	 align: {
+	align: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
@@ -584,7 +597,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		marginTop:20
+		marginTop: 20
 
 	},
 });

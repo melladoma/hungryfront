@@ -72,7 +72,7 @@ function HomeScreen(props) {
 		"entrée",
 		"plat",
 		"dessert",
-		"amuse-bouche",
+		"apéro",
 		"boisson",
 		"asiatique",
 		"américain",
@@ -81,7 +81,7 @@ function HomeScreen(props) {
 		"végétarien",
 		"rapide",
 		"gastronomique",
-		"recette de fête",
+		"festif",
 		"brunch",
 	];
 	const [selectedTagsArray, setSelectedTagsArray] = useState([]);
@@ -115,7 +115,7 @@ function HomeScreen(props) {
 
 				setDATA(response.addedRecipes);
 				setInitialData(response.addedRecipes);
-				console.log(response.addedRecipes, "---------------------------------------")
+				// console.log(response.addedRecipes, "---------------------------------------")
 			}
 			initialFetch();
 		}
