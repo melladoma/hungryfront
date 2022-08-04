@@ -374,6 +374,7 @@ function FormScreen(props) {
 					value={recipe.name}
 					placeholder={"Nom de la recette"}
 					placeholderTextColor={"#d35400"}
+					maxLength={26}
 				/>
 
 				{/* <Text style={styles.label}>Image</Text> */}
@@ -406,6 +407,7 @@ function FormScreen(props) {
 								placeholder={"Heures"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
+								maxLength={2}
 							/>
 							<TextInput
 								style={styles.inputDuo}
@@ -416,6 +418,7 @@ function FormScreen(props) {
 								placeholder={"Min"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
+								maxLength={2}
 							/>
 						</View>
 						</View>
@@ -432,6 +435,7 @@ function FormScreen(props) {
 								placeholder={"Heures"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
+								maxLength={2}
 							/>
 							<TextInput
 								style={styles.inputDuo}
@@ -442,6 +446,7 @@ function FormScreen(props) {
 								placeholder={"Min"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
+								maxLength={2}
 							/>
 						</View>
 					</View>
@@ -460,6 +465,7 @@ function FormScreen(props) {
 						value={recipe.servings}
 						placeholder={"Nombre de personnes"}
 						placeholderTextColor={"#d35400"}
+						maxLength={2}
 					/>
 				</View>
 				{/* <Text style={styles.label}>Nombre de personnes</Text> */}
