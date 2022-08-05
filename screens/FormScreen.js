@@ -3,8 +3,9 @@ import { connect } from "react-redux";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { privateIP } from "../env.js";
+import * as ImagePicker from 'expo-image-picker';
+import { privateIP } from "../env.js"
+
 
 import {
 	StatusBar,
@@ -21,139 +22,112 @@ import {
 	KeyboardAvoidingView,
 	Image,
 	ImageBackground,
-	Modal,
+	Modal
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+
 function FormScreen(props) {
+
 	const [modalOpen, setModalOpen] = useState(false);
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
-	const [recipe, setRecipe] = useState({
-		name: "",
-		image: "",
-		prepTime: "",
-		cookTime: "",
-		directions: "",
-		servings: "",
-		privateStatus: "",
-		tags: [],
-		recipeId: "",
-	});
+	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "" })
 	const isFocused = useIsFocused();
-	const [nameError, setNameError] = useState(null);
-	const [numberError, setNumberError] = useState(null);
+	const [nameError, setNameError] = useState(null)
+	const [numberError, setNumberError] = useState(null)
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
 		if (isFocused) {
-			if (props.recipe._id) {
+			if (props.recipe.name) {
 				setRecipe(props.recipe);
 			}
+
 		}
 	}, [isFocused]);
+
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
 	var handleSubmitForm = async function () {
+
 		let recipeObj = { ...recipe };
 
 		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
 		for (let i = 0; i < numInputs; i++) {
-			recipeIngredientsCopy.push({
-				name: refInputs.current[i],
-				quantity: refInputsQuantity.current[i],
-			});
+			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
 		}
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
 		recipeObj.tags = [...selectedFiltersArray];
 
 		//verif si champs vides
-		if (
-			recipeObj.ingredients.length === 0 ||
-			recipeObj.cookTime === "" ||
-			recipeObj.prepTime === "" ||
-			recipeObj.name === "" ||
-			recipeObj.directions === "" ||
-			recipeObj.servings === ""
-		) {
-			setNameError("Veuillez remplir tous les champs");
+		if (recipeObj.ingredients.length === 0 || recipeObj.cookTime === "" || recipeObj.prepTime === "" || recipeObj.name === "" || recipeObj.directions === "" || recipeObj.servings === "") {
+			setNameError("Veuillez remplir tous les champs")
 		} else {
-			let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/);
+			let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/)
 			recipeObj.prepTime = parseInt(prepTimeClean[0]);
-			let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/);
+			let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/)
 			recipeObj.cookTime = parseInt(cookTimeClean[0]);
 
 			if (image) {
 				var data = new FormData();
 				//attention ne fonctionne que sur jpg
-				data.append("image", {
+				data.append('image', {
 					uri: image,
-					type: "image/jpeg",
-					name: "recipe.jpg",
+					type: 'image/jpeg',
+					name: 'recipe.jpg',
 				});
 
-				var rawResponseImg = await fetch(
-					`http://${privateIP}:3000/upload-image`,
-					{
-						method: "post",
-						body: data,
-					}
-				);
+				var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+					method: 'post',
+					body: data
+				})
 
-				var responseImg = await rawResponseImg.json();
+				var responseImg = await rawResponseImg.json()
 
 				if (responseImg.result) {
-					recipeObj.image = responseImg.resultObj.imageUrl;
+					recipeObj.image = responseImg.resultObj.imageUrl
 				} else {
-					recipeObj.image =
-						"https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png";
+					recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 				}
+
 			} else {
-				recipeObj.image =
-					"https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png";
+				recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 			}
 
-			//---- envoi recette en BDD
-			setModalOpen(true);
-			let recipeData = {
-				recipe: recipeObj,
-				userToken: props.token,
-				userName: props.username,
-			};
-			var rawResponse = await fetch(
-				`http://${privateIP}:3000/validate-form`,
-				{
-					method: "POST",
-					headers: {
-						"Content-type": "application/json; charset=UTF-8",
-					},
-					body: JSON.stringify(recipeData),
-				}
-			);
-			var response = await rawResponse.json();
+			//---- envoi recette en BDD 
+			setModalOpen(true)
+			let recipeData = { recipe: recipeObj, userToken: props.token, userName: props.username }
+			var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
+				method: 'POST',
+				headers: { 'Content-type': 'application/json; charset=UTF-8' },
+				body: JSON.stringify(recipeData)
+			})
+			var response = await rawResponse.json()
 
-			var recipeToStore = response.recipeSaved;
-			console.log(response.recipeSaved, "--------");
+			var recipeToStore = response.recipeSaved
+			console.log(response.recipeSaved, "--------")
 
 			//---------envoi recipe traitee Backend dans store
 			if (recipeToStore) {
-				props.setRecipe(recipeToStore);
+				props.setRecipe(recipeToStore)
 			}
 
 			setModalOpen(false);
 			// redirection vers fiche recette
-			navigation.navigate("RecipeSheetScreen");
+			navigation.navigate("RecipeSheetScreen")
+
 		}
-	};
+
+	}
 
 	//-----------------------FIN FONCTION DE SOUMISSION DU FORMULAIRE
 
 	//-------------FONCTION MISE A JOUR DES CHAMPS SUR LE STATE RECIPE
-
 	const handleChange = (name, value) => {
 		setRecipe({
 			...recipe,
@@ -182,66 +156,58 @@ function FormScreen(props) {
 	//----------------------------------FIN IMAGE PICKER
 
 	// ----------------------------------INPUTS INGREDIENTS
-	const [textValue, setTextValue] = useState("");
+	const [textValue, setTextValue] = useState('');
 	const [numInputs, setNumInputs] = useState(1);
 	const refInputs = useRef([textValue]);
-	const [numValue, setNumValue] = useState("");
+	const [numValue, setNumValue] = useState('');
 	const refInputsQuantity = useRef([numValue]);
 
 	const setInputValue = (index, value) => {
 		const inputs = refInputs.current;
 		inputs[index] = value;
-		setTextValue(value);
-	};
+		setTextValue(value)
+	}
 	const setInputQuantity = (index, value) => {
 		const inputsQuantity = refInputsQuantity.current;
 		inputsQuantity[index] = value;
-		setNumValue(value);
-	};
+		setNumValue(value)
+	}
 	const addInput = () => {
 		// add a new element in our refInputs array
-		refInputs.current.push("");
-		refInputsQuantity.current.push("");
+		refInputs.current.push('');
+		refInputsQuantity.current.push('');
 		// increase the number of inputs
-		setNumInputs((value) => value + 1);
-	};
+		setNumInputs(value => value + 1);
+	}
 	const removeInput = (i) => {
 		// remove from the array by index value
 		refInputs.current.splice(i, 1)[0];
 		refInputsQuantity.current.splice(i, 1)[0];
 		// decrease the number of inputs
-		setNumInputs((value) => value - 1);
-	};
+		setNumInputs(value => value - 1);
+	}
 
 	const inputsIngredients = [];
 	for (let i = 0; i < numInputs; i++) {
 		inputsIngredients.push(
-			<View
-				key={i}
-				style={{ flexDirection: "row", alignItems: "center" }}
-			>
+			<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
 				<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setInputValue(i, value)}
+					onChangeText={value => setInputValue(i, value)}
 					value={refInputs.current[i]}
 					placeholder="ex: lait"
 					placeholderTextColor={"#d35400"}
 				/>
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => setInputQuantity(i, value)}
+					onChangeText={value => setInputQuantity(i, value)}
 					value={refInputsQuantity.current[i]}
-					placeholder="20cl"
+					placeholder="20cL"
 					placeholderTextColor={"#d35400"}
-					keyboardType="numeric"
 				/>
-
 				{/* To remove the input */}
-				<Pressable
-					onPress={() => removeInput(i)}
-					style={{ marginLeft: 5 }}
-				>
+				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
 					<MaterialCommunityIcons
 						name="close"
 						size={25}
@@ -262,26 +228,11 @@ function FormScreen(props) {
 
 	//----------------------------------------SWITCH publication publique
 	const [isEnabled, setIsEnabled] = useState(true);
-	const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+	const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 	//------------------------------------fin SWITCH publication publique
 
 	//------------------------------------------TAG LIST
-	var tags = [
-		"entrée",
-		"plat",
-		"dessert",
-		"apéro",
-		"boisson",
-		"asiatique",
-		"américaine",
-		"italien",
-		"diététique",
-		"végétarien",
-		"rapide",
-		"gastronomique",
-		"brunch",
-		"festif",
-	];
+	var tags = ["entrée", "plat", "dessert", "apéro", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "brunch", "festif"]
 	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
 	const handlePressedChip = (name) => {
 		if (selectedFiltersArray.includes(name)) {
@@ -293,22 +244,13 @@ function FormScreen(props) {
 	};
 
 	var tagList = tags.map((item, index) => {
-		var color = selectedFiltersArray.includes(item) ? "#F19066" : "#dfe4ea";
-		return (
-			<TouchableOpacity
-				key={index}
-				style={{
-					backgroundColor: color,
-					padding: 10,
-					margin: 5,
-					borderRadius: 5,
-				}}
-				onPress={() => handlePressedChip(item)}
-			>
-				<Text>{item}</Text>
-			</TouchableOpacity>
-		);
-	});
+		var color = selectedFiltersArray.includes(item) ? "#F19066" : "#dfe4ea"
+		return <TouchableOpacity key={index}
+			style={{ backgroundColor: color, padding: 10, margin: 5, borderRadius: 5 }}
+			onPress={() => handlePressedChip(item)}>
+			<Text>{item}</Text>
+		</TouchableOpacity >
+	})
 
 	//-------------------------------------------FIN TAG LIST
 
@@ -328,7 +270,9 @@ function FormScreen(props) {
 	//-----------------------------------------------------------------Fin de StatusBar
 	const AppButton = ({ onPress, title }) => (
 		<TouchableOpacity onPress={pickImage} style={styles.appButtonContainer}>
-			<Text style={styles.appButtonText}>{title}</Text>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
 			<MaterialCommunityIcons
 				name="image-multiple"
 				size={28}
@@ -339,149 +283,93 @@ function FormScreen(props) {
 	);
 
 	const ValidateForm = ({ onPress, title }) => (
-		<TouchableOpacity
-			onPress={() => handleSubmitForm()}
-			style={styles.appButtonContainer}
-		>
-			<Text style={styles.appButtonText}>{title}</Text>
+		<TouchableOpacity onPress={() => handleSubmitForm()} style={styles.appButtonContainer}>
+			<Text style={styles.appButtonText}>
+				{title}
+			</Text>
 		</TouchableOpacity>
 	);
 	//------------------------------------------------------RETURN------------------------------------------
 
 	return (
-		<ImageBackground
-			source={require("../assets/gold.jpg")}
-			style={styles.container}
-		>
+		<ImageBackground source={require('../assets/gold.jpg')} style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
 				<View style={styles.title}>
-					<Text
-						style={{
-							fontSize: 24,
-							textAlign: "center",
-						}}
-					>
-						Ma nouvelle recette
-					</Text>
+					<Text style={{
+						fontSize: 24,
+						textAlign: "center",
+					}}
+					>Ma nouvelle recette</Text>
 				</View>
+
 
 				{/* <Text style={styles.label}>Nom de la recette</Text> */}
 				<TextInput
 					style={styles.input}
-					onChangeText={(value) => handleChange("name", value)}
+					onChangeText={(value) => handleChange('name', value)}
 					value={recipe.name}
 					placeholder={"Nom de la recette"}
 					placeholderTextColor={"#d35400"}
-					maxLength={26}
 				/>
+
 
 				{/* <Text style={styles.label}>Image</Text> */}
 				{/* <View style={styles.align}> */}
 				<View style={styles.screenContainer}>
 					<AppButton title="Ajouter une photo" size="sm" />
-					{image && (
+					{image &&
 						<View style={styles.alignImage}>
-							<Image
-								source={{ uri: image }}
+							<Image source={{ uri: image }}
 								style={{
 									width: 400,
 									height: 250,
-								}}
-							/>
+								}} />
 						</View>
-					)}
+					}
+
 				</View>
 
-				<View style={{ display: "flex", flexDirection: "row" }}>
-					<View style={{ display: "flex", flexDirection: "column", width:"50%", borderWidth:1 }}>
-						<Text style={{alignSelf:"center", color:"white"}}>Temps de préparation</Text>
-						<View style={{display:"flex", flexDirection:"row"}}>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("prepTime", value)
-								}
-								value={recipe.prepTime}
-								placeholder={"Heures"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
-							/>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("prepTime", value)
-								}
-								value={recipe.prepTime}
-								placeholder={"Min"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
-							/>
-						</View>
-						</View>
+				<Text style={styles.label}>Temps (en minutes)</Text>
+				<View style={styles.align}>
+					<TextInput
+						style={styles.inputDuo}
+						onChangeText={(value) => handleChange('prepTime', value)}
+						value={recipe.prepTime}
+						placeholder={"Préparation (ex: 10 min)"}
+						placeholderTextColor={"#d35400"}
+					/>
 
-						<View style={{ display: "flex", flexDirection: "column" , width:"50%", borderWidth:1 }}>
-						<Text style={{alignSelf:"center", color:"white"}}>Temps de cuisson</Text>
-						<View style={{display:"flex", flexDirection:"row"}}>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("cookTime", value)
-								}
-								value={recipe.cookTime}
-								placeholder={"Heures"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
-							/>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("cookTime", value)
-								}
-								value={recipe.cookTime}
-								placeholder={"Min"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
-							/>
-						</View>
-					</View>
+					<TextInput
+						style={styles.inputDuo}
+						onChangeText={(value) => handleChange('cookTime', value)}
+						value={recipe.cookTime}
+						placeholder={"Cuisson (ex: 90 min)"}
+						placeholderTextColor={"#d35400"}
+					/>
+
 				</View>
-				<View
-					style={{
-						alignItems: "center",
-						justifyContent: "center",
-					}}
-				>
+				<View style={{
+					alignItems: "center",
+					justifyContent: "center",
+				}}>
 					<TextInput
 						style={styles.inputSolo}
-						onChangeText={(value) =>
-							handleChange("servings", value)
-						}
+						onChangeText={(value) => handleChange('servings', value)}
 						value={recipe.servings}
 						placeholder={"Nombre de personnes"}
 						placeholderTextColor={"#d35400"}
-						maxLength={2}
 					/>
 				</View>
 				{/* <Text style={styles.label}>Nombre de personnes</Text> */}
 
+
+
 				<Text style={styles.label}>Ingrédients</Text>
 				{/* MULTPIPLE INPUTS */}
 				{inputsIngredients}
-				<Pressable
-					onPress={addInput}
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "flex-start",
-						marginLeft: 10,
-					}}
-				>
+				<Pressable onPress={addInput} style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginLeft: 10 }}>
 					<MaterialCommunityIcons
 						name="plus"
 						size={25}
@@ -492,10 +380,7 @@ function FormScreen(props) {
 							zIndex: 1,
 						}}
 					/>
-					<Text style={{ fontWeight: "bold", color: "#fff" }}>
-						{" "}
-						Ajouter un ingrédient
-					</Text>
+					<Text style={{ fontWeight: 'bold', color: "#fff" }}> Ajouter un ingrédient</Text>
 				</Pressable>
 
 				{/* FIN MULTIPLE INPUTS */}
@@ -513,44 +398,27 @@ function FormScreen(props) {
 						padding: 10,
 						backgroundColor: "#dfe4ea",
 						borderWidth: 0.7,
-						borderRadius: 10,
+						borderRadius: 10
+
 					}}
 					multiline
-					onChangeText={(value) => handleChange("directions", value)}
+					onChangeText={(value) => handleChange('directions', value)}
 					value={recipe.directions}
 				/>
 
 				{/* </ScrollView> */}
 
+
 				<Text style={styles.label}>Tags</Text>
-				<View
-					style={{
-						flexDirection: "row",
-						flexWrap: "wrap",
-						marginBottom: 10,
-					}}
-				>
+				<View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 10 }}>
 					{tagList}
 				</View>
 
-				<View
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
-						marginLeft: 10,
-						marginBottom: 10,
-					}}
-				>
-					<Text style={styles.label}>
-						Partager sur le feed Hungry:{" "}
-					</Text>
-					<View
-						style={{ flexDirection: "row", alignItems: "center" }}
-					>
-						<Text style={{ marginLeft: 10, color: "#fff" }}>
-							{isEnabled ? "Oui" : "Non"}
-						</Text>
+
+				<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10, marginBottom: 10 }}>
+					<Text style={styles.label}>Partager sur le feed Hungry: </Text>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Text style={{ marginLeft: 10, color: "#fff" }}>{isEnabled ? "Oui" : "Non"}</Text>
 						<Switch
 							style={{ marginRight: 10, marginLeft: 10 }}
 							trackColor={{ false: "#2F3542", true: "#d35400" }}
@@ -564,24 +432,25 @@ function FormScreen(props) {
 
 				<View style={styles.screenContainer}>
 					{!!nameError && (
-						<Text style={{ color: "red", textAlign: "center" }}>
-							{nameError}
-						</Text>
+						<Text style={{ color: "red", textAlign: "center" }}>{nameError}</Text>
 					)}
 					<ValidateForm title="Valider ma recette" size="sm" />
 				</View>
 
 				<Modal visible={modalOpen}>
-					<View style={{ justifyContent: "center", flex: 1 }}>
-						<Image
-							style={{}}
+					<View style={{ justifyContent: 'center', flex: 1 }}>
+						<Image style={{
+
+						}}
 							source={require("../assets/chef.gif")}
 							resizeMode="contain"
 							resizeMethod="resize"
 						/>
 					</View>
 				</Modal>
-			</ScrollView>
+
+			</ScrollView >
+
 
 			<View
 				style={{
@@ -624,12 +493,7 @@ function FormScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return {
-		bottomTabHeight: state.bottomTabHeight,
-		token: state.token,
-		username: state.username,
-		recipe: state.recipe,
-	};
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username, recipe: state.recipe };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -642,6 +506,8 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormScreen);
 
+
+
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
 const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
@@ -650,6 +516,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+
 	},
 	statusBar: {
 		height: STATUSBAR_HEIGHT,
@@ -664,7 +531,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		justifyContent: "center",
 		alignContent: "center",
-		marginBottom: 10,
+		marginBottom: 10
 	},
 	button: {
 		backgroundColor: "#2F3542",
@@ -682,6 +549,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		borderWidth: 0.6,
+
 	},
 	inputSolo: {
 		height: 40,
@@ -691,6 +559,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		borderWidth: 0.6,
+
+
 	},
 	inputDuo: {
 		height: 40,
@@ -700,17 +570,19 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		borderWidth: 0.6,
-		width: 70,
+		width: 180,
+
 	},
 	label: {
 		marginLeft: 10,
 		color: "#fff",
 		fontSize: 16,
+
 	},
 	screenContainer: {
 		//flex: 1,
 		justifyContent: "center",
-		padding: 16,
+		padding: 16
 	},
 	appButtonContainer: {
 		elevation: 8,
@@ -722,6 +594,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: 10,
+
+
 	},
 	appButtonText: {
 		fontSize: 18,
@@ -733,12 +607,13 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
+
 	},
 	alignImage: {
 		// flexDirection: "row",
 		alignItems: "center",
 		// justifyContent: "space-between",
-		marginTop: 20,
-	}
+		marginTop: 20
 
+	},
 });
