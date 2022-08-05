@@ -33,7 +33,7 @@ function FormScreen(props) {
 	const navigation = useNavigation();
 
 	// ETAT OBJET RECIPE
-	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "" })
+	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "", ingredients: [] })
 	const isFocused = useIsFocused();
 	const [nameError, setNameError] = useState(null)
 	const [numberError, setNumberError] = useState(null)
@@ -43,6 +43,8 @@ function FormScreen(props) {
 		if (isFocused) {
 			if (props.recipe.name) {
 				setRecipe(props.recipe);
+				console.log("length", props.recipe.ingredients)
+				setNumInputs(props.recipe.ingredients.length)
 			}
 
 		}
@@ -58,7 +60,11 @@ function FormScreen(props) {
 		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
 		for (let i = 0; i < numInputs; i++) {
-			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
+			if (recipe.ingredients.length > 0) {
+				recipeIngredientsCopy.push({ name: recipe.ingredients[i].name, quantity: recipe.ingredients[i].quantity })
+			} else {
+				recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
+			}
 		}
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
@@ -158,7 +164,7 @@ function FormScreen(props) {
 
 	// ----------------------------------INPUTS INGREDIENTS
 	const [textValue, setTextValue] = useState('');
-	const [numInputs, setNumInputs] = useState(1);
+	const [numInputs, setNumInputs] = useState(recipe.ingredients.length);
 	const refInputs = useRef([textValue]);
 	const [numValue, setNumValue] = useState('');
 	const refInputsQuantity = useRef([numValue]);
@@ -187,44 +193,96 @@ function FormScreen(props) {
 		// decrease the number of inputs
 		setNumInputs(value => value - 1);
 	}
-
 	const inputsIngredients = [];
-	for (let i = 0; i < numInputs; i++) {
-		inputsIngredients.push(
-			<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
-				<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setInputValue(i, value)}
-					value={String(refInputs.current[i])}
-					placeholder="ex: lait"
-					placeholderTextColor={"#d35400"}
-				/>
-				<TextInput
-					style={styles.input}
-					onChangeText={(value) => setInputQuantity(i, value)}
-					value={String(refInputsQuantity.current[i])}
-					placeholder="20cl"
-					placeholderTextColor={"#d35400"}
-				/>
-				{/* To remove the input */}
-				<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
-					<MaterialCommunityIcons
-						name="close"
-						size={25}
-						color="#fff"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							paddingBottom: 10,
-							zIndex: 1,
-						}}
+
+	if (recipe.ingredients.length > 0) {
+		for (let i = 0; i < numInputs; i++) {
+			inputsIngredients.push(
+				<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
+					<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
+					<TextInput
+						style={styles.input}
+						onChangeText={(value) => setInputValue(i, value)}
+						// value={String(refInputs.current[i])}
+						value={recipe.ingredients[i].name}
+
+						placeholder="ex: lait"
+						placeholderTextColor={"#d35400"}
 					/>
-				</Pressable>
-			</View>
-		);
+					<TextInput
+						style={styles.input}
+						onChangeText={(value) => setInputQuantity(i, value)}
+						// value={String(refInputsQuantity.current[i])}
+						value={recipe.ingredients[i].quantity}
+
+						placeholder="20cl"
+						placeholderTextColor={"#d35400"}
+					/>
+					{/* To remove the input */}
+					<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
+						<MaterialCommunityIcons
+							name="close"
+							size={25}
+							color="#fff"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</Pressable>
+				</View>
+			);
+		}
+
+	} else {
+
+		for (let i = 0; i < numInputs; i++) {
+			inputsIngredients.push(
+				<View key={i} style={{ flexDirection: 'row', alignItems: 'center' }}>
+					<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
+					<TextInput
+						style={styles.input}
+						onChangeText={(value) => setInputValue(i, value)}
+						// value={{}}}
+						value={String(refInputs.current[i])}
+						// value={recipe.ingredients[i].name}
+
+						placeholder="ex: lait"
+						placeholderTextColor={"#d35400"}
+					/>
+					<TextInput
+						style={styles.input}
+						onChangeText={(value) => setInputQuantity(i, value)}
+						value={String(refInputsQuantity.current[i])}
+						// value={recipe.ingredients[i].quantity}
+
+						placeholder="20cl"
+						placeholderTextColor={"#d35400"}
+					/>
+					{/* To remove the input */}
+					<Pressable onPress={() => removeInput(i)} style={{ marginLeft: 5 }}>
+						<MaterialCommunityIcons
+							name="close"
+							size={25}
+							color="#fff"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</Pressable>
+				</View>
+			);
+		}
 	}
+
+
 	// ----------------------------------FIN INPUTS INGREDIENTS
 
 	//----------------------------------------SWITCH publication publique
