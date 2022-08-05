@@ -739,5 +739,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		// justifyContent: "space-between",
 		marginTop: 20,
-	},
+	}
+
 });
