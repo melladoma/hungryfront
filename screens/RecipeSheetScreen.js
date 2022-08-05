@@ -39,6 +39,10 @@ function RecipeSheetScreen(props) {
 	const [likedRecipesList, setLikedRecipesList] = useState(
 		props.likedRecipes
 	);
+	const [addedRecipes, setAddedRecipes] = useState([]);
+	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] = useState(false);
+
+
 
 	const window = Dimensions.get("window");
 
@@ -46,7 +50,25 @@ function RecipeSheetScreen(props) {
 		if (isFocused) {
 
 			setRecipeData(props.recipe);
-			console.log("store", props.recipe)
+			async function initialFetch() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}`,
+					}
+				);
+
+				var response = await rawResponse.json();
+
+				setAddedRecipes(response.addedRecipes);
+				// setLikedRecipesList(response.likedRecipes)
+			
+			}
+			initialFetch();
 			props.recipe.author.token === props.token
 				? setIsThisRecipeMine(true)
 				: setIsThisRecipeMine(false);
@@ -54,19 +76,46 @@ function RecipeSheetScreen(props) {
 	}, [isFocused]);
 
 	let modificationPencilIcon = null;
-	let deletionTrashIcon = (
-		<TouchableOpacity style={{}}>
-			<MaterialCommunityIcons
-				name="book-plus"
-				size={25}
-				color="#2f3542"
-				style={{
-					paddingLeft: 10,
-					marginTop: 5,
+	let poubelleIcone = null
+	let deletionTrashIcon
+	if (isAlreadyAddedToMyRecipes == false /*|| !addedRecipes.includes(recipeData._id)*/) {
+		deletionTrashIcon = (
+			<TouchableOpacity style={{}}
+				onPress={() => {
+					  handleAddBook(recipeData,props.token);
 				}}
-			/>
-		</TouchableOpacity>
-	);
+				>
+				<MaterialCommunityIcons
+					name="book-plus"
+					size={25}
+					color="#2f3542"
+					style={{
+						paddingLeft: 10,
+						marginTop: 5,
+					}}
+				/>
+			</TouchableOpacity>
+		);
+	} else {
+		deletionTrashIcon = (
+			<TouchableOpacity style={{}}
+				onPress={() => {
+					  handleDeleteBook(recipeData,props.token);
+				}}
+				>
+				<MaterialCommunityIcons
+					name="book-minus"
+					size={25}
+					color="#F19066"
+					style={{
+						paddingLeft: 10,
+						marginTop: 5,
+					}}
+				/>
+			</TouchableOpacity>
+		);
+	}
+		
 
 	var likeHeartIcon = (
 		<TouchableOpacity
@@ -122,6 +171,31 @@ function RecipeSheetScreen(props) {
 		setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
 	};
 
+
+	var handleAddBook = async (recipe,token) => {
+		  var rawResponse = await fetch(
+		    `http://${privateIP}:3000/recipesheet/add-recipe-to-myrecipes`,
+		    {
+		      method: "post",
+		      headers: {"Content-Type": "application/x-www-form-urlencoded",},
+		      body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
+		    }
+		  );
+			setIsAlreadyAddedToMyRecipes(true)
+	}
+
+	var handleDeleteBook = async (recipe,token) => {
+		var rawResponse = await fetch(
+		  `http://${privateIP}:3000/recipesheet/delete-recipe-to-myrecipes`,
+		  {
+			method: "post",
+			headers: {"Content-Type": "application/x-www-form-urlencoded",},
+			body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
+		  }
+		);
+		  setIsAlreadyAddedToMyRecipes(false)
+  }
+
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
 			<TouchableOpacity
@@ -140,7 +214,7 @@ function RecipeSheetScreen(props) {
 			</TouchableOpacity>
 		);
 
-		deletionTrashIcon = (
+		poubelleIcone = (
 			<TouchableOpacity
 				style={{}}
 				onPress={() => {
@@ -351,6 +425,7 @@ function RecipeSheetScreen(props) {
 				{/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection + poubelle ---------------------------------------------------------  */}
 				<View style={styles.ligne}>
 					{deletionTrashIcon}
+					{poubelleIcone}
 
 					<Text style={styles.userName}>
 						{recipeData.author.username}
