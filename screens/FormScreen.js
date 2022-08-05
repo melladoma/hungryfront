@@ -234,7 +234,6 @@ function FormScreen(props) {
 					value={refInputsQuantity.current[i]}
 					placeholder="20cl"
 					placeholderTextColor={"#d35400"}
-					keyboardType="numeric"
 				/>
 
 				{/* To remove the input */}
@@ -404,22 +403,12 @@ function FormScreen(props) {
 									handleChange("prepTime", value)
 								}
 								value={recipe.prepTime}
-								placeholder={"Heures"}
+								placeholder={"en minutes"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
-								maxLength={2}
+
 							/>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("prepTime", value)
-								}
-								value={recipe.prepTime}
-								placeholder={"Min"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
-							/>
+							
 						</View>
 						</View>
 
@@ -432,21 +421,9 @@ function FormScreen(props) {
 									handleChange("cookTime", value)
 								}
 								value={recipe.cookTime}
-								placeholder={"Heures"}
+								placeholder={"en minutes"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
-								maxLength={2}
-							/>
-							<TextInput
-								style={styles.inputDuo}
-								onChangeText={(value) =>
-									handleChange("cookTime", value)
-								}
-								value={recipe.cookTime}
-								placeholder={"Min"}
-								placeholderTextColor={"#d35400"}
-								keyboardType="numeric"
-								maxLength={2}
 							/>
 						</View>
 					</View>
@@ -700,7 +677,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		borderWidth: 0.6,
-		width: 70,
+		width: 100,
 	},
 	label: {
 		marginLeft: 10,
