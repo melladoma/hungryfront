@@ -392,7 +392,7 @@ function FeedScreen(props) {
 				<View
 					style={{
 						height: 260,
-						width: 190,
+						width: 180,
 						marginBottom: 5,
 						marginTop: 5,
 						borderWidth: 1.5,

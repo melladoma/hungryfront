@@ -283,7 +283,7 @@ function RecipeSheetScreen(props) {
 						marginTop: "30%",
 					}}
 				>
-					Êtes-vous certain de vouloir supprimer cette recettes ?
+					Êtes-vous certain de vouloir supprimer cette recette ?
 				</Text>
 				<View style={styles.deleteButton}>
 					<TouchableOpacity
@@ -474,13 +474,21 @@ function RecipeSheetScreen(props) {
 				</View>
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
-						<ScrollView>
-							<View>
+						<ScrollView style={{marginTop:30}}>
+							<View style={{
+								marginTop:20,
+								width:"95%",
+								marginLeft:"3%",
+								textAlign: "justify"
+								}}>
 								<Text h1 style={styles.recipeName}>
 									{recipeData.name}
 								</Text>
 
-								<Text style={{ fontSize: 20 }}>
+								<Text style={{ 
+									fontSize: 20,
+									 marginTop:30,
+									  }}>
 									{recipeData.directions}
 								</Text>
 							</View>

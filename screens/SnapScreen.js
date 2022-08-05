@@ -12,7 +12,8 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
-	Image
+	Image,
+	Modal
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -20,6 +21,7 @@ import { Camera } from 'expo-camera';
 import { useIsFocused } from '@react-navigation/native';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
+
 
 function SnapScreen(props) {
 	const navigation = useNavigation();
@@ -43,6 +45,7 @@ function SnapScreen(props) {
 	const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
 	const [hasPermission, setHasPermission] = useState(null);
 	const [image, setImage] = useState(null);
+	const [modalOpen, setModalOpen] = useState(false);
 	//const [visible, setVisible] = useState(false);
 	var camera = useRef(null);
 	const isFocused = useIsFocused();
@@ -57,7 +60,7 @@ function SnapScreen(props) {
 			aspect: [4, 3],
 			quality: 1,
 		});
-
+		setModalOpen(true)
 		if (!result.cancelled) {
 			setImage(result.uri);
 
@@ -176,7 +179,74 @@ function SnapScreen(props) {
 		cameraDisplay = <View style={{ flex: 1 }}></View>
 	}
 	//---------------------------------------------------------------------Fin composant camera ----------------------------------------------------
+	//---------------------------------------------------Tentative Modale screenshot ---------------------------------------
 
+	var ModalScreenShot = (
+		<Modal
+			visible={modalOpen}
+			animationType="slide"
+			transparent={true}
+			style={styles.modal}
+		>
+			{/* {pickImage} */}
+			<View
+				style={{
+					alignItems: "center",
+
+					// borderBottomLeftRadius: 20,
+					// borderBottomRightRadius: 20,
+					borderRadius: 100,
+					backgroundColor: "#fff",
+					width: "100%",
+					height: "80%",
+					marginTop: "10%",
+					
+				}}
+			>   
+				{image && <TouchableOpacity 
+										onPress={() => handleSubmitPhoto(image)} 
+										style={{ flex: 1 }}>
+							<Image source={{ uri: image }} 
+								   style={{ 
+											width: 300,
+											height: 300,
+											marginTop:"50%"
+											
+										  }} />
+							</TouchableOpacity>}
+				<Text
+					style={{
+						fontSize: 20,
+						alignSelf: "center",
+						textAlign: "center",
+						marginTop: "30%",
+					}}
+				>
+					Voulez vous convertir cette recette en photo ?
+				</Text>
+				<View style={styles.button}>
+					<TouchableOpacity
+						style={styles.buttonContainer}
+						onPress={() => handleSubmitPhoto(image)}
+							// handlePressTrashIcon(props.recipe._id);
+					>
+						<Text style={{color:"#fff"}}>Oui</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={styles.buttonContainer}
+						onPress={() => {
+							setModalOpen(false);
+							
+						}}
+					>
+						<Text style={{color:"#fff"}}>Non</Text>
+					</TouchableOpacity>
+				</View>
+			</View>
+		</Modal>
+	);
+
+	//--------------------------------------------------Fin tentative modal screenshot
 
 	return (
 		<View style={styles.container}>
@@ -284,12 +354,23 @@ function SnapScreen(props) {
 									zIndex: 1,
 								}}
 							/>
-							{image && <TouchableOpacity onPress={() => handleSubmitPhoto(image)} style={{ flex: 1 }}><Image source={{ uri: image }} style={{ width: 200, height: 200 }} /></TouchableOpacity>}
+							{/* {image && <TouchableOpacity 
+										onPress={() => handleSubmitPhoto(image)} 
+										style={{ flex: 1 }}>
+							<Image source={{ uri: image }} 
+								   style={{ 
+											width: 300,
+											height: 300,
+											marginBottom:50
+										  }} />
+							</TouchableOpacity>} */}
 						</TouchableOpacity>
 					</View>
 				</View>
 			</View>
+			{ModalScreenShot}
 		</View>
+		
 	);
 }
 
@@ -324,5 +405,28 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	modal: {
+		width: 150,
+		height: 150,
+	},
+	button: {
+		flexDirection: "row",
+
+		justifyContent: "center",
+		marginTop: 40,
+		alignItems: "center",
+	},
+	buttonContainer: {
+		elevation: 8,
+		backgroundColor: "#2F3542",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		// marginRight:25,
+		width: 100,
 	},
 });
