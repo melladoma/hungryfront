@@ -49,6 +49,7 @@ function FormScreen(props) {
 	useEffect(() => {
 		if (isFocused) {
 			if (props.recipe._id) {
+				console.log(props.recipe)
 				setRecipe(props.recipe);
 			}
 		}
@@ -82,10 +83,11 @@ function FormScreen(props) {
 		) {
 			setNameError("Veuillez remplir tous les champs");
 		} else {
-			let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/);
-			recipeObj.prepTime = parseInt(prepTimeClean[0]);
-			let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/);
-			recipeObj.cookTime = parseInt(cookTimeClean[0]);
+			// let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/);
+			// recipeObj.prepTime = parseInt(prepTimeClean[0]);
+			// let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/);
+			// recipeObj.cookTime = parseInt(cookTimeClean[0]);
+
 
 			if (image) {
 				var data = new FormData();
@@ -224,14 +226,14 @@ function FormScreen(props) {
 				<TextInput
 					style={styles.input}
 					onChangeText={(value) => setInputValue(i, value)}
-					value={refInputs.current[i]}
+					value={String(refInputs.current[i])}
 					placeholder="ex: lait"
 					placeholderTextColor={"#d35400"}
 				/>
 				<TextInput
 					style={styles.input}
 					onChangeText={(value) => setInputQuantity(i, value)}
-					value={refInputsQuantity.current[i]}
+					value={String(refInputsQuantity.current[i])}
 					placeholder="20cl"
 					placeholderTextColor={"#d35400"}
 				/>
@@ -281,7 +283,7 @@ function FormScreen(props) {
 		"brunch",
 		"festif",
 	];
-	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
+	const [selectedFiltersArray, setSelectedFiltersArray] = useState(recipe.tags);
 	const handlePressedChip = (name) => {
 		if (selectedFiltersArray.includes(name)) {
 			let tempArray = selectedFiltersArray.filter((x) => x !== name);
@@ -394,33 +396,33 @@ function FormScreen(props) {
 				</View>
 
 				<View style={{ display: "flex", flexDirection: "row" }}>
-					<View style={{ display: "flex", flexDirection: "column", width:"50%", borderWidth:1 }}>
-						<Text style={{alignSelf:"center", color:"white"}}>Temps de préparation</Text>
-						<View style={{display:"flex", flexDirection:"row"}}>
+					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+						<Text style={{ alignSelf: "center", color: "white" }}>Temps de préparation</Text>
+						<View style={{ display: "flex", flexDirection: "row" }}>
 							<TextInput
 								style={styles.inputDuo}
 								onChangeText={(value) =>
 									handleChange("prepTime", value)
 								}
-								value={recipe.prepTime}
+								value={String(recipe.prepTime)}
 								placeholder={"en minutes"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
 
 							/>
-							
-						</View>
-						</View>
 
-						<View style={{ display: "flex", flexDirection: "column" , width:"50%", borderWidth:1 }}>
-						<Text style={{alignSelf:"center", color:"white"}}>Temps de cuisson</Text>
-						<View style={{display:"flex", flexDirection:"row"}}>
+						</View>
+					</View>
+
+					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+						<Text style={{ alignSelf: "center", color: "white" }}>Temps de cuisson</Text>
+						<View style={{ display: "flex", flexDirection: "row" }}>
 							<TextInput
 								style={styles.inputDuo}
 								onChangeText={(value) =>
 									handleChange("cookTime", value)
 								}
-								value={recipe.cookTime}
+								value={String(recipe.cookTime)}
 								placeholder={"en minutes"}
 								placeholderTextColor={"#d35400"}
 								keyboardType="numeric"
@@ -439,7 +441,7 @@ function FormScreen(props) {
 						onChangeText={(value) =>
 							handleChange("servings", value)
 						}
-						value={recipe.servings}
+						value={String(recipe.servings)}
 						placeholder={"Nombre de personnes"}
 						placeholderTextColor={"#d35400"}
 						maxLength={2}
