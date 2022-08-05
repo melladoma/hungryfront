@@ -289,17 +289,22 @@ function RecipeSheetScreen(props) {
 					height: 360,
 					marginTop: "50%",
 					marginLeft: "5%",
+					borderWidth: 1.2,
+					borderColor: "#e67e22"
 				}}
 			>
 				<Text
 					style={{
-						fontSize: 20,
+						fontSize: 22,
 						alignSelf: "center",
 						textAlign: "center",
 						marginTop: "30%",
+						flexWrap: "wrap",
+						marginLeft:"8%",
+						marginRight:"8%"
 					}}
 				>
-					Êtes-vous certain de vouloir supprimer cette recette ?
+					Êtes-vous certain  de vouloir supprimer cette recette ?
 				</Text>
 				<View style={styles.deleteButton}>
 					<TouchableOpacity
@@ -813,8 +818,10 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 
 		justifyContent: "center",
-		marginTop: 40,
+		marginTop: "15%",
 		alignItems: "center",
+		// marginRight:"2%",
+		// marginLeft: "2%"
 	},
 	deleteButtonContainer: {
 		elevation: 8,
@@ -827,5 +834,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		// marginRight:25,
 		width: 100,
+		marginRight:"4%",
+		marginLeft: "4%"
 	},
 });
