@@ -128,6 +128,7 @@ function SnapScreen(props) {
 
 		// setModalOpen(false);
 		// redirection vers fiche recette	
+		setModalOpen(false)
 		navigation.navigate("FormScreen")
 	}
 
@@ -200,20 +201,20 @@ function SnapScreen(props) {
 					width: "100%",
 					height: "80%",
 					marginTop: "10%",
-					
+
 				}}
-			>   
-				{image && <TouchableOpacity 
-										onPress={() => handleSubmitPhoto(image)} 
-										style={{ flex: 1 }}>
-							<Image source={{ uri: image }} 
-								   style={{ 
-											width: 300,
-											height: 300,
-											marginTop:"50%"
-											
-										  }} />
-							</TouchableOpacity>}
+			>
+				{image && <TouchableOpacity
+					onPress={() => handleSubmitPhoto(image)}
+					style={{ flex: 1 }}>
+					<Image source={{ uri: image }}
+						style={{
+							width: 300,
+							height: 300,
+							marginTop: "50%"
+
+						}} />
+				</TouchableOpacity>}
 				<Text
 					style={{
 						fontSize: 20,
@@ -222,24 +223,24 @@ function SnapScreen(props) {
 						marginTop: "30%",
 					}}
 				>
-					Voulez vous convertir cette recette en photo ?
+					Voulez vous convertir cette photo en fiche recette ?
 				</Text>
 				<View style={styles.button}>
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={() => handleSubmitPhoto(image)}
-							// handlePressTrashIcon(props.recipe._id);
+					// handlePressTrashIcon(props.recipe._id);
 					>
-						<Text style={{color:"#fff"}}>Oui</Text>
+						<Text style={{ color: "#fff" }}>Oui</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={() => {
 							setModalOpen(false);
-							
+
 						}}
 					>
-						<Text style={{color:"#fff"}}>Non</Text>
+						<Text style={{ color: "#fff" }}>Non</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -370,7 +371,7 @@ function SnapScreen(props) {
 			</View>
 			{ModalScreenShot}
 		</View>
-		
+
 	);
 }
 

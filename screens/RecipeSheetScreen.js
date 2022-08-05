@@ -281,6 +281,9 @@ function RecipeSheetScreen(props) {
 						alignSelf: "center",
 						textAlign: "center",
 						marginTop: "30%",
+						flexWrap: "wrap",
+						marginLeft: "8%",
+						marginLeft: "8%"
 					}}
 				>
 					Êtes-vous certain de vouloir supprimer cette recette ?
@@ -474,21 +477,21 @@ function RecipeSheetScreen(props) {
 				</View>
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
-						<ScrollView style={{marginTop:30}}>
+						<ScrollView style={{ marginTop: 30 }}>
 							<View style={{
-								marginTop:20,
-								width:"95%",
-								marginLeft:"3%",
+								marginTop: 20,
+								width: "95%",
+								marginLeft: "3%",
 								textAlign: "justify"
-								}}>
+							}}>
 								<Text h1 style={styles.recipeName}>
 									{recipeData.name}
 								</Text>
 
-								<Text style={{ 
+								<Text style={{
 									fontSize: 20,
-									 marginTop:30,
-									  }}>
+									marginTop: 30,
+								}}>
 									{recipeData.directions}
 								</Text>
 							</View>
@@ -694,7 +697,6 @@ const styles = StyleSheet.create({
 	},
 	deleteButton: {
 		flexDirection: "row",
-
 		justifyContent: "center",
 		marginTop: 40,
 		alignItems: "center",
@@ -708,7 +710,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		// marginRight:25,
+		marginRight: "4%",
+		marginLeft: "4%",
 		width: 100,
 	},
 });
