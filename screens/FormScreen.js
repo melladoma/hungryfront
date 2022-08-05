@@ -68,10 +68,11 @@ function FormScreen(props) {
 		if (recipeObj.ingredients.length === 0 || recipeObj.cookTime === "" || recipeObj.prepTime === "" || recipeObj.name === "" || recipeObj.directions === "" || recipeObj.servings === "") {
 			setNameError("Veuillez remplir tous les champs")
 		} else {
-			let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/)
-			recipeObj.prepTime = parseInt(prepTimeClean[0]);
-			let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/)
-			recipeObj.cookTime = parseInt(cookTimeClean[0]);
+			// let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/);
+			// recipeObj.prepTime = parseInt(prepTimeClean[0]);
+			// let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/);
+			// recipeObj.cookTime = parseInt(cookTimeClean[0]);
+
 
 			if (image) {
 				var data = new FormData();
@@ -194,16 +195,16 @@ function FormScreen(props) {
 				<Text style={{ marginLeft: 10, color: "#fff" }}>{i + 1}.</Text>
 				<TextInput
 					style={styles.input}
-					onChangeText={value => setInputValue(i, value)}
-					value={refInputs.current[i]}
+					onChangeText={(value) => setInputValue(i, value)}
+					value={String(refInputs.current[i])}
 					placeholder="ex: lait"
 					placeholderTextColor={"#d35400"}
 				/>
 				<TextInput
 					style={styles.input}
-					onChangeText={value => setInputQuantity(i, value)}
-					value={refInputsQuantity.current[i]}
-					placeholder="20cL"
+					onChangeText={(value) => setInputQuantity(i, value)}
+					value={String(refInputsQuantity.current[i])}
+					placeholder="20cl"
 					placeholderTextColor={"#d35400"}
 				/>
 				{/* To remove the input */}
@@ -232,8 +233,23 @@ function FormScreen(props) {
 	//------------------------------------fin SWITCH publication publique
 
 	//------------------------------------------TAG LIST
-	var tags = ["entrée", "plat", "dessert", "apéro", "boisson", "asiatique", "américaine", "italien", "diététique", "végétarien", "rapide", "gastronomique", "brunch", "festif"]
-	const [selectedFiltersArray, setSelectedFiltersArray] = useState([]);
+	var tags = [
+		"entrée",
+		"plat",
+		"dessert",
+		"apéro",
+		"boisson",
+		"asiatique",
+		"américaine",
+		"italien",
+		"diététique",
+		"végétarien",
+		"rapide",
+		"gastronomique",
+		"brunch",
+		"festif",
+	];
+	const [selectedFiltersArray, setSelectedFiltersArray] = useState(recipe.tags);
 	const handlePressedChip = (name) => {
 		if (selectedFiltersArray.includes(name)) {
 			let tempArray = selectedFiltersArray.filter((x) => x !== name);
@@ -331,24 +347,40 @@ function FormScreen(props) {
 
 				</View>
 
-				<Text style={styles.label}>Temps (en minutes)</Text>
-				<View style={styles.align}>
-					<TextInput
-						style={styles.inputDuo}
-						onChangeText={(value) => handleChange('prepTime', value)}
-						value={recipe.prepTime}
-						placeholder={"Préparation (ex: 10 min)"}
-						placeholderTextColor={"#d35400"}
-					/>
+				<View style={{ display: "flex", flexDirection: "row" }}>
+					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+						<Text style={{ alignSelf: "center", color: "white" }}>Temps de préparation</Text>
+						<View style={{ display: "flex", flexDirection: "row" }}>
+							<TextInput
+								style={styles.inputDuo}
+								onChangeText={(value) =>
+									handleChange("prepTime", value)
+								}
+								value={String(recipe.prepTime)}
+								placeholder={"en minutes"}
+								placeholderTextColor={"#d35400"}
+								keyboardType="numeric"
 
-					<TextInput
-						style={styles.inputDuo}
-						onChangeText={(value) => handleChange('cookTime', value)}
-						value={recipe.cookTime}
-						placeholder={"Cuisson (ex: 90 min)"}
-						placeholderTextColor={"#d35400"}
-					/>
+							/>
 
+						</View>
+					</View>
+
+					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+						<Text style={{ alignSelf: "center", color: "white" }}>Temps de cuisson</Text>
+						<View style={{ display: "flex", flexDirection: "row" }}>
+							<TextInput
+								style={styles.inputDuo}
+								onChangeText={(value) =>
+									handleChange("cookTime", value)
+								}
+								value={String(recipe.cookTime)}
+								placeholder={"en minutes"}
+								placeholderTextColor={"#d35400"}
+								keyboardType="numeric"
+							/>
+						</View>
+					</View>
 				</View>
 				<View style={{
 					alignItems: "center",
@@ -356,8 +388,10 @@ function FormScreen(props) {
 				}}>
 					<TextInput
 						style={styles.inputSolo}
-						onChangeText={(value) => handleChange('servings', value)}
-						value={recipe.servings}
+						onChangeText={(value) =>
+							handleChange("servings", value)
+						}
+						value={String(recipe.servings)}
 						placeholder={"Nombre de personnes"}
 						placeholderTextColor={"#d35400"}
 					/>
@@ -570,8 +604,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		borderWidth: 0.6,
-		width: 180,
-
+		width: 100,
 	},
 	label: {
 		marginLeft: 10,
