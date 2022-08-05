@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { privateIP } from "../env.js";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -11,6 +12,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
+	Image
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -43,84 +45,147 @@ function SnapScreen(props) {
 	const [image, setImage] = useState(null);
 	//const [visible, setVisible] = useState(false);
 	var camera = useRef(null);
-    const isFocused = useIsFocused();
+	const isFocused = useIsFocused();
 
 
-// -------------------------------------------------------------------Gallerie photo --------------------------------------------------------
+	// -------------------------------------------------------------------Gallerie photo --------------------------------------------------------
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
-		  mediaTypes: ImagePicker.MediaTypeOptions.All,
-		  allowsEditing: true,
-		  aspect: [4, 3],
-		  quality: 1,
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
 		});
-	
-		console.log(result);
-	
+
 		if (!result.cancelled) {
-		  setImage(result.uri);
+			setImage(result.uri);
+
 		}
-	  };
-	
-// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
-	useEffect(() => {  
+
+	};
+
+	const handleSubmitPhoto = async (image) => {
+		//  if (image) {
+		console.log("image", image)
+		var data = new FormData();
+		//attention ne fonctionne que sur jpg
+
+		data.append("image", {
+			uri: image,
+			type: "image/png",
+			name: "recipe.png",
+		});
+		console.log("data", data)
+
+		var rawResponseImg = await fetch(
+			`http://${privateIP}:3000/upload-image`,
+			{
+				method: "post",
+				body: data,
+			}
+		);
+
+		var responseImg = await rawResponseImg.json();
+
+		if (responseImg.result) {
+			var imageToTreat = responseImg.resultObj.imageUrl;
+			console.log("imageToTreat", imageToTreat)
+
+		}
+		// }
+
+		//---- envoi recette en traitement Tesseract
+		// setModalOpen(true);
+		let recipeData = {
+			image: imageToTreat,
+			userToken: props.token,
+			userName: props.username,
+		};
+		console.log("recipeData", recipeData)
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/api/tesseract`,
+			{
+				method: "POST",
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+				},
+				body: JSON.stringify(recipeData),
+			}
+		);
+		var response = await rawResponse.json();
+
+		var recipeToStore = response.recipeTreated;
+		console.log(response.recipeTreated, "--------");
+
+		//---------envoi recipe traitee Backend dans store
+		if (recipeToStore) {
+			props.setRecipe(recipeToStore);
+		}
+
+		// setModalOpen(false);
+		// redirection vers fiche recette	
+		navigation.navigate("FormScreen")
+	}
+
+	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
+	useEffect(() => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(status === 'granted');
 		})();
-	  }, []);
-	  
-	  var cameraDisplay;
-	  if(hasPermission && isFocused){
-		cameraDisplay = <Camera 
-		  style={{ flex: 1 }}
-		  flashMode={flash}
-		  ref={ref => (camera = ref)}
+	}, []);
+
+	var cameraDisplay;
+	if (hasPermission && isFocused) {
+		cameraDisplay = <Camera
+			style={{ flex: 1 }}
+			flashMode={flash}
+			ref={ref => (camera = ref)}
 		>
-		   <View    
-			style={{
-			  flex: 1,
-			  backgroundColor: 'transparent',
-			  flexDirection: 'row',
-			}}>
-			   <TouchableOpacity
+			<View
 				style={{
-				
-					alignSelf: 'flex-end',
-					alignItems: 'center',
-				}}
-				onPress={() => {
-					setFlash(
-					  flash === Camera.Constants.FlashMode.off
-						? Camera.Constants.FlashMode.torch
-						: Camera.Constants.FlashMode.off
-					);
-				  }}
+					flex: 1,
+					backgroundColor: 'transparent',
+					flexDirection: 'row',
+				}}>
+				<TouchableOpacity
+					style={{
+
+						alignSelf: 'flex-end',
+						alignItems: 'center',
+					}}
+					onPress={() => {
+						setFlash(
+							flash === Camera.Constants.FlashMode.off
+								? Camera.Constants.FlashMode.torch
+								: Camera.Constants.FlashMode.off
+						);
+					}}
 				>
-				<IconFontAwesome
-				name="flash"
-				size={20}
-				color="#ffffff"
-				/><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flash </Text>
-			   </TouchableOpacity>
-	
+					<IconFontAwesome
+						name="flash"
+						size={20}
+						color="#ffffff"
+					/><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flash </Text>
+				</TouchableOpacity>
+
 			</View>
 		</Camera>
-	  } else {
+	} else {
 		cameraDisplay = <View style={{ flex: 1 }}></View>
-	  }
-	  //---------------------------------------------------------------------Fin composant camera ----------------------------------------------------
-	
+	}
+	//---------------------------------------------------------------------Fin composant camera ----------------------------------------------------
+
 
 	return (
 		<View style={styles.container}>
 			{/* <MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" /> */}
 
 			<View style={{ flex: 1 }}>
-			{cameraDisplay} 
+				{cameraDisplay}
 
-	{/* ------------------------------------------------Boutons de camera et gallerie --------------------------------------------------- */}
+				{/* ------------------------------------------------Boutons de camera et gallerie --------------------------------------------------- */}
 				<View style={styles.bottomTab}>
 					<View
 						style={{
@@ -150,29 +215,29 @@ function SnapScreen(props) {
 							/>
 						</TouchableOpacity>
 
-{/* ---------------------------------------------------------Enregistrement photo + redirection sur FormScreen------------------------------------------ */}
+						{/* ---------------------------------------------------------Enregistrement photo + redirection sur FormScreen------------------------------------------ */}
 						<TouchableOpacity
 							style={{}}
 							onPress={async () => {
-								
+
 								if (camera) {
-									console.log("salut");
-									var photo = await camera.takePictureAsync({quality : 0.7, base64: true, exif: true});
-									console.log("photo",photo.uri);
+
+									var photo = await camera.takePictureAsync({ quality: 0.7, base64: true, exif: true });
+									console.log("photo", photo.uri);
 									var data = new FormData();
-									
+
 									data.append('recette', {
-									  uri: photo.uri,
-									  type: 'image/jpeg',
-									  name: 'recette.jpg',
-									});     
-									console.log(data,"data es tu la");            
-									var rawResponse = await fetch("http://192.168.10.128:3000/api/tesseract", {
-									  method: 'POST',
-									  body: data
+										uri: photo.uri,
+										type: 'image/jpeg',
+										name: 'recette.jpg',
+									});
+									console.log(data, "data es tu la");
+									var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
+										method: 'POST',
+										body: data
 									});
 									var response = await rawResponse.json();
-									console.log(response,"repond nous")
+									console.log(response, "repond nous")
 									navigation.navigate("FormScreen")
 								}
 							}
@@ -201,10 +266,10 @@ function SnapScreen(props) {
 								/>
 							</View>
 						</TouchableOpacity>
-{/* ------------------------------------------------REDIRECTION SUR LA GALLERIE PHOTO ---------------------------------------------- */}
+						{/* ------------------------------------------------REDIRECTION SUR LA GALLERIE PHOTO ---------------------------------------------- */}
 						<TouchableOpacity
 							style={{ alignSelf: "flex-end" }}
-							onPress={() => navigation.navigate("FormScreen")}
+							onPress={() => handleSubmitPhoto()}
 						>
 							<MaterialCommunityIcons
 								name="image"
@@ -219,7 +284,7 @@ function SnapScreen(props) {
 									zIndex: 1,
 								}}
 							/>
-							{image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+							{image && <TouchableOpacity onPress={() => handleSubmitPhoto(image)} style={{ flex: 1 }}><Image source={{ uri: image }} style={{ width: 200, height: 200 }} /></TouchableOpacity>}
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -229,18 +294,19 @@ function SnapScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
 }
 
-/*function mapDispatchToProps(dispatch) {
+
+function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+		setRecipe: function (recipe) {
+			dispatch({ type: "setRecipe", recipe: recipe });
 		},
 	};
-}*/
+}
 
-export default connect(mapStateToProps, null)(SnapScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SnapScreen);
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
