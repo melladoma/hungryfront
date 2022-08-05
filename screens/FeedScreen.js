@@ -391,26 +391,45 @@ function FeedScreen(props) {
 			>
 				<View
 					style={{
-						height: 200,
-						width: 170,
-						marginBottom: 10,
-						marginTop: 10,
-						borderRadius: 10,
-						borderWidth: 1,
+						height: 260,
+						width: 190,
+						marginBottom: 5,
+						marginTop: 5,
+						borderWidth: 1.5,
+					    borderColor: "#000",
+						backgroundColor: "#Fff",
+						borderRadius:15
 					}}
 				>
-					<Text style={{ height: "15%", padding: 5 }}>{item.name}</Text>
+					<Text style={{ height: "15%",
+								   padding: 5,
+								   textAlign:"center",
+								   color: "#e67e22",
+								   fontSize:18,
+								   fontWeight:"bold"
+					 }}>					
+					{item.name}					 
+					 </Text>
 					<Image
 						style={{
-							height: "85%",
+							height: "75%",
 							width: "100%",
-							borderBottomLeftRadius: 10,
-							borderBottomRightRadius: 10,
-							borderTopLeftRadius: 0,
-							borderTopRightRadius: 0,
+							// marginBottom:"1%",
+							// borderRadius:10
 						}}
 						source={{ uri: item.image }}
 					/>
+						<View style={styles.like}>
+							<Text style={{ fontSize: 15 }}>
+							{item.likeCount}
+							</Text>
+							<MaterialCommunityIcons
+								name="heart"
+								size={25}
+								color="#ff4757"
+								style={{}}
+							/>
+						</View>
 				</View>
 			</TouchableOpacity>
 		);
@@ -448,7 +467,7 @@ function FeedScreen(props) {
 						borderTopRightRadius: 22,
 						borderWidth: 1.5,
 						borderColor:"#000",
-					    backgroundColor: "#dfe4ea"
+					    backgroundColor: "#fff"
 					}}
 				>
 					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft:20, marginTop:10, color:"#e67e22" }}>{item.name}</Text>
@@ -691,9 +710,7 @@ const styles = StyleSheet.create({
 	},
 	like: {
 		flexDirection: "row",
-		// alignItems: "",
-		justifyContent: "center",
-		marginRight: 5,
-		marginTop: 5,
+		// justifyContent: "center",
+		marginLeft: 5,
 	},
 });

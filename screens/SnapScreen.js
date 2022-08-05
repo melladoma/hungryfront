@@ -167,7 +167,7 @@ function SnapScreen(props) {
 									  name: 'recette.jpg',
 									});     
 									console.log(data,"data es tu la");            
-									var rawResponse = await fetch("http://192.168.10.128:3000/api/tesseract", {
+									var rawResponse = await fetch("http://192.168.10.115:3000/api/tesseract", {
 									  method: 'POST',
 									  body: data
 									});

@@ -393,31 +393,45 @@ function HomeScreen(props) {
 			>
 				<View
 					style={{
-						height: 240,
+						height: 260,
 						width: 190,
 						marginBottom: 5,
 						marginTop: 5,
 						borderWidth: 1.5,
-					    borderColor: "#d35400",
-						backgroundColor: "#Fff"
+					    borderColor: "#000",
+						backgroundColor: "#Fff",
+						borderRadius:15
 					}}
 				>
 					<Text style={{ height: "15%",
 								   padding: 5,
 								   textAlign:"center",
-								   color: "#d35400",
+								   color: "#e67e22",
 								   fontSize:18,
+								   fontWeight:"bold"
 					 }}>					
 					{item.name}					 
 					 </Text>
 					<Image
 						style={{
-							height: "80%",
+							height: "75%",
 							width: "100%",
-							borderRadius:10
+							// marginBottom:"1%",
+							// borderRadius:10
 						}}
 						source={{ uri: item.image }}
 					/>
+						<View style={styles.like}>
+							<Text style={{ fontSize: 15 }}>
+								{item.likeCount}
+							</Text>
+							<MaterialCommunityIcons
+								name="heart"
+								size={25}
+								color="#ff4757"
+								style={{}}
+							/>
+						</View>
 				</View>
 			</TouchableOpacity>
 		);
@@ -455,7 +469,7 @@ function HomeScreen(props) {
 						borderTopRightRadius: 22,
 						borderWidth: 1.5,
 						borderColor:"#000",
-					    backgroundColor: "#dfe4ea"
+					    backgroundColor: "#fff"
 					}}
 				>
 					
@@ -703,7 +717,7 @@ const styles = StyleSheet.create({
 		// alignItems: "",
 		justifyContent: "center",
 		marginRight: 5,
-		marginTop: 5,
+		// marginTop: 5,
 	},
 
 });
