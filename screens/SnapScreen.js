@@ -199,27 +199,28 @@ function SnapScreen(props) {
 					backgroundColor: "#fff",
 					width: "100%",
 					height: "80%",
-					marginTop: "10%",
+					marginTop: "25%",
 					
 				}}
 			>   
-				{image && <TouchableOpacity 
-										onPress={() => handleSubmitPhoto(image)} 
-										style={{ flex: 1 }}>
+				{/* {image && <TouchableOpacity  */}
+										{/* // onPress={() => handleSubmitPhoto(image)} 
+										style={{ flex: 1 }}> */}
 							<Image source={{ uri: image }} 
 								   style={{ 
-											width: 300,
-											height: 300,
-											marginTop:"50%"
+									width: 380,
+									height: 380,
+									marginTop:"30%"
+									// borderRadius: 100
 											
 										  }} />
-							</TouchableOpacity>}
+							{/* </TouchableOpacity>} */}
 				<Text
 					style={{
-						fontSize: 20,
+						fontSize: 17,
 						alignSelf: "center",
 						textAlign: "center",
-						marginTop: "30%",
+						marginTop: "10%",
 					}}
 				>
 					Voulez vous convertir cette recette en photo ?
@@ -230,7 +231,7 @@ function SnapScreen(props) {
 						onPress={() => handleSubmitPhoto(image)}
 							// handlePressTrashIcon(props.recipe._id);
 					>
-						<Text style={{color:"#fff"}}>Oui</Text>
+						<Text style={{color:"#fff", fontSize:20}}>Oui</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.buttonContainer}
@@ -239,7 +240,7 @@ function SnapScreen(props) {
 							
 						}}
 					>
-						<Text style={{color:"#fff"}}>Non</Text>
+						<Text style={{color:"#fff", fontSize:20}}>Non</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -414,8 +415,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 
 		justifyContent: "center",
-		marginTop: 40,
-		alignItems: "center",
+		marginTop: "3%",
+		alignItems: "space-between",
 	},
 	buttonContainer: {
 		elevation: 8,
