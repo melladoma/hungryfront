@@ -99,8 +99,6 @@ function HomeScreen(props) {
 
 	useEffect(() => {
 		if (isFocused) {
-			setSelectedTagsArray([])
-			setSearchInput("")
 			async function initialFetch() {
 				var rawResponse = await fetch(
 					`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
@@ -122,6 +120,9 @@ function HomeScreen(props) {
 			initialFetch();
 
 
+		} else {
+			setSelectedTagsArray([])
+			setSearchInput("")
 		}
 	}, [isFocused]);
 
