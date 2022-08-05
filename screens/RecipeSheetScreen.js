@@ -521,7 +521,7 @@ function RecipeSheetScreen(props) {
 
 				<TouchableOpacity
 					style={{}}
-					onPress={() => navigation.navigate("Home")}
+					onPress={() => navigation.goBack()}
 				>
 					<MaterialCommunityIcons
 						name="arrow-left"

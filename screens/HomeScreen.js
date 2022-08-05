@@ -99,6 +99,8 @@ function HomeScreen(props) {
 
 	useEffect(() => {
 		if (isFocused) {
+			setSelectedTagsArray([])
+			setSearchInput("")
 			async function initialFetch() {
 				var rawResponse = await fetch(
 					`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
@@ -118,6 +120,8 @@ function HomeScreen(props) {
 				// console.log(response.addedRecipes, "---------------------------------------")
 			}
 			initialFetch();
+
+
 		}
 	}, [isFocused]);
 
@@ -399,20 +403,21 @@ function HomeScreen(props) {
 						marginBottom: 5,
 						marginTop: 5,
 						borderWidth: 1.5,
-					    borderColor: "#000",
+						borderColor: "#000",
 						backgroundColor: "#Fff",
-						borderRadius:15
+						borderRadius: 15
 					}}
 				>
-					<Text style={{ height: "15%",
-								   padding: 5,
-								   textAlign:"center",
-								   color: "#e67e22",
-								   fontSize:18,
-								   fontWeight:"bold"
-					 }}>					
-					{item.name}					 
-					 </Text>
+					<Text style={{
+						height: "15%",
+						padding: 5,
+						textAlign: "center",
+						color: "#e67e22",
+						fontSize: 18,
+						fontWeight: "bold"
+					}}>
+						{item.name}
+					</Text>
 					<Image
 						style={{
 							height: "75%",
@@ -422,17 +427,17 @@ function HomeScreen(props) {
 						}}
 						source={{ uri: item.image }}
 					/>
-						<View style={styles.like}>
-							<Text style={{ fontSize: 15 }}>
-								{item.likeCount}
-							</Text>
-							<MaterialCommunityIcons
-								name="heart"
-								size={25}
-								color="#ff4757"
-								style={{}}
-							/>
-						</View>
+					<View style={styles.like}>
+						<Text style={{ fontSize: 15 }}>
+							{item.likeCount}
+						</Text>
+						<MaterialCommunityIcons
+							name="heart"
+							size={25}
+							color="#ff4757"
+							style={{}}
+						/>
+					</View>
 				</View>
 			</TouchableOpacity>
 		);
@@ -469,17 +474,17 @@ function HomeScreen(props) {
 						borderTopLeftRadius: 22,
 						borderTopRightRadius: 22,
 						borderWidth: 1.5,
-						borderColor:"#000",
-					    backgroundColor: "#fff"
+						borderColor: "#000",
+						backgroundColor: "#fff"
 					}}
 				>
-					
-					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft:20, marginTop:10, color:"#e67e22" }}>{item.name}</Text>
+
+					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20, marginTop: 10, color: "#e67e22" }}>{item.name}</Text>
 					<Image
 						style={{
 							height: "82%",
 							width: "100%",
-							marginTop:"1%"
+							marginTop: "1%"
 							// borderBottomLeftRadius: 0,
 							// borderBottomRightRadius: 0,
 							// borderTopLeftRadius: 20,
@@ -488,7 +493,7 @@ function HomeScreen(props) {
 						source={{ uri: item.image }}
 					/>
 					<View style={styles.align}>
-						
+
 
 						<View style={styles.like}>
 							<Text style={{ fontSize: 15 }}>
@@ -501,11 +506,11 @@ function HomeScreen(props) {
 								style={{}}
 							/>
 						</View>
-						<Text style={{ fontSize: 25, fontWeight: "bold", marginRight:10 }}>
-						@{item.author.username}
-					</Text>
+						<Text style={{ fontSize: 25, fontWeight: "bold", marginRight: 10 }}>
+							@{item.author.username}
+						</Text>
 					</View>
-					
+
 				</View>
 			</TouchableOpacity>
 		);
@@ -708,9 +713,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		marginRight :8,
-		marginLeft :8,
-		textAlign:"center",
+		marginRight: 8,
+		marginLeft: 8,
+		textAlign: "center",
 		marginTop: 5,
 	},
 	like: {
