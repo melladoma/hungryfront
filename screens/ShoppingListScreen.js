@@ -41,6 +41,30 @@ function ShoppingListScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 
+	var DATA = [
+		{id:1 , ingredients:'lait' , quantity:'20cl'},
+		{id:2 , ingredients:'creme' , quantity:'100cl'},
+		{id:3 , ingredients:'sucre' , quantity:'80cl'},
+	]
+
+	var item = ({item}) => {
+			return(
+				<View style={{flexDirection: 'row' }}>
+					<View style={{width: 110 ,backgroundColor: '#dfe4ea'}}>
+						<Text style={{textAlign: "center",fontSize: 20,}}>{item.id}</Text>
+					</View>
+					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
+						<Text style={{textAlign: "center",fontSize: 20,}}>{item.ingredients}</Text>
+					</View>
+					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
+						<Text style={{textAlign: "center",fontSize: 20,}}>{item.quantity}</Text>
+					</View>
+				</View>
+			)
+		}
+		
+	
+
 	return (
 		<View style={styles.container}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
@@ -67,7 +91,29 @@ function ShoppingListScreen(props) {
 			</View>
 			<View style={{ flex: 1 }}>
 				<View style={styles.content}>
-					<Text style={{ fontSize: 20 }}>ShoppingListScreen</Text>
+					<View style={{
+						flex:1,
+						justifyContent:'center',
+						alignItems:'center',
+						marginTop:'10%',
+					}}>
+						<View style={{flexDirection:'row', margin:3,}}>
+							<View style={{width: 110 , backgroundColor: '#F19066'}}>
+								<Text style={{textAlign: "center",fontSize: 20,}}>valide</Text>
+							</View>
+							<View style={{width: 110 , backgroundColor: '#F19066'}}>
+								<Text style={{textAlign: "center",fontSize: 20,}}>vos produits</Text>
+							</View>
+							<View style={{width: 110 , backgroundColor: '#F19066'}}>
+								<Text style={{textAlign: "center",fontSize: 20,}}>quantity</Text>
+							</View>
+						</View>
+						<FlatList
+							data={DATA}
+							renderItem={item}
+							keyExtractor={(item,index)=>index.toString()}
+						/>
+					</View>
 				</View>
 				<View style={styles.bottomTab}>
 					<View
@@ -102,8 +148,13 @@ function ShoppingListScreen(props) {
 	);
 }
 
+
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return { 
+			bottomTabHeight: state.bottomTabHeight,
+			recipe: state.recipe,
+			token: state.token,
+		};
 }
 
 /*function mapDispatchToProps(dispatch) {

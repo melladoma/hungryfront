@@ -40,16 +40,17 @@ function FormScreen(props) {
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
-		if (isFocused) {
-			if (props.recipe.name) {
-				setRecipe(props.recipe);
-				setSelectedFiltersArray(props.recipe.tags)
-				setNumInputs(props.recipe.ingredients.length)
-			}
+        if (isFocused) {
+            if (props.recipe.name) {
+                setRecipe(props.recipe);
+                if (props.recipe.tags) {
+                    setSelectedFiltersArray(props.recipe.tags)
+                }
+                setNumInputs(props.recipe.ingredients.length)
+            }
 
-		}
-	}, [isFocused]);
-
+        }
+    }, [isFocused]);
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
