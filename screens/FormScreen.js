@@ -43,7 +43,7 @@ function FormScreen(props) {
 		if (isFocused) {
 			if (props.recipe.name) {
 				setRecipe(props.recipe);
-				console.log("length", props.recipe.ingredients)
+				setSelectedFiltersArray(props.recipe.tags)
 				setNumInputs(props.recipe.ingredients.length)
 			}
 
@@ -68,43 +68,49 @@ function FormScreen(props) {
 		}
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
-		recipeObj.tags = [...selectedFiltersArray];
+		if (props.recipe.tags) {
+			recipeObj.tags = recipe.tags
+		} else {
+			recipeObj.tags = [...selectedFiltersArray];
+		}
+
 
 		//verif si champs vides
 		if (recipeObj.ingredients.length === 0 || recipeObj.cookTime === "" || recipeObj.prepTime === "" || recipeObj.name === "" || recipeObj.directions === "" || recipeObj.servings === "") {
 			setNameError("Veuillez remplir tous les champs")
 		} else {
-			// let prepTimeClean = recipeObj.prepTime.match(/[0-9]+/);
-			// recipeObj.prepTime = parseInt(prepTimeClean[0]);
-			// let cookTimeClean = recipeObj.cookTime.match(/[0-9]+/);
-			// recipeObj.cookTime = parseInt(cookTimeClean[0]);
+			if (props.recipe.image) {
+				recipeObj.image = recipe.image
+			} else {
+				if (image) {
+					var data = new FormData();
+					//attention ne fonctionne que sur jpg
+					data.append('image', {
+						uri: image,
+						type: 'image/jpeg',
+						name: 'recipe.jpg',
+					});
 
+					var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+						method: 'post',
+						body: data
+					})
 
-			if (image) {
-				var data = new FormData();
-				//attention ne fonctionne que sur jpg
-				data.append('image', {
-					uri: image,
-					type: 'image/jpeg',
-					name: 'recipe.jpg',
-				});
+					var responseImg = await rawResponseImg.json()
 
-				var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
-					method: 'post',
-					body: data
-				})
+					if (responseImg.result) {
+						recipeObj.image = responseImg.resultObj.imageUrl
+					} else {
+						recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
+					}
 
-				var responseImg = await rawResponseImg.json()
-
-				if (responseImg.result) {
-					recipeObj.image = responseImg.resultObj.imageUrl
 				} else {
 					recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 				}
 
-			} else {
-				recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 			}
+
+
 
 			//---- envoi recette en BDD 
 			setModalOpen(true)
