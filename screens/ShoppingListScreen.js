@@ -25,6 +25,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 function ShoppingListScreen(props) {
 	const navigation = useNavigation();
+	const [recipeData, setRecipeData] = useState(props.recipe);
+
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -41,20 +43,42 @@ function ShoppingListScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 
-	var DATA = [
-		{id:1 , ingredients:'lait' , quantity:'20cl'},
-		{id:2 , ingredients:'creme' , quantity:'100cl'},
-		{id:3 , ingredients:'sucre' , quantity:'80cl'},
-	]
+	// var DATA = recipeData.ingredients.map((data, i)=>
+	// 	{id : i , ingredients : data.name , quantity : data.quantity},
+	// )
+	// var DATA = [
+	// 	// {id : i , ingredients : data.name , quantity : data.quantity},
+	// 	{id:2 , ingredients:'creme' , quantity:'100cl'},
+	// 	{id:3 , ingredients:'sucre' , quantity:'80cl'},
+	// ]
 
-	var item = ({item}) => {
+	// var DATA = props.recipe.ingredients
+
+	console.log(recipeData,'dylan');
+	var item =({item}) => {
 			return(
 				<View style={{flexDirection: 'row' }}>
-					<View style={{width: 110 ,backgroundColor: '#dfe4ea'}}>
-						<Text style={{textAlign: "center",fontSize: 20,}}>{item.id}</Text>
+					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
+					<TouchableOpacity
+							style={{}}
+							onPress={() => navigation.goBack()}
+						>
+							<MaterialCommunityIcons
+								name="checkbox-blank-outline"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
 					</View>
 					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
-						<Text style={{textAlign: "center",fontSize: 20,}}>{item.ingredients}</Text>
+						<Text style={{textAlign: "center",fontSize: 20,}}>{item.name}</Text>
 					</View>
 					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
 						<Text style={{textAlign: "center",fontSize: 20,}}>{item.quantity}</Text>
@@ -109,7 +133,7 @@ function ShoppingListScreen(props) {
 							</View>
 						</View>
 						<FlatList
-							data={DATA}
+							data={recipeData.ingredients}
 							renderItem={item}
 							keyExtractor={(item,index)=>index.toString()}
 						/>
