@@ -41,7 +41,9 @@ function FormScreen(props) {
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
 		if (isFocused) {
+
 			if (props.recipe.name) {
+				// console.log("store existe")
 				setRecipe(props.recipe);
 				if (props.recipe.tags) {
 					setSelectedFiltersArray(props.recipe.tags)
@@ -70,46 +72,44 @@ function FormScreen(props) {
 		}
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
-		if (props.recipe.tags) {
-			recipeObj.tags = recipe.tags
-		} else {
+		if (!props.recipe.tags) {
 			recipeObj.tags = [...selectedFiltersArray];
+		} else {
+			recipeObj.tags = recipe.tags
 		}
-
 
 		//verif si champs vides
 		if (recipeObj.ingredients.length === 0 || recipeObj.cookTime === "" || recipeObj.prepTime === "" || recipeObj.name === "" || recipeObj.directions === "" || recipeObj.servings === "") {
 			setNameError("Veuillez remplir tous les champs")
 		} else {
-			if (props.recipe.image) {
-				recipeObj.image = recipe.image
-			} else {
-				if (image) {
-					var data = new FormData();
-					//attention ne fonctionne que sur jpg
-					data.append('image', {
-						uri: image,
-						type: 'image/jpeg',
-						name: 'recipe.jpg',
-					});
 
-					var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
-						method: 'post',
-						body: data
-					})
+			if (image) {
+				var data = new FormData();
+				//attention ne fonctionne que sur jpg
+				data.append('image', {
+					uri: image,
+					type: 'image/jpeg',
+					name: 'recipe.jpg',
+				});
 
-					var responseImg = await rawResponseImg.json()
+				var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+					method: 'post',
+					body: data
+				})
 
-					if (responseImg.result) {
-						recipeObj.image = responseImg.resultObj.imageUrl
-					} else {
-						recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
-					}
+				var responseImg = await rawResponseImg.json()
 
+				if (responseImg.result) {
+					recipeObj.image = responseImg.resultObj.imageUrl
 				} else {
 					recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 				}
 
+			} else if (props.recipe.image) {
+				recipeObj.image = recipe.image
+
+			} else {
+				recipeObj.image = "https://res.cloudinary.com/cloud022/image/upload/v1659520138/default-placeholder_ddf2uy.png"
 			}
 
 

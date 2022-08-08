@@ -71,9 +71,8 @@ function SnapScreen(props) {
 
 	const handleSubmitPhoto = async (image) => {
 
-		console.log("image", image)
+		// console.log("image", image)
 		var data = new FormData();
-		//attention ne fonctionne que sur png
 		setModalOpen(false)
 		setLoadModalOpen(true);
 		let regExjpg = /$jp*g/
@@ -84,6 +83,7 @@ function SnapScreen(props) {
 				type: "image/png",
 				name: "recipe.png",
 			});
+
 		} else {
 			data.append("image", {
 				uri: image,
@@ -91,12 +91,6 @@ function SnapScreen(props) {
 				name: "recipe.png",
 			});
 		}
-
-		// data.append("image", {
-		// 	uri: image,
-		// 	type: "image/png",
-		// 	name: "recipe.png",
-		// });
 
 		console.log("data", data)
 
@@ -112,11 +106,9 @@ function SnapScreen(props) {
 
 		if (responseImg.result) {
 			var imageToTreat = responseImg.resultObj.imageUrl;
-			console.log("imageToTreat", imageToTreat)
-
+			// console.log("imageToTreat", imageToTreat)
 
 		}
-
 
 		//---- envoi recette en traitement Tesseract
 
@@ -143,14 +135,14 @@ function SnapScreen(props) {
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {
+			// console.log("set to store")
 			props.setRecipe(recipeToStore);
 		}
 
-		// setModalOpen(false);
 		// redirection vers fiche recette	
-
-		navigation.navigate("FormScreen")
 		setLoadModalOpen(false);
+		navigation.navigate("FormScreen")
+
 	}
 
 	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
@@ -344,6 +336,7 @@ function SnapScreen(props) {
 									// console.log("photo", photo.uri);
 									setImage(photo.uri)
 									handleSubmitPhoto(photo.uri)
+
 									// var data = new FormData();
 
 									// data.append('recette', {
