@@ -425,6 +425,7 @@ function FeedScreen(props) {
 						}}
 						source={{ uri: item.image }}
 					/>
+					<View style={{display:"flex", flexDirection:"row"}}>
 					<View style={styles.like}>
 						<Text style={{ fontSize: 15 }}>
 							{item.likeCount}
@@ -436,6 +437,17 @@ function FeedScreen(props) {
 							style={{}}
 						/>
 					</View>
+					<View style={styles.like}>
+						<Text style={{ fontSize: 15 }}>
+							{item.comments.length}
+						</Text>
+						<MaterialCommunityIcons
+							name="comment-multiple"
+							size={25}
+							color="green"
+							style={{}}
+						/>
+					</View></View>
 				</View>
 			</TouchableOpacity>
 		);
@@ -503,6 +515,17 @@ function FeedScreen(props) {
 								style={{}}
 							/>
 						</View>
+						<View style={styles.like}>
+						<Text style={{ fontSize: 15 }}>
+							{item.comments.length}
+						</Text>
+						<MaterialCommunityIcons
+							name="comment-multiple"
+							size={25}
+							color="green"
+							style={{}}
+						/>
+					</View>
 						<Text style={{ fontSize: 25, fontWeight: "bold", marginRight: 10 }}>
 							@{item.author.username}
 						</Text>
