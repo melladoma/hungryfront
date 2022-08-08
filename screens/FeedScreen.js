@@ -65,7 +65,7 @@ function FeedScreen(props) {
 		"entrée",
 		"plat",
 		"dessert",
-		"amuse-bouche",
+		"apéro",
 		"boisson",
 		"asiatique",
 		"américain",
@@ -74,7 +74,7 @@ function FeedScreen(props) {
 		"végétarien",
 		"rapide",
 		"gastronomique",
-		"recette de fête",
+		"festif",
 		"brunch",
 	];
 	const [selectedTagsArray, setSelectedTagsArray] = useState([]);

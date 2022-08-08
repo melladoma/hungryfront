@@ -53,6 +53,8 @@ function FormScreen(props) {
 
 	var handleSubmitForm = async function () {
 
+		props.fromWhichScreen("FormScreen")
+
 		let recipeObj = { ...recipe };
 
 		//------recup du multi champs ingredients et push dans l'objet recipe
@@ -534,6 +536,9 @@ function mapDispatchToProps(dispatch) {
 	return {
 		setRecipe: function (recipe) {
 			dispatch({ type: "setRecipe", recipe: recipe });
+		},
+		fromWhichScreen: function (fromWhichScreen) {
+			dispatch({ type: "fromWhichScreen", fromWhichScreen: fromWhichScreen });
 		},
 	};
 }
