@@ -311,10 +311,14 @@ function RecipeSheetScreen(props) {
 
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
 		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
-			//transforme le string de la quantity en INT
-			var finalQuantity = parseInt(ingredient.quantity);
+			let finalQuantity = ""
+			if (ingredient.quantity.match(/\d/) != null) {
+				let quantity = parseInt(ingredient.quantity);
+				finalQuantity = Math.round((quantity / recipeData.servings)*nbPersonne)
+			}
 			//et la je le remplace
-			var grammes = ingredient.quantity.replace(finalQuantity, "");
+			var grammes = ingredient.quantity.replace(/\d/gi, "");
+			
 
 			return (
 				<View key={i} style={styles.ligne}>
@@ -326,10 +330,7 @@ function RecipeSheetScreen(props) {
 							{/* je divise la quantity par le nombre de personne qui a etais mit dans le formlaire (sa donne 1)
 								et apres je le multipli par le nombre de personne que j'ai set (et je let un Math pour mettre
 								un chiffre arrondi) */}
-							{Math.round(
-								(finalQuantity / recipeData.servings) *
-									nbPersonne
-							)}
+							{finalQuantity}
 							{grammes}
 						</Text>
 					</View>
@@ -514,6 +515,16 @@ function RecipeSheetScreen(props) {
 				/>
 			</View>
 		);
+	}
+
+	var handleGoBack = () => {
+	
+		if (props.fromWhichScreen === "FormScreen") {
+			navigation.navigate("Home")
+		} else {
+			navigation.goBack()
+		}
+		
 	}
 
 
@@ -770,7 +781,7 @@ function RecipeSheetScreen(props) {
 
 				<TouchableOpacity
 					style={{}}
-					onPress={() => navigation.goBack()}
+					onPress={() => handleGoBack()}
 				>
 					<MaterialCommunityIcons
 						name="arrow-left"
@@ -797,6 +808,7 @@ function mapStateToProps(state) {
 		recipe: state.recipe,
 		token: state.token,
 		likedRecipes: state.likedRecipes,
+		fromWhichScreen: state.fromWhichScreen
 	};
 }
 
