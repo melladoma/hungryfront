@@ -24,6 +24,7 @@ import {
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 TouchableOpacity.defaultProps = { activeOpacity: 0.8 };
 
@@ -40,14 +41,16 @@ function RecipeSheetScreen(props) {
 	const [addedRecipes, setAddedRecipes] = useState([]);
 	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
 		useState(false);
+	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
 
 	const window = Dimensions.get("window");
 
 
 
+
 	useEffect(() => {
 		if (isFocused) {
-			/* setRecipeData(props.recipe); */
+			setRecipeData(props.recipe);
 			async function initialFetch() {
 				var rawResponse = await fetch(
 					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
@@ -66,11 +69,16 @@ function RecipeSheetScreen(props) {
 				setLikedRecipes(response.likedRecipes)
 			}
 			initialFetch();
+
 			props.recipe.author.token === props.token
 				? setIsThisRecipeMine(true)
 				: setIsThisRecipeMine(false);
 		}
 	}, [isFocused]);
+	
+			
+		
+	
 
 
 	//likeIcon
@@ -292,15 +300,22 @@ function RecipeSheetScreen(props) {
 			}
 		);
 
+
 		var response = await rawResponse.json();
 		if (response.result === true) {
-			navigation.navigate("HomeDrawer2");
+			navigation.navigate("HomeDrawer2");  //vérifier s'il faut pas mettre "home"------------
 		}
 	};
 	
 
+
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
 		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
+			//transforme le string de la quantity en INT
+			var finalQuantity = parseInt(ingredient.quantity);
+			//et la je le remplace
+			var grammes = ingredient.quantity.replace(finalQuantity, "");
+
 			return (
 				<View key={i} style={styles.ligne}>
 					<Text style={{ fontSize: 19, marginLeft: 25 }}>
@@ -308,7 +323,14 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<View>
 						<Text style={{ fontSize: 19, marginRight: 18 }}>
-							{ingredient.quantity}
+							{/* je divise la quantity par le nombre de personne qui a etais mit dans le formlaire (sa donne 1)
+								et apres je le multipli par le nombre de personne que j'ai set (et je let un Math pour mettre
+								un chiffre arrondi) */}
+							{Math.round(
+								(finalQuantity / recipeData.servings) *
+									nbPersonne
+							)}
+							{grammes}
 						</Text>
 					</View>
 				</View>
@@ -395,9 +417,11 @@ function RecipeSheetScreen(props) {
 						alignSelf: "center",
 						textAlign: "center",
 						marginTop: "30%",
+
 						flexWrap: "wrap",
 						marginLeft: "8%",
 						marginLeft: "8%",
+
 					}}
 				>
 					Êtes-vous certain de vouloir supprimer cette recette ?
@@ -433,7 +457,66 @@ function RecipeSheetScreen(props) {
 	}
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
 
-	
+
+	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
+	var handlePressTrashIcon = async (id) => {
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/delete-recipe`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `id=${id}`,
+			}
+		);
+
+		var response = await rawResponse.json();
+		if (response.result === true) {
+			navigation.navigate("Home");
+		}
+	};
+	//---------------------------------------------------------- FIN DELETE RECIPE -------------------------------------------
+
+	const [plus, setPlus] = useState(false);
+
+	var plusPersonne;
+	if (plus) {
+		plusPersonne = (
+			<View
+				style={{
+					borderWidth: 2,
+					flex: 1,
+					position: "absolute",
+					bottom: 60,
+					width: "50%",
+					backgroundColor: "white",
+					alignSelf: "center",
+				}}
+			>
+				<ScrollPicker
+					//avoir le tableau jusqu'a 100 ....
+					dataSource={[...Array(21).keys()]}
+					//mettre le compteur par defaut au nombre de personne que le mec a mit dans le formulaire
+					selectedIndex={nbPersonne}
+					onValueChange={(data, selectedIndex) => {
+						//data = la valeur que la scrollPicker renvoi et on le set dans un etat
+						setNbPersonne(data);
+
+						//console.log(data)
+					}}
+					wrapperHeight={180}
+					wrapperWidth={150}
+					wrapperColor="#FFFFFF"
+					itemHeight={60}
+					highlightColor="#f19066"
+					highlightBorderWidth={3}
+				/>
+			</View>
+		);
+	}
+
+
 	return (
 		<View style={styles.container}>
 			{/*-----------------------------------------------------Nom de recette + edit ---------------------------------------------------------  */}
@@ -501,7 +584,19 @@ function RecipeSheetScreen(props) {
 									fontSize: 24,
 								}}
 							>
-								{recipeData.prepTime}
+								{recipeData.prepTime < 60
+									? `${recipeData.prepTime} min`
+									: recipeData.prepTime % 60 > 9
+									? `${Math.floor(
+											recipeData.prepTime / 60
+									  )}h${recipeData.prepTime % 60}min`
+									: recipeData.prepTime % 60 > 0
+									? `${Math.floor(
+											recipeData.prepTime / 60
+									  )}h0${recipeData.prepTime % 60}min`
+									: `${Math.floor(
+											recipeData.prepTime / 60
+									  )}h`}
 							</Text>
 							<Text>Préparation</Text>
 						</View>
@@ -513,21 +608,66 @@ function RecipeSheetScreen(props) {
 									fontSize: 24,
 								}}
 							>
-								{recipeData.cookTime}
+								{recipeData.cookTime < 60
+									? `${recipeData.cookTime} min`
+									: recipeData.cookTime % 60 > 9
+									? `${Math.floor(
+											recipeData.cookTime / 60
+									  )}h${recipeData.cookTime % 60}min`
+									: recipeData.cookTime % 60 > 0
+									? `${Math.floor(
+											recipeData.cookTime / 60
+									  )}h0${recipeData.cookTime % 60}min`
+									: `${Math.floor(
+											recipeData.cookTime / 60
+									  )}h`}
 							</Text>
 							<Text>Cuisson</Text>
 						</View>
-						<View style={{ marginRight: 8 }}>
-							<Text
+						<View
+							style={{ display: "flex", flexDirection: "column" }}
+						>
+							<TouchableOpacity
 								style={{
-									textAlign: "center",
-									color: "#F19066",
-									fontSize: 24,
+									marginRight: 8,
+									borderWidth: 1,
+									borderRadius: 8,
+									padding: 5,
+									backgroundColor: "#F19066",
 								}}
+								onPress={() => setPlus(!plus)}
 							>
-								{recipeData.servings}
-							</Text>
-							<Text>Personnes</Text>
+								<View
+									style={{
+										display: "flex",
+										flexDirection: "row",
+									}}
+								>
+									<View>
+										<Text
+											style={{
+												textAlign: "center",
+												color: "black",
+												fontSize: 24,
+											}}
+										>
+											{/* au lieu de lui mettre un recipeData.servings je lui met le nombre de personne mais ca va toujours
+									garder le nombre de personne quil a mit dans le formulaire prck dans l'etat je lai mit par defaut
+									au nombre de personne quil a mit dans le formulaire (recipeData.servings) */}
+											{nbPersonne}
+										</Text>
+
+										<Text>Personnes</Text>
+									</View>
+									<MaterialCommunityIcons
+										name="plus-minus-variant"
+										size={28}
+										color="#2f3542"
+										style={{}}
+									/>
+								</View>
+							</TouchableOpacity>
+							{plusPersonne}
 						</View>
 					</View>
 				</View>
@@ -546,7 +686,7 @@ function RecipeSheetScreen(props) {
 						Ingrédients
 					</Text>
 					<TouchableOpacity
-						style={{}}
+						style={{ zIndex: 1 }}
 						onPress={() =>
 							navigation.navigate("ShoppingListScreen")
 						}
@@ -574,6 +714,7 @@ function RecipeSheetScreen(props) {
 				</View>
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
+
 						<ScrollView style={{ marginTop: 30 }}>
 							<View
 								style={{
@@ -583,9 +724,11 @@ function RecipeSheetScreen(props) {
 									textAlign: "justify",
 								}}
 							>
+
 								<Text h1 style={styles.recipeName}>
 									{recipeData.name}
 								</Text>
+
 
 								<Text
 									style={{
@@ -593,8 +736,13 @@ function RecipeSheetScreen(props) {
 										marginTop: 30,
 									}}
 								>
+
 									{recipeData.directions}
 								</Text>
+								{/* pour dire que les instruction sont pour le nombre de personne qui a etait mit dans le formulaire */}
+								{/* <Text style={{ fontSize: 20 }}>
+									(cette instruction est pour {recipeData.servings} personne)
+								</Text> */}
 							</View>
 							<View style={styles.screenContainer}>
 								<CloseModal
@@ -709,6 +857,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		marginTop: 5,
+		zIndex: 1,
 	},
 	tagligne: {
 		flexDirection: "row",
@@ -798,6 +947,7 @@ const styles = StyleSheet.create({
 	},
 	deleteButton: {
 		flexDirection: "row",
+
 		justifyContent: "center",
 		marginTop: 40,
 		alignItems: "center",
@@ -811,8 +961,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		marginRight: "4%",
-		marginLeft: "4%",
+		// marginRight:25,
 		width: 100,
 	},
 });

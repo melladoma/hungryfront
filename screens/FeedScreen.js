@@ -92,8 +92,6 @@ function FeedScreen(props) {
 
 	useEffect(() => {
 		if (isFocused) {
-			setSelectedTagsArray([])
-			setSearchInput("")
 
 			async function initialFetch() {
 				var rawResponse = await fetch(
@@ -114,6 +112,9 @@ function FeedScreen(props) {
 			}
 			initialFetch();
 
+		} else {
+			setSelectedTagsArray([])
+			setSearchInput("")
 		}
 	}, [isFocused]);
 
