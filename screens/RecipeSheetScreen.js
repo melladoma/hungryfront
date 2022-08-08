@@ -256,7 +256,7 @@ function RecipeSheetScreen(props) {
 					}}
 				>
 					<MaterialCommunityIcons
-						name="book-minus"
+						name="notebook-minus-outline"
 						size={25}
 						color="#F19066"
 						style={{
@@ -275,7 +275,7 @@ function RecipeSheetScreen(props) {
 					}}
 				>
 					<MaterialCommunityIcons
-						name="book-plus"
+						name="notebook-plus-outline"
 						size={25}
 						color="#2f3542"
 						style={{

@@ -291,18 +291,18 @@ function HomeScreen(props) {
 										}}
 									>
 										<MaterialCommunityIcons
-											name="view-list"
+											name="view-stream"
 											size={24}
 											color="#2f3542"
 										/>
 										<Text
 											style={{
 												color: "black",
-												fontSize: 18,
+												fontSize: 15,
 												marginLeft: 10,
 											}}
 										>
-											Liste
+											Grandes icônes
 										</Text>
 									</TouchableOpacity>
 								</View>
@@ -349,11 +349,11 @@ function HomeScreen(props) {
 										<Text
 											style={{
 												color: "black",
-												fontSize: 18,
+												fontSize: 15,
 												marginLeft: 10,
 											}}
 										>
-											Icônes
+											Petites icônes
 										</Text>
 									</TouchableOpacity>
 								</View>

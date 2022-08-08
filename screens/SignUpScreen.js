@@ -76,7 +76,7 @@ function SignUpScreen(props) {
 	};
 	useEffect(() => {
 		if (userExists) {
-			navigation.navigate("HomeDrawer2");
+			navigation.navigate("FeedDrawer2");
 		}
 	}, [userExists]);
 
