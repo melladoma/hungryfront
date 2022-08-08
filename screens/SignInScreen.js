@@ -72,7 +72,7 @@ function SignInScreen(props) {
 
 	useEffect(() => {
 		if (userExists) {
-			navigation.navigate("HomeDrawer2");
+			navigation.navigate("FeedDrawer2");
 		}
 	}, [userExists]);
 
@@ -144,6 +144,7 @@ function SignInScreen(props) {
 					<KeyboardAvoidingView
 						behavior={Platform.OS === "ios" ? "padding" : "height"}
 					>
+						{/* <TouchableOpacity> */}
 						<TextInput
 							style={styles.inputContainer}
 							inputStyle={{ marginLeft: 10 }}
@@ -155,14 +156,15 @@ function SignInScreen(props) {
 							value={signInEmail}
 						/>
 						<View style={styles.inputContainer}>
+						
 							<TextInput
-								style={styles.inputField}
 								inputStyle={{ marginLeft: 10 }}
 								placeholder="Votre mot de passe"
 								secureTextEntry={passwordVisibility}
 								onChangeText={(val) => setSignInPassword(val)}
-								value={signInPassword}
+								value={signInPassword}								
 							/>
+							
 							<Pressable onPress={handlePasswordVisibility}>
 								<MaterialCommunityIcons
 									name={rightIcon}
@@ -170,6 +172,8 @@ function SignInScreen(props) {
 									color="#232323"
 								/>
 							</Pressable>
+						
+							
 						</View>
 
 						{tabErrorsSignin}

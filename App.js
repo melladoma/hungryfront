@@ -74,7 +74,7 @@ function HomeScreenTabs() {
 					} else if (route.name === "Add") {
 						iconName = "plus-circle";
 					} else if (route.name === "Home") {
-						iconName = "silverware-clean";
+						iconName = "notebook";
 					}
 					return (
 						<MaterialCommunityIcons
@@ -131,7 +131,7 @@ function AddScreenTabs() {
 					} else if (route.name === "Add") {
 						iconName = "plus-circle";
 					} else if (route.name === "Home") {
-						iconName = "silverware-clean";
+						iconName = "notebook";
 					}
 					return (
 						<MaterialCommunityIcons
@@ -188,7 +188,7 @@ function FeedScreenTabs() {
 					} else if (route.name === "Add") {
 						iconName = "plus-circle";
 					} else if (route.name === "Home") {
-						iconName = "silverware-clean";
+						iconName = "notebook";
 					}
 					return (
 						<MaterialCommunityIcons

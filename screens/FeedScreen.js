@@ -37,7 +37,7 @@ function FeedScreen(props) {
 
 	const [alert, setAlert] = useState(false); //pour afficher la modal des filtres
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'ombre derrière la modal
-	const [typeAffichage, setTypeAffichage] = useState("icones"); //filtre accessible dans la modal, gère le type d'affichage
+	const [typeAffichage, setTypeAffichage] = useState("liste"); //filtre accessible dans la modal, gère le type d'affichage
 	const [DATA, setDATA] = useState([]); //tableau d'objets contenant les données des recetes
 	const [initialData, setInitialData] = useState([]); //sert pour filtrer recettes par nom et tags
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
@@ -283,18 +283,18 @@ function FeedScreen(props) {
 										}}
 									>
 										<MaterialCommunityIcons
-											name="view-list"
+											name="view-stream"
 											size={24}
 											color="#2f3542"
 										/>
 										<Text
 											style={{
 												color: "black",
-												fontSize: 18,
+												fontSize: 15,
 												marginLeft: 10,
 											}}
 										>
-											Liste
+											Grandes icônes
 										</Text>
 									</TouchableOpacity>
 								</View>
@@ -341,11 +341,11 @@ function FeedScreen(props) {
 										<Text
 											style={{
 												color: "black",
-												fontSize: 18,
+												fontSize: 15,
 												marginLeft: 10,
 											}}
 										>
-											Icônes
+											Petites icônes
 										</Text>
 									</TouchableOpacity>
 								</View>
