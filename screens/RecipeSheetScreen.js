@@ -36,59 +36,54 @@ function RecipeSheetScreen(props) {
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [shadow, setShadow] = useState(false);
-	const [likedRecipesList, setLikedRecipesList] = useState(
-		props.likedRecipes
-	);
+	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
+	const [addedRecipes, setAddedRecipes] = useState([]);
+	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
+		useState(false);
 
 	const window = Dimensions.get("window");
 
+
+
 	useEffect(() => {
 		if (isFocused) {
+			/* setRecipeData(props.recipe); */
+			async function initialFetch() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}`,
+					}
+				);
 
-			setRecipeData(props.recipe);
-			console.log("store", props.recipe)
+				var response = await rawResponse.json();
+
+				setAddedRecipes(response.addedRecipes);
+				setLikedRecipes(response.likedRecipes)
+			}
+			initialFetch();
 			props.recipe.author.token === props.token
 				? setIsThisRecipeMine(true)
 				: setIsThisRecipeMine(false);
 		}
 	}, [isFocused]);
 
-	let modificationPencilIcon = null;
-	let deletionTrashIcon = (
-		<TouchableOpacity style={{}}>
-			<MaterialCommunityIcons
-				name="book-plus"
-				size={25}
-				color="#2f3542"
-				style={{
-					paddingLeft: 10,
-					marginTop: 5,
+
+	//likeIcon
+	var heartIcon
+	if (likedRecipes.includes(recipeData._id)) {
+		heartIcon = (
+			<TouchableOpacity
+				style={styles.like}
+				onPress={() => {
+					handlePressHeartIcon(props.recipe._id, props.token);
 				}}
-			/>
-		</TouchableOpacity>
-	);
-
-	var likeHeartIcon = (
-		<TouchableOpacity
-			style={styles.like}
-			onPress={() => {
-				handlePressHeartIcon(props.recipe._id, props.token);
-			}}
-		>
-			<MaterialCommunityIcons
-				name="heart-outline"
-				size={25}
-				color="grey"
-				style={{}}
-			/>
-
-			<Text>{recipeData.likeCount}</Text>
-		</TouchableOpacity>
-	);
-
-	if (likedRecipesList.includes(recipeData._id)) {
-		likeHeartIcon = (
-			<View style={styles.like}>
+			>
+				<Text>{Number(recipeData.likeCount)}</Text>
 				<MaterialCommunityIcons
 					name="heart"
 					size={25}
@@ -96,32 +91,101 @@ function RecipeSheetScreen(props) {
 					style={{}}
 				/>
 
-				<Text>{Number(recipeData.likeCount)}</Text>
-			</View>
+				
+			</TouchableOpacity>
+		);
+	} else {
+		heartIcon = (
+			<TouchableOpacity
+				style={styles.like}
+				onPress={() => {
+					handlePressHeartIcon(props.recipe._id, props.token);
+				}}
+			>
+				<Text>{recipeData.likeCount}</Text>
+				<MaterialCommunityIcons
+					name="heart-outline"
+					size={25}
+					color="grey"
+					style={{}}
+				/>
+	
+				
+			</TouchableOpacity>
 		);
 	}
 
-	//Like a Recipe
 	var handlePressHeartIcon = async (id, token) => {
+		if (likedRecipes.includes(recipeData._id)) {
+			var rawResponse = await fetch(
+				`http://${privateIP}:3000/recipesheet/dislike-recipe`,
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `id=${id}&token=${token}`,
+				}
+			);
+	
+			var response = await rawResponse.json();
+	
+			setLikedRecipes(response.likedRecipes);
+	
+			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
+		} else {
+			var rawResponse = await fetch(
+				`http://${privateIP}:3000/recipesheet/like-recipe`,
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `id=${id}&token=${token}`,
+				}
+			);
+	
+			var response = await rawResponse.json();
+	
+			setLikedRecipes(response.likedRecipes);
+	
+			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
+		}
+	};
+
+	var handleAddBook = async (recipe, token) => {
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/like-recipe`,
+			`http://${privateIP}:3000/recipesheet/add-recipe-to-myrecipes`,
 			{
 				method: "post",
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				body: `id=${id}&token=${token}`,
+				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
 			}
 		);
-
 		var response = await rawResponse.json();
-
-		setLikedRecipesList(response.likedRecipes);
-		props.addLikedRecipes(response.likedRecipes);
-
-		setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
+		setAddedRecipes(JSON.parse(response.addedRecipes));
 	};
 
+	var handleDeleteBook = async (recipe, token) => {
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/delete-recipe-to-myrecipes`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
+			}
+		);
+		var response = await rawResponse.json();
+		setAddedRecipes(JSON.parse(response.addedRecipes));
+	};
+
+	let modificationPencilIcon = null;
+	let trashIcon = null;
+	let addBookIcon = null
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
 			<TouchableOpacity
@@ -140,7 +204,7 @@ function RecipeSheetScreen(props) {
 			</TouchableOpacity>
 		);
 
-		deletionTrashIcon = (
+		trashIcon = (
 			<TouchableOpacity
 				style={{}}
 				onPress={() => {
@@ -161,8 +225,9 @@ function RecipeSheetScreen(props) {
 			</TouchableOpacity>
 		);
 
-		likeHeartIcon = (
+		heartIcon = (
 			<View style={styles.like}>
+				<Text>{recipeData.likeCount}</Text>
 				<MaterialCommunityIcons
 					name="heart"
 					size={25}
@@ -170,20 +235,69 @@ function RecipeSheetScreen(props) {
 					style={{}}
 				/>
 
-				<Text>{recipeData.likeCount}</Text>
+				
 			</View>
 		);
+	} else {
+		if (addedRecipes.includes(recipeData._id)) {
+			addBookIcon = (
+				<TouchableOpacity
+					style={{}}
+					onPress={() => {
+						handleDeleteBook(recipeData, props.token);
+					}}
+				>
+					<MaterialCommunityIcons
+						name="book-minus"
+						size={25}
+						color="#F19066"
+						style={{
+							paddingLeft: 10,
+							marginTop: 5,
+						}}
+					/>
+				</TouchableOpacity>
+			);
+		} else {
+			addBookIcon = (
+				<TouchableOpacity
+					style={{}}
+					onPress={() => {
+						handleAddBook(recipeData, props.token);
+					}}
+				>
+					<MaterialCommunityIcons
+						name="book-plus"
+						size={25}
+						color="#2f3542"
+						style={{
+							paddingLeft: 10,
+							marginTop: 5,
+						}}
+					/>
+				</TouchableOpacity>
+			);
+		}
 	}
-	// ------------------------------------------------------------------A remplacer par ajouter dans ma collection ---------------------------------------------------------
 
-	// ------------------------------------------------------------------ FIN A remplacer par ajouter dans ma collection ---------------------------------------------------------
-	//ce que je veux afficher ou pas:
-	/*  -le crayon et la poubelle sont là, et coeur pas cliquable et déjà 1 like, si ça vient de HomeScreen et FormScreen car c'est donc ma recette
-	-pas de crayon, ni poubelle si ça vient de FeedScreen, coeur cliquable (car a priori mes recettes s'affichent pas dans le feed)
-	-si ça vient de l'agenda je sais pas*/
+	var handlePressTrashIcon = async (id) => {
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/delete-recipe`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `id=${id}`,
+			}
+		);
 
-	/* if (props.provenanceDeLaRecette === "HomeScreen" || props.provenanceDeLaRecette === "FormScreen") {
-	} else if (props.provenanceDeLaRecette === "FeedScreen") */
+		var response = await rawResponse.json();
+		if (response.result === true) {
+			navigation.navigate("HomeDrawer2");
+		}
+	};
+	
 
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
 		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
@@ -283,7 +397,7 @@ function RecipeSheetScreen(props) {
 						marginTop: "30%",
 						flexWrap: "wrap",
 						marginLeft: "8%",
-						marginLeft: "8%"
+						marginLeft: "8%",
 					}}
 				>
 					Êtes-vous certain de vouloir supprimer cette recette ?
@@ -319,25 +433,7 @@ function RecipeSheetScreen(props) {
 	}
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
 
-	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
-	var handlePressTrashIcon = async (id) => {
-		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/delete-recipe`,
-			{
-				method: "post",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
-				},
-				body: `id=${id}`,
-			}
-		);
-
-		var response = await rawResponse.json();
-		if (response.result === true) {
-			navigation.navigate("HomeDrawer2");
-		}
-	};
-	//---------------------------------------------------------- FIN DELETE RECIPE -------------------------------------------
+	
 	return (
 		<View style={styles.container}>
 			{/*-----------------------------------------------------Nom de recette + edit ---------------------------------------------------------  */}
@@ -350,7 +446,8 @@ function RecipeSheetScreen(props) {
 
 				{/*-----------------------------------------------------nom du créateur + semainier + ajout a la collection + poubelle ---------------------------------------------------------  */}
 				<View style={styles.ligne}>
-					{deletionTrashIcon}
+					{addBookIcon}
+					{trashIcon}
 
 					<Text style={styles.userName}>
 						{recipeData.author.username}
@@ -392,7 +489,7 @@ function RecipeSheetScreen(props) {
 						<View style={styles.tagligne}>{tag}</View>
 					</View>
 				</ScrollView>
-				<View style={styles.like}>{likeHeartIcon}</View>
+				<View style={styles.like}>{heartIcon}</View>
 
 				<View style={styles.center}>
 					<View style={styles.time}>
@@ -478,20 +575,24 @@ function RecipeSheetScreen(props) {
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
 						<ScrollView style={{ marginTop: 30 }}>
-							<View style={{
-								marginTop: 20,
-								width: "95%",
-								marginLeft: "3%",
-								textAlign: "justify"
-							}}>
+							<View
+								style={{
+									marginTop: 20,
+									width: "95%",
+									marginLeft: "3%",
+									textAlign: "justify",
+								}}
+							>
 								<Text h1 style={styles.recipeName}>
 									{recipeData.name}
 								</Text>
 
-								<Text style={{
-									fontSize: 20,
-									marginTop: 30,
-								}}>
+								<Text
+									style={{
+										fontSize: 20,
+										marginTop: 30,
+									}}
+								>
 									{recipeData.directions}
 								</Text>
 							</View>
