@@ -785,17 +785,20 @@ function RecipeSheetScreen(props) {
 				</Modal>
 
 				{/* -----------------------------------------------------Commentaires----------------------------------------------------------------- */}
-
+<TouchableOpacity
+onPress={() =>{}}
+>
 				<View style={styles.like}>
-					<Text style={{ fontSize: 18 }}>Commentaires</Text>
+					<Text style={{ fontSize: 18 }}>Commentaires </Text>
 					<MaterialCommunityIcons
-						name="comment"
+						name="comment-multiple"
 						size={25}
-						color="#d35400"
+						color="green"
 						style={{}}
 					/>
+					<Text>{recipeData.comments.length}</Text>
 				</View>
-
+</TouchableOpacity>
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
 
 				<TouchableOpacity
