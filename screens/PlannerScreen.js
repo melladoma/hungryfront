@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import { LocaleConfig } from "react-native-calendars";
@@ -57,12 +57,96 @@ import {
 	TouchableOpacity,
 	Text,
 	TextInput,
+	Image
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 function PlannerScreen(props) {
 	const navigation = useNavigation();
+	const isFocused = useIsFocused();
+	const [items, setItems] = useState({})
+	const [recipeData, setRecipeData] = useState(props.recipe);
+	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
+	const [addedRecipes, setAddedRecipes] = useState([]);
+	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
+
+	useEffect(() => {
+		if (isFocused) {
+			setRecipeData(props.recipe);
+			async function initialFetch() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}`,
+					}
+				);
+
+				var response = await rawResponse.json();
+
+				setAddedRecipes(response.addedRecipes);
+				setLikedRecipes(response.likedRecipes)
+			}
+			initialFetch();
+		}
+	}, [isFocused]);
+
+	const timeToString = (time) => {
+		const date = new Date(time);
+		return date.toISOString().split('T')[0];
+	  }
+	
+
+	const loadItems = (day, item) => {
+	
+		setTimeout(() => {
+		  for (let i = 0; i < 8; i++) {
+			const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+			const strTime = timeToString(time);	
+
+			if (!items[strTime]) {
+			  items[strTime] = [];			  
+			  const numItems = 1;
+			  for (let j = 0; j < numItems; j++) {
+				items[strTime].push({
+				  
+				  height: Math.max(50, Math.floor(Math.random() * 150)),
+				  day: strTime
+				});
+			  }
+			}
+		  }
+		  
+		  const newItems= {};
+		  Object.keys(items).forEach(key => {
+			newItems[key] = items[key];
+		  });
+		  setItems(newItems)
+		}, 1000);
+	  }
+	  
+
+
+	  const renderItem = ({ item }) =>{
+		return(
+			<TouchableOpacity 
+				style={{borderWidth:1}}
+				>
+				<View>
+					<Text>
+					ok
+					</Text>
+				</View>
+			</TouchableOpacity>
+		)
+
+	  }
+
+	
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -106,8 +190,8 @@ function PlannerScreen(props) {
 
 			<View style={styles.content}>
 				
-
-				<Agenda
+{/* -----------------------------Code Dylan --------------------------- */}
+				{/* <Agenda
 					// The list of items that have to be displayed in agenda. If you want to render item as empty date
 					// the value of date key has to be an empty array []. If there exists no value for date key it is
 					// considered that the date in question is not yet loaded
@@ -161,9 +245,9 @@ function PlannerScreen(props) {
 						"2012-05-17": { marked: true },
 						"2012-05-18": { disabled: true }, */
 						}
-					}
+					{/* } */}
 					
-					// If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly
+					{/* // If provided, a standard RefreshControl will be added for "Pull to Refresh" functionality. Make sure to also set the refreshing prop correctly
 					onRefresh={() => console.log("refreshing...")}
 					
 					// Agenda theme
@@ -174,8 +258,8 @@ function PlannerScreen(props) {
 						agendaKnobColor: "blue",
 					}}
 					// Agenda container style
-					style={{}}
-				/>
+					style={{}} */}
+				{/* /> */} 
 				{/* <Text style={{ fontSize: 20 }}>PlannerScreen</Text>
 				<View
 					style={{
@@ -203,22 +287,66 @@ function PlannerScreen(props) {
 						/>
 					</TouchableOpacity>
 				</View> */}
+{/* -----------------------------Code Dylan --------------------------- */}
+
+<Agenda
+       
+        items={items}
+        loadItemsForMonth={loadItems}
+        selected={'2022-08-08'}
+		renderItem={renderItem}
+        // renderItem={this.renderItem}
+        // renderEmptyDate={this.renderEmptyDate}
+        // rowHasChanged={this.rowHasChanged}
+        // showClosingKnob={true}
+        // markingType={'period'}
+        // markedDates={{
+        //    '2017-05-08': {textColor: '#43515c'},
+        //    '2017-05-09': {textColor: '#43515c'},
+        //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
+        //    '2017-05-21': {startingDay: true, color: 'blue'},
+        //    '2017-05-22': {endingDay: true, color: 'gray'},
+        //    '2017-05-24': {startingDay: true, color: 'gray'},
+        //    '2017-05-25': {color: 'gray'},
+        //    '2017-05-26': {endingDay: true, color: 'gray'}}}
+        // monthFormat={'yyyy'}
+        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
+        //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
+        // hideExtraDays={false}
+        // showOnlySelectedDayItems
+      />
 			</View>
 		</View>
 	);
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight };
+	return {
+		bottomTabHeight: state.bottomTabHeight,
+		recipe: state.recipe,
+		token: state.token,
+		likedRecipes: state.likedRecipes,
+		fromWhichScreen: state.fromWhichScreen
+	};
 }
 
-/*function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
+		sendBottomTabHeight: function (bottomTabHeight) {
+			dispatch({
+				type: "sendBottomTabHeight",
+				bottomTabHeight: bottomTabHeight,
+			});
+		},
+		sendPressedRecipeToStore: function (recipe) {
+			console.log(recipe)
+			dispatch({
+				type: "setRecipe",
+				recipe: recipe,
+			});
 		},
 	};
-}*/
+}
 
 export default connect(mapStateToProps, null)(PlannerScreen);
 

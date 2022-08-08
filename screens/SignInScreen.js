@@ -131,7 +131,7 @@ function SignInScreen(props) {
 		<ImageBackground
 			source={require("../assets/eggs.jpg")}
 			style={styles.container}
-			blurRadius={10}
+			blurRadius={3}
 		>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		width: 210,
 		alignItems: "center",
-		marginTop: 10,
-		marginBottom: 10,
+		// marginTop: 10,
+		// marginBottom: 10,
 	},
 });
