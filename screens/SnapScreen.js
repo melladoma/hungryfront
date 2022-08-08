@@ -268,12 +268,14 @@ function SnapScreen(props) {
 var LoadingModal = (
 	<Modal visible={loadModalOpen}>
 			<View style={{ justifyContent: 'center', flex: 1 }}>
-				<Image style={{}}						
-					   source={require("../assets/chef.gif")}
-					   resizeMode="contain"
-					   resizeMethod="resize"
-				/>
-			</View>
+						<Image style={{
+
+						}}
+							source={require("../assets/chef.gif")}
+							resizeMode="contain"
+							resizeMethod="resize"
+						/>
+					</View>
 	</Modal>
 );
 	//-----------------------------------------------Fin modal chargement -----------------------------------------------------
