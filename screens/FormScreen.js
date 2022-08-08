@@ -36,7 +36,7 @@ function FormScreen(props) {
 	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "", ingredients: [] })
 	const isFocused = useIsFocused();
 	const [nameError, setNameError] = useState(null)
-	const [numberError, setNumberError] = useState(null)
+	
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
@@ -51,6 +51,7 @@ function FormScreen(props) {
 
         }
     }, [isFocused]);
+
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
@@ -375,7 +376,7 @@ function FormScreen(props) {
 	//------------------------------------------------------RETURN------------------------------------------
 
 	return (
-		<ImageBackground source={require('../assets/gold.jpg')} style={styles.container} >
+		<ImageBackground source={require('../assets/marble.jpg')} style={styles.container} >
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
@@ -481,7 +482,7 @@ function FormScreen(props) {
 							zIndex: 1,
 						}}
 					/>
-					<Text style={{ fontWeight: 'bold', color: "#fff" }}> Ajouter un ingrédient</Text>
+					<Text style={{ fontWeight: 'bold', color: "#fff", fontSize:18 }}> Ajouter un ingrédient</Text>
 				</Pressable>
 
 				{/* FIN MULTIPLE INPUTS */}
@@ -678,8 +679,10 @@ const styles = StyleSheet.create({
 	},
 	label: {
 		marginLeft: 10,
-		color: "#fff",
-		fontSize: 16,
+		color: "#f39c12",
+		fontSize: 19,
+		fontWeight:"bold",
+		textDecorationLine: 'underline'
 
 	},
 	screenContainer: {
