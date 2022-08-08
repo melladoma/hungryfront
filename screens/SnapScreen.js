@@ -46,7 +46,7 @@ function SnapScreen(props) {
 	const [hasPermission, setHasPermission] = useState(null);
 	const [image, setImage] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
-	const [loadModalOpen, setLoadModalOpen] =useState(false);
+	const [loadModalOpen, setLoadModalOpen] = useState(false);
 	//const [visible, setVisible] = useState(false);
 	var camera = useRef(null);
 	const isFocused = useIsFocused();
@@ -70,16 +70,34 @@ function SnapScreen(props) {
 	};
 
 	const handleSubmitPhoto = async (image) => {
-		//  if (image) {
+
 		console.log("image", image)
 		var data = new FormData();
-		//attention ne fonctionne que sur jpg
+		//attention ne fonctionne que sur png
+		setModalOpen(false)
 		setLoadModalOpen(true);
-		data.append("image", {
-			uri: image,
-			type: "image/png",
-			name: "recipe.png",
-		});
+		let regExjpg = /$jp*g/
+		// console.log(image.match(regExjpg[0]) === "")
+		if (image.match(regExjpg)) {
+			data.append("image", {
+				uri: image,
+				type: "image/png",
+				name: "recipe.png",
+			});
+		} else {
+			data.append("image", {
+				uri: image,
+				type: "image/png",
+				name: "recipe.png",
+			});
+		}
+
+		// data.append("image", {
+		// 	uri: image,
+		// 	type: "image/png",
+		// 	name: "recipe.png",
+		// });
+
 		console.log("data", data)
 
 		var rawResponseImg = await fetch(
@@ -95,13 +113,13 @@ function SnapScreen(props) {
 		if (responseImg.result) {
 			var imageToTreat = responseImg.resultObj.imageUrl;
 			console.log("imageToTreat", imageToTreat)
-			
+
 
 		}
-		// }
+
 
 		//---- envoi recette en traitement Tesseract
-		// setModalOpen(true);
+
 		let recipeData = {
 			image: imageToTreat,
 			userToken: props.token,
@@ -130,7 +148,7 @@ function SnapScreen(props) {
 
 		// setModalOpen(false);
 		// redirection vers fiche recette	
-		setModalOpen(false)
+
 		navigation.navigate("FormScreen")
 		setLoadModalOpen(false);
 	}
@@ -234,11 +252,11 @@ function SnapScreen(props) {
 						onPress={() => handleSubmitPhoto(image)}
 					// handlePressTrashIcon(props.recipe._id);
 					>
-						<Text style={{ 
-								color: "#fff",
-								fontSize:18,
-							    fontWeight:"bold",
-								 }}>
+						<Text style={{
+							color: "#fff",
+							fontSize: 18,
+							fontWeight: "bold",
+						}}>
 							Oui
 						</Text>
 					</TouchableOpacity>
@@ -246,15 +264,15 @@ function SnapScreen(props) {
 						style={styles.buttonContainer}
 						onPress={() => {
 							setModalOpen(false);
-							
+
 
 						}}
 					>
-						<Text style={{ 
-								color: "#fff",
-								fontSize:18,
-								fontWeight:"bold"
-								}}>
+						<Text style={{
+							color: "#fff",
+							fontSize: 18,
+							fontWeight: "bold"
+						}}>
 							Non
 						</Text>
 					</TouchableOpacity>
@@ -265,17 +283,17 @@ function SnapScreen(props) {
 
 	//--------------------------------------------------Fin modal screenshot---------------------------------------------------
 	//--------------------------------------------------Modal chargement ------------------------------------------------------
-var LoadingModal = (
-	<Modal visible={loadModalOpen}>
+	var LoadingModal = (
+		<Modal visible={loadModalOpen}>
 			<View style={{ justifyContent: 'center', flex: 1 }}>
-				<Image style={{}}						
-					   source={require("../assets/chef.gif")}
-					   resizeMode="contain"
-					   resizeMethod="resize"
+				<Image style={{}}
+					source={require("../assets/chef.gif")}
+					resizeMode="contain"
+					resizeMethod="resize"
 				/>
 			</View>
-	</Modal>
-);
+		</Modal>
+	);
 	//-----------------------------------------------Fin modal chargement -----------------------------------------------------
 
 	return (
@@ -323,21 +341,23 @@ var LoadingModal = (
 								if (camera) {
 
 									var photo = await camera.takePictureAsync({ quality: 0.7, base64: true, exif: true });
-									console.log("photo", photo.uri);
-									var data = new FormData();
+									// console.log("photo", photo.uri);
+									setImage(photo.uri)
+									handleSubmitPhoto(photo.uri)
+									// var data = new FormData();
 
-									data.append('recette', {
-										uri: photo.uri,
-										type: 'image/jpeg',
-										name: 'recette.jpg',
-									});
-									console.log(data, "data es tu la");
-									var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
-										method: 'POST',
-										body: data
-									});
-									var response = await rawResponse.json();
-									console.log(response, "repond nous")
+									// data.append('recette', {
+									// 	uri: photo.uri,
+									// 	type: 'image/jpeg',
+									// 	name: 'recette.jpg',
+									// });
+									// console.log(data, "data es tu la");
+									// var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
+									// 	method: 'POST',
+									// 	body: data
+									// });
+									// var response = await rawResponse.json();
+									// console.log(response, "repond nous")
 									navigation.navigate("FormScreen")
 								}
 							}
@@ -459,7 +479,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		// marginRight:25,
 		width: 100,
-		marginLeft:"5%",
-		marginRight:"5%"
+		marginLeft: "5%",
+		marginRight: "5%"
 	},
 });

@@ -36,14 +36,16 @@ function FormScreen(props) {
 	const [recipe, setRecipe] = useState({ name: "", image: "", prepTime: "", cookTime: "", directions: "", servings: "", privateStatus: "", tags: [], recipeId: "", ingredients: [] })
 	const isFocused = useIsFocused();
 	const [nameError, setNameError] = useState(null)
-	const [numberError, setNumberError] = useState(null)
+
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
 		if (isFocused) {
 			if (props.recipe.name) {
 				setRecipe(props.recipe);
-				setSelectedFiltersArray(props.recipe.tags)
+				if (props.recipe.tags) {
+					setSelectedFiltersArray(props.recipe.tags)
+				}
 				setNumInputs(props.recipe.ingredients.length)
 			}
 
@@ -109,7 +111,6 @@ function FormScreen(props) {
 				}
 
 			}
-
 
 
 			//---- envoi recette en BDD 
