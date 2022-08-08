@@ -191,6 +191,24 @@ function RecipeSheetScreen(props) {
 		setAddedRecipes(JSON.parse(response.addedRecipes));
 	};
 
+	var handleCard = async (recipe, token) => {
+		console.log('salut toi');
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/addToShoppingList`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
+			}
+		);
+		console.log('salut vous');		
+			navigation.navigate("ShoppingListScreen"); 
+		
+		
+	};
+
 	let modificationPencilIcon = null;
 	let trashIcon = null;
 	let addBookIcon = null
@@ -699,7 +717,8 @@ function RecipeSheetScreen(props) {
 					<TouchableOpacity
 						style={{ zIndex: 1 }}
 						onPress={() =>
-							navigation.navigate("ShoppingListScreen")
+							handleCard(recipeData, props.token)
+							// navigation.navigate("ShoppingListScreen")
 						}
 					>
 						<MaterialCommunityIcons
