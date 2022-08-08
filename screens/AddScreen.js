@@ -103,7 +103,7 @@ function AddScreen(props) {
 	);
 	// -----------------------------------------------------------FIN BOUTONS --------------------------------------------------------------
 	return (
-		<ImageBackground source={require('../assets/cook.jpg')} style={styles.container}>
+		<ImageBackground source={require('../assets/cook.jpg')} style={styles.container} blurRadius={2}>
 
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}>

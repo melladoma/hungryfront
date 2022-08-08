@@ -131,11 +131,12 @@ function SignInScreen(props) {
 		<ImageBackground
 			source={require("../assets/eggs.jpg")}
 			style={styles.container}
+			blurRadius={10}
 		>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
 			<View style={{ flex: 1 }}>
-				<View style={{ marginTop: 40, marginBottom: 80 }}>
+				<View style={{ marginTop: 40, marginBottom: 50 }}>
 					<Text style={styles.baseText}>THE</Text>
 					<Text style={styles.baseText}>HUNGRY-BOOK</Text>
 				</View>
@@ -156,7 +157,7 @@ function SignInScreen(props) {
 						/>
 						<View style={styles.inputContainer}>
 							<TextInput
-								style={styles.inputField}
+								style={styles.inputPass}
 								inputStyle={{ marginLeft: 10 }}
 								placeholder="Votre mot de passe"
 								secureTextEntry={passwordVisibility}
@@ -178,7 +179,7 @@ function SignInScreen(props) {
 							<AppButton title="Me connecter" size="sm" />
 						</View>
 					</KeyboardAvoidingView>
-					<View style={{ marginTop: 90 }}>
+					<View style={{ marginTop: 120 }}>
 						<Text style={styles.goSignup}>
 							Vous n'avez pas encore de compte ?
 						</Text>
@@ -300,7 +301,17 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		borderWidth: 0.75,
 		padding: 10,
+		paddingLeft: 20,
 		height: 55,
-		margin: 10,
+		marginTop: 10,
+		marginBottom: 10,
+	},
+	inputPass: {
+		backgroundColor: "#dfe4ea",
+		borderRadius: 15,
+		width: 210,
+		alignItems: "center",
+		marginTop: 10,
+		marginBottom: 10,
 	},
 });

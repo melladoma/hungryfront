@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { privateIP } from "../env.js";
 
 import {
+	KeyboardAvoidingView,
 	StatusBar,
 	View,
 	Platform,
@@ -146,15 +147,19 @@ function SignUpScreen(props) {
 		<ImageBackground
 			source={require("../assets/fork.jpg")}
 			style={styles.container}
+			blurRadius={2}
 		>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 
-			<View style={{ marginTop: 100 }}>
+			<View style={{ marginTop: 40 }}>
 				<Text style={styles.baseText}>THE</Text>
 				<Text style={styles.baseText}>HUNGRY-BOOK</Text>
 			</View>
 
-			<View style={styles.content}>
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				style={styles.content}
+			>
 				<TextInput
 					style={styles.inputContainer}
 					inputStyle={{ marginLeft: 10 }}
@@ -173,6 +178,7 @@ function SignUpScreen(props) {
 				/>
 				<View style={styles.inputContainer}>
 					<TextInput
+						style={styles.inputPass}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder="Votre mot de passe"
 						secureTextEntry={passwordVisibility}
@@ -190,6 +196,7 @@ function SignUpScreen(props) {
 
 				<View style={styles.inputContainer}>
 					<TextInput
+						style={styles.inputPass}
 						inputStyle={{ marginLeft: 10 }}
 						placeholder="Confirmer votre mot de passe"
 						secureTextEntry={confirmationVisibility}
@@ -213,7 +220,7 @@ function SignUpScreen(props) {
 				<View style={styles.screenContainer}>
 					<AppButton title="Créer mon compte" size="sm" />
 				</View>
-			</View>
+			</KeyboardAvoidingView>
 
 			<TouchableOpacity style={{}} onPress={() => navigation.goBack()}>
 				<MaterialCommunityIcons
@@ -275,20 +282,6 @@ const styles = StyleSheet.create({
 		margin: 35,
 		fontSize: 25,
 	},
-	inputContainer: {
-		backgroundColor: "white",
-		width: "100%",
-		borderRadius: 8,
-		flexDirection: "row",
-		alignItems: "center",
-		borderWidth: 4,
-		borderColor: "#d7d7d7",
-	},
-	inputField: {
-		padding: 14,
-		fontSize: 22,
-		width: "90%",
-	},
 	baseText: {
 		fontWeight: "bold",
 		textAlign: "center",
@@ -307,8 +300,18 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		borderWidth: 0.75,
 		padding: 10,
+		paddingLeft: 20,
 		height: 55,
-		margin: 10,
+		marginTop: 10,
+		marginBottom: 10,
+	},
+	inputPass: {
+		backgroundColor: "#dfe4ea",
+		borderRadius: 15,
+		width: 210,
+		alignItems: "center",
+		marginTop: 10,
+		marginBottom: 10,
 	},
 	screenContainer: {
 		//flex: 1,

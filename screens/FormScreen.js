@@ -307,7 +307,7 @@ function FormScreen(props) {
 		"apéro",
 		"boisson",
 		"asiatique",
-		"américaine",
+		"américain",
 		"italien",
 		"diététique",
 		"végétarien",
@@ -375,7 +375,7 @@ function FormScreen(props) {
 	//------------------------------------------------------RETURN------------------------------------------
 
 	return (
-		<ImageBackground source={require('../assets/marble.jpg')} style={styles.container} >
+		<ImageBackground source={require('../assets/marble.jpg')} style={styles.container} blurRadius={5}>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			{/* ------------------------------------Debut du formulaire */}
 			<ScrollView style={{ flex: 1 }}>
@@ -395,6 +395,7 @@ function FormScreen(props) {
 					value={recipe.name}
 					placeholder={"Nom de la recette"}
 					placeholderTextColor={"#d35400"}
+					maxLength={24}
 				/>
 
 
@@ -415,7 +416,7 @@ function FormScreen(props) {
 				</View>
 
 				<View style={{ display: "flex", flexDirection: "row" }}>
-					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+					<View style={{ display: "flex", flexDirection: "column", width: "50%" }}>
 						<Text style={{ alignSelf: "center", color: "white" }}>Temps de préparation</Text>
 						<View style={{ display: "flex", flexDirection: "row" }}>
 							<TextInput
@@ -433,7 +434,7 @@ function FormScreen(props) {
 						</View>
 					</View>
 
-					<View style={{ display: "flex", flexDirection: "column", width: "50%", borderWidth: 1 }}>
+					<View style={{ display: "flex", flexDirection: "column", width: "50%" }}>
 						<Text style={{ alignSelf: "center", color: "white" }}>Temps de cuisson</Text>
 						<View style={{ display: "flex", flexDirection: "row" }}>
 							<TextInput
