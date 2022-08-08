@@ -137,13 +137,88 @@ function SnapScreen(props) {
 		if (recipeToStore) {
 			// console.log("set to store")
 			props.setRecipe(recipeToStore);
+			// redirection vers fiche recette	
+			setLoadModalOpen(false);
+			navigation.navigate("FormScreen")
 		}
 
-		// redirection vers fiche recette	
-		setLoadModalOpen(false);
-		navigation.navigate("FormScreen")
-
 	}
+
+	const handleSubmitPhotoCamera = async (image) => {
+
+		// console.log("image", image)
+		var data = new FormData();
+		setModalOpen(false)
+		setLoadModalOpen(true);
+		let regExjpg = /$jp*g/
+		// console.log(image.match(regExjpg[0]) === "")
+		if (image.match(regExjpg)) {
+			data.append("image", {
+				uri: image,
+				type: "image/png",
+				name: "recipe.png",
+			});
+
+		} else {
+			data.append("image", {
+				uri: image,
+				type: "image/png",
+				name: "recipe.png",
+			});
+		}
+
+		console.log("data", data)
+
+		var rawResponseImg = await fetch(
+			`http://${privateIP}:3000/upload-image-camera`,
+			{
+				method: "post",
+				body: data,
+			}
+		);
+
+		var responseImg = await rawResponseImg.json();
+
+		if (responseImg.result) {
+			var imageToTreat = responseImg.resultObj.imageUrl;
+			// console.log("imageToTreat", imageToTreat)
+
+		}
+
+		//---- envoi recette en traitement Tesseract
+
+		let recipeData = {
+			image: imageToTreat,
+			userToken: props.token,
+			userName: props.username,
+		};
+		console.log("recipeData", recipeData)
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/api/tesseract`,
+			{
+				method: "POST",
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+				},
+				body: JSON.stringify(recipeData),
+			}
+		);
+		var response = await rawResponse.json();
+
+		var recipeToStore = response.recipeTreated;
+		console.log(response.recipeTreated, "--------");
+
+		//---------envoi recipe traitee Backend dans store
+		if (recipeToStore) {
+			// console.log("set to store")
+			props.setRecipe(recipeToStore);
+			setLoadModalOpen(false);
+			navigation.navigate("FormScreen")
+		}
+	}
+
+
+
 
 	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
 	useEffect(() => {
@@ -335,7 +410,7 @@ function SnapScreen(props) {
 									var photo = await camera.takePictureAsync({ quality: 0.7, base64: true, exif: true });
 									// console.log("photo", photo.uri);
 									setImage(photo.uri)
-									handleSubmitPhoto(photo.uri)
+									handleSubmitPhotoCamera(photo.uri)
 
 									// var data = new FormData();
 

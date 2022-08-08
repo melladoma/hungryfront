@@ -43,7 +43,7 @@ function FormScreen(props) {
 		if (isFocused) {
 
 			if (props.recipe.name) {
-				// console.log("store existe")
+				console.log("store existe")
 				setRecipe(props.recipe);
 				if (props.recipe.tags) {
 					setSelectedFiltersArray(props.recipe.tags)
