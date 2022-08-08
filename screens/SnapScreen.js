@@ -46,6 +46,7 @@ function SnapScreen(props) {
 	const [hasPermission, setHasPermission] = useState(null);
 	const [image, setImage] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [loadModalOpen, setLoadModalOpen] =useState(false);
 	//const [visible, setVisible] = useState(false);
 	var camera = useRef(null);
 	const isFocused = useIsFocused();
@@ -73,7 +74,7 @@ function SnapScreen(props) {
 		console.log("image", image)
 		var data = new FormData();
 		//attention ne fonctionne que sur jpg
-
+		setLoadModalOpen(true);
 		data.append("image", {
 			uri: image,
 			type: "image/png",
@@ -94,6 +95,7 @@ function SnapScreen(props) {
 		if (responseImg.result) {
 			var imageToTreat = responseImg.resultObj.imageUrl;
 			console.log("imageToTreat", imageToTreat)
+			
 
 		}
 		// }
@@ -130,6 +132,7 @@ function SnapScreen(props) {
 		// redirection vers fiche recette	
 		setModalOpen(false)
 		navigation.navigate("FormScreen")
+		setLoadModalOpen(false);
 	}
 
 	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
@@ -211,7 +214,7 @@ function SnapScreen(props) {
 						style={{
 							width: 300,
 							height: 300,
-							marginTop: "50%"
+							marginTop: "20%"
 
 						}} />
 				</TouchableOpacity>}
@@ -220,7 +223,7 @@ function SnapScreen(props) {
 						fontSize: 20,
 						alignSelf: "center",
 						textAlign: "center",
-						marginTop: "30%",
+						// marginTop: 400,
 					}}
 				>
 					Voulez vous convertir cette photo en fiche recette ?
@@ -231,23 +234,49 @@ function SnapScreen(props) {
 						onPress={() => handleSubmitPhoto(image)}
 					// handlePressTrashIcon(props.recipe._id);
 					>
-						<Text style={{ color: "#fff" }}>Oui</Text>
+						<Text style={{ 
+								color: "#fff",
+								fontSize:18,
+							    fontWeight:"bold",
+								 }}>
+							Oui
+						</Text>
 					</TouchableOpacity>
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={() => {
 							setModalOpen(false);
+							
 
 						}}
 					>
-						<Text style={{ color: "#fff" }}>Non</Text>
+						<Text style={{ 
+								color: "#fff",
+								fontSize:18,
+								fontWeight:"bold"
+								}}>
+							Non
+						</Text>
 					</TouchableOpacity>
 				</View>
 			</View>
 		</Modal>
 	);
 
-	//--------------------------------------------------Fin tentative modal screenshot
+	//--------------------------------------------------Fin modal screenshot---------------------------------------------------
+	//--------------------------------------------------Modal chargement ------------------------------------------------------
+var LoadingModal = (
+	<Modal visible={loadModalOpen}>
+			<View style={{ justifyContent: 'center', flex: 1 }}>
+				<Image style={{}}						
+					   source={require("../assets/chef.gif")}
+					   resizeMode="contain"
+					   resizeMethod="resize"
+				/>
+			</View>
+	</Modal>
+);
+	//-----------------------------------------------Fin modal chargement -----------------------------------------------------
 
 	return (
 		<View style={styles.container}>
@@ -370,6 +399,7 @@ function SnapScreen(props) {
 				</View>
 			</View>
 			{ModalScreenShot}
+			{LoadingModal}
 		</View>
 
 	);
@@ -413,10 +443,10 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		flexDirection: "row",
-
 		justifyContent: "center",
 		marginTop: 40,
 		alignItems: "center",
+		marginBottom: "20%"
 	},
 	buttonContainer: {
 		elevation: 8,
@@ -429,5 +459,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		// marginRight:25,
 		width: 100,
+		marginLeft:"5%",
+		marginRight:"5%"
 	},
 });
