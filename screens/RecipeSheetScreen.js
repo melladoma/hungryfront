@@ -222,7 +222,6 @@ function RecipeSheetScreen(props) {
 			date,
 			recipe: recipe._id,
 			token
-
 		}
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,

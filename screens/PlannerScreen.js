@@ -25,15 +25,13 @@ function PlannerScreen(props) {
 	const isFocused = useIsFocused();
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
-	const [addedRecipes, setAddedRecipes] = useState([]);
-	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
+	const [weeklyPlanRecipes, setWeeklyPlanRecipes] = useState([]);
 
 	useEffect(() => {
 		if (isFocused) {
-			setRecipeData(props.recipe);
 			async function initialFetch() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
+					`http://${privateIP}:3000/initial-fetch-calendar`,
 					{
 						method: "post",
 						headers: {
@@ -44,29 +42,33 @@ function PlannerScreen(props) {
 				);
 
 				var response = await rawResponse.json();
-
-				setAddedRecipes(response.addedRecipes);
-				setLikedRecipes(response.likedRecipes)
+				if (response) {
+					setWeeklyPlanRecipes(response.weeklyPlan)
+				}
 			}
 			initialFetch();
 		}
 	}, [isFocused]);
 
-	const timeToString = (time) => {
-		const date = new Date(time);
-		return date.toISOString().split('T')[0];
-	}
-	// const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-	// const strTime = timeToString(time);
-	// console.log(strTime)
+	// const timeToString = (time) => {
+	// 	const date = new Date(time);
+	// 	return date.toISOString().split('T')[0];
+	// }
+
 
 	var today = new Date()
-	var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+	// var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 	//getDay en 0 to 6
 
 	var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
-	var weekDay = days[today.getDay()]
-	console.log(date, weekDay)
+	// var weekDay = days[today.getDay()]
+	// console.log(date, weekDay)
+
+	var weekDays = weeklyPlanRecipes.map(item => {
+		return (
+			<View><Text>{item.date}</Text></View>
+		)
+	})
 
 
 
@@ -112,7 +114,8 @@ function PlannerScreen(props) {
 			</View>
 
 			<View style={styles.content}>
-				<SingleDatePage></SingleDatePage>
+				{weekDays}
+
 
 			</View>
 		</View>
