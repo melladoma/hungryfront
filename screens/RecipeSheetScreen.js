@@ -42,6 +42,7 @@ function RecipeSheetScreen(props) {
 	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
 		useState(false);
 	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
+	const [calendarModalOpen, setCalendarModalOpen] = useState(false);
 
 	const window = Dimensions.get("window");
 
@@ -75,10 +76,8 @@ function RecipeSheetScreen(props) {
 				: setIsThisRecipeMine(false);
 		}
 	}, [isFocused]);
-	
-			
-		
-	
+
+
 
 
 	//likeIcon
@@ -99,7 +98,7 @@ function RecipeSheetScreen(props) {
 					style={{}}
 				/>
 
-				
+
 			</TouchableOpacity>
 		);
 	} else {
@@ -117,8 +116,8 @@ function RecipeSheetScreen(props) {
 					color="grey"
 					style={{}}
 				/>
-	
-				
+
+
 			</TouchableOpacity>
 		);
 	}
@@ -135,11 +134,11 @@ function RecipeSheetScreen(props) {
 					body: `id=${id}&token=${token}`,
 				}
 			);
-	
+
 			var response = await rawResponse.json();
-	
+
 			setLikedRecipes(response.likedRecipes);
-	
+
 			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
 		} else {
 			var rawResponse = await fetch(
@@ -152,11 +151,11 @@ function RecipeSheetScreen(props) {
 					body: `id=${id}&token=${token}`,
 				}
 			);
-	
+
 			var response = await rawResponse.json();
-	
+
 			setLikedRecipes(response.likedRecipes);
-	
+
 			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
 		}
 	};
@@ -203,11 +202,44 @@ function RecipeSheetScreen(props) {
 				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
 			}
 		);
-		console.log('salut vous');		
-			navigation.navigate("ShoppingListScreen"); 
-		
-		
+		console.log('salut vous');
+		navigation.navigate("ShoppingListScreen");
 	};
+
+	// ------------------------------------------------------------CALENDAR FUNCTION
+	const [recipeToCalendar, setRecipeToCalendar] = useState("")
+	var today = new Date()
+	function addDays(date, days) {
+		var result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+	}
+	var weekdays = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4), addDays(today, 5), addDays(today, 6)];
+
+	var handleCalendarAdd = async (date, token) => {
+		// console.log(recipeToCalendar, date, token)
+		let calendarObj = {
+			date,
+			recipeId: recipeToCalendar
+		}
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `calendarObj=${JSON.stringify(calendarObj)}&token=${token}`,
+			}
+		);
+		var response = await rawResponse.json();
+		if (response) {
+			setCalendarModalOpen(false)
+		}
+
+	}
+
+	//-------------------------------------------------------------FIN CALENDAR
 
 	let modificationPencilIcon = null;
 	let trashIcon = null;
@@ -261,7 +293,7 @@ function RecipeSheetScreen(props) {
 					style={{}}
 				/>
 
-				
+
 			</View>
 		);
 	} else {
@@ -324,7 +356,7 @@ function RecipeSheetScreen(props) {
 			navigation.navigate("HomeDrawer2");  //vérifier s'il faut pas mettre "home"------------
 		}
 	};
-	
+
 
 
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
@@ -332,11 +364,11 @@ function RecipeSheetScreen(props) {
 			let finalQuantity = ""
 			if (ingredient.quantity.match(/\d/) != null) {
 				let quantity = parseInt(ingredient.quantity);
-				finalQuantity = Math.round((quantity / recipeData.servings)*nbPersonne)
+				finalQuantity = Math.round((quantity / recipeData.servings) * nbPersonne)
 			}
 			//et la je le remplace
 			var grammes = ingredient.quantity.replace(/\d/gi, "");
-			
+
 
 			return (
 				<View key={i} style={styles.ligne}>
@@ -406,6 +438,39 @@ function RecipeSheetScreen(props) {
 		/>
 	);
 
+
+	const weekButtonsList = weekdays.map((item, i) => {
+		return (
+			<TouchableOpacity
+				onPress={() => handleCalendarAdd(item, props.token)}
+				style={{
+					marginTop: 5,
+					elevation: 8,
+					backgroundColor: "#F19066",
+					// borderRadius: 25,
+					paddingVertical: 10,
+					paddingHorizontal: 12,
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+				key={i}
+			>
+				<Text style={styles.appButtonText}>{item.toLocaleString('fr-FR', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'numeric',
+					day: 'numeric',
+				})}</Text>
+
+			</TouchableOpacity>
+
+
+		)
+	})
+
+
+
 	// -----------------------------------------------------------Fin Boutons ----------------------------------------------------------------
 
 	// --------------------------------------------------------Modales-------------------------------------------------
@@ -474,7 +539,55 @@ function RecipeSheetScreen(props) {
 			<View style={[styles.overlayShadow, { height: "100%" }]} />
 		);
 	}
+
+	var CalendarModal = (
+		<Modal
+			visible={calendarModalOpen}
+			animationType="slide"
+			transparent={true}
+			style={styles.deleteModal}
+		>
+			<View
+				style={{
+
+
+					borderRadius: 100,
+					backgroundColor: "#fff",
+					width: "90%",
+					height: 360,
+					marginTop: "50%",
+					marginLeft: "5%",
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 20,
+
+						marginTop: "30%",
+
+						flexWrap: "wrap",
+						marginLeft: "8%",
+						marginLeft: "8%",
+
+					}}
+				>
+					Ajouter ma recette pour
+				</Text>
+				<MaterialCommunityIcons
+					name="close"
+					size={28}
+					color="#ddd"
+					onPress={() => { setCalendarModalOpen(false); setRecipeToCalendar(props.recipe._id) }}
+				/>
+
+				{weekButtonsList}
+
+
+			</View>
+		</Modal>
+	)
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
+
 
 
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
@@ -536,13 +649,13 @@ function RecipeSheetScreen(props) {
 	}
 
 	var handleGoBack = () => {
-	
+
 		if (props.fromWhichScreen === "FormScreen") {
 			navigation.navigate("Home")
 		} else {
 			navigation.goBack()
 		}
-		
+
 	}
 
 
@@ -566,7 +679,7 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<TouchableOpacity
 						style={{}}
-						onPress={() => navigation.navigate("PlannerScreen")}
+						onPress={() => setCalendarModalOpen(true)}
 					>
 						<MaterialCommunityIcons
 							name="calendar"
@@ -616,16 +729,16 @@ function RecipeSheetScreen(props) {
 								{recipeData.prepTime < 60
 									? `${recipeData.prepTime} min`
 									: recipeData.prepTime % 60 > 9
-									? `${Math.floor(
+										? `${Math.floor(
 											recipeData.prepTime / 60
-									  )}h${recipeData.prepTime % 60}min`
-									: recipeData.prepTime % 60 > 0
-									? `${Math.floor(
-											recipeData.prepTime / 60
-									  )}h0${recipeData.prepTime % 60}min`
-									: `${Math.floor(
-											recipeData.prepTime / 60
-									  )}h`}
+										)}h${recipeData.prepTime % 60}min`
+										: recipeData.prepTime % 60 > 0
+											? `${Math.floor(
+												recipeData.prepTime / 60
+											)}h0${recipeData.prepTime % 60}min`
+											: `${Math.floor(
+												recipeData.prepTime / 60
+											)}h`}
 							</Text>
 							<Text>Préparation</Text>
 						</View>
@@ -640,16 +753,16 @@ function RecipeSheetScreen(props) {
 								{recipeData.cookTime < 60
 									? `${recipeData.cookTime} min`
 									: recipeData.cookTime % 60 > 9
-									? `${Math.floor(
+										? `${Math.floor(
 											recipeData.cookTime / 60
-									  )}h${recipeData.cookTime % 60}min`
-									: recipeData.cookTime % 60 > 0
-									? `${Math.floor(
-											recipeData.cookTime / 60
-									  )}h0${recipeData.cookTime % 60}min`
-									: `${Math.floor(
-											recipeData.cookTime / 60
-									  )}h`}
+										)}h${recipeData.cookTime % 60}min`
+										: recipeData.cookTime % 60 > 0
+											? `${Math.floor(
+												recipeData.cookTime / 60
+											)}h0${recipeData.cookTime % 60}min`
+											: `${Math.floor(
+												recipeData.cookTime / 60
+											)}h`}
 							</Text>
 							<Text>Cuisson</Text>
 						</View>
@@ -785,20 +898,20 @@ function RecipeSheetScreen(props) {
 				</Modal>
 
 				{/* -----------------------------------------------------Commentaires----------------------------------------------------------------- */}
-<TouchableOpacity
-onPress={() =>{}}
->
-				<View style={styles.like}>
-					<Text style={{ fontSize: 18 }}>Commentaires </Text>
-					<MaterialCommunityIcons
-						name="comment-multiple"
-						size={25}
-						color="green"
-						style={{}}
-					/>
-					<Text>{recipeData.comments.length}</Text>
-				</View>
-</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => { }}
+				>
+					<View style={styles.like}>
+						<Text style={{ fontSize: 18 }}>Commentaires </Text>
+						<MaterialCommunityIcons
+							name="comment-multiple"
+							size={25}
+							color="green"
+							style={{}}
+						/>
+						<Text>{recipeData.comments.length}</Text>
+					</View>
+				</TouchableOpacity>
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
 
 				<TouchableOpacity
@@ -820,6 +933,7 @@ onPress={() =>{}}
 			</ScrollView>
 			{DeleteModalVerif}
 			{overlayShadow}
+			{CalendarModal}
 		</View>
 	);
 }
