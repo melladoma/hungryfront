@@ -49,45 +49,46 @@ function RecipeSheetScreen(props) {
 	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
 		useState(false);
 	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
+	const [calendarModalOpen, setCalendarModalOpen] = useState(false);
 
 	const window = Dimensions.get("window");
-	
-
-//---------------Share function ----------------
-// let ingredientObj = {};
-// recipeData.ingredients.map()
-let ingredientToMessage = JSON.stringify(recipeData.ingredients)
-let shareMessage = recipeData.name + "  "+
-					    "Temps de cuisson : " + recipeData.cookTime + " min"  + "   " +
-					    "Temps de préparation : " + recipeData.prepTime + " min" + "  " +
-					    "Nombre de personnes : " + nbPersonne + "   " + 
-						"Listes des ingédients : " + ingredientToMessage + "   " +
-					    "Méthodologie : " + recipeData.directions + "  " ;
-
-const onShare = async () => {
-    try {
-      const result = await Share.share({
-									
-	  message: shareMessage ,
-	
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
 
+	//---------------Share function ----------------
+	// let ingredientObj = {};
+	// recipeData.ingredients.map()
+	let ingredientToMessage = JSON.stringify(recipeData.ingredients)
+	let shareMessage = recipeData.name + "  " +
+		"Temps de cuisson : " + recipeData.cookTime + " min" + "   " +
+		"Temps de préparation : " + recipeData.prepTime + " min" + "  " +
+		"Nombre de personnes : " + nbPersonne + "   " +
+		"Listes des ingédients : " + ingredientToMessage + "   " +
+		"Méthodologie : " + recipeData.directions + "  ";
 
-//----------------Fin share function -----------
+	const onShare = async () => {
+		try {
+			const result = await Share.share({
+
+				message: shareMessage,
+
+			});
+			if (result.action === Share.sharedAction) {
+				if (result.activityType) {
+					// shared with activity type of result.activityType
+				} else {
+					// shared
+				}
+			} else if (result.action === Share.dismissedAction) {
+				// dismissed
+			}
+		} catch (error) {
+			alert(error.message);
+		}
+	};
+
+
+
+	//----------------Fin share function -----------
 
 
 	useEffect(() => {
@@ -242,15 +243,49 @@ const onShare = async () => {
 				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
 			}
 		);
-			console.log('salut vous');
-			var response = await rawResponse.json();
+		// console.log('salut vous');
+		var response = await rawResponse.json();
 
-			console.log(response.shoppingList,'hello pour la 5eme fois');
+		// console.log(response.shoppingList,'hello pour la 5eme fois');
 
-			navigation.navigate("ShoppingListScreen"); 
-		
-		
+		navigation.navigate("ShoppingListScreen");
+
+
 	};
+
+	// ------------------------------------------------------------CALENDAR FUNCTION
+
+	var today = new Date()
+	function addDays(date, days) {
+		var result = new Date(date);
+		result.setDate(result.getDate() + days);
+		return result;
+	}
+	var weekdays = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4), addDays(today, 5), addDays(today, 6)];
+
+	var handleCalendarAdd = async (date, token, recipe) => {
+		// console.log(recipeId, date, token)
+		let calendarObj = {
+			date,
+			recipe: recipe._id,
+			token
+		}
+		var rawResponse = await fetch(
+			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,
+			{
+				method: "post",
+				headers: { 'Content-type': 'application/json; charset=UTF-8' },
+				body: JSON.stringify(calendarObj)
+			}
+		);
+		var response = await rawResponse.json();
+		if (response) {
+			setCalendarModalOpen(false)
+		}
+
+	}
+
+	//-------------------------------------------------------------FIN CALENDAR
 
 	let modificationPencilIcon = null;
 	let trashIcon = null;
@@ -259,7 +294,7 @@ const onShare = async () => {
 		modificationPencilIcon = (
 			<TouchableOpacity
 				style={{
-					justifyContent:"flex-end"
+					justifyContent: "flex-end"
 				}}
 				onPress={() => navigation.navigate("FormScreen")}
 			>
@@ -270,7 +305,7 @@ const onShare = async () => {
 					style={{
 						paddingLeft: 10,
 						marginTop: 5,
-						
+
 					}}
 				/>
 			</TouchableOpacity>
@@ -306,7 +341,7 @@ const onShare = async () => {
 					color="#ff4757"
 					style={{}}
 				/>
-			</View>
+			</View >
 		);
 	} else {
 		if (addedRecipes.includes(recipeData._id)) {
@@ -448,6 +483,39 @@ const onShare = async () => {
 		/>
 	);
 
+
+	const weekButtonsList = weekdays.map((item, i) => {
+		return (
+			<TouchableOpacity
+				onPress={() => handleCalendarAdd(item, props.token, props.recipe)}
+				style={{
+					marginTop: 5,
+					elevation: 8,
+					backgroundColor: "#F19066",
+					// borderRadius: 25,
+					paddingVertical: 10,
+					paddingHorizontal: 12,
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+				key={i}
+			>
+				<Text style={styles.appButtonText}>{item.toLocaleString('fr-FR', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'numeric',
+					day: 'numeric',
+				})}</Text>
+
+			</TouchableOpacity>
+
+
+		)
+	})
+
+
+
 	// -----------------------------------------------------------Fin Boutons ----------------------------------------------------------------
 
 	// --------------------------------------------------------Modales-------------------------------------------------
@@ -515,6 +583,53 @@ const onShare = async () => {
 			<View style={[styles.overlayShadow, { height: "100%" }]} />
 		);
 	}
+
+	var CalendarModal = (
+		<Modal
+			visible={calendarModalOpen}
+			animationType="slide"
+			transparent={true}
+			style={styles.deleteModal}
+		>
+			<View
+				style={{
+
+
+					borderRadius: 100,
+					backgroundColor: "#fff",
+					width: "90%",
+					height: 360,
+					marginTop: "50%",
+					marginLeft: "5%",
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 20,
+
+						marginTop: "30%",
+
+						flexWrap: "wrap",
+						marginLeft: "8%",
+						marginLeft: "8%",
+
+					}}
+				>
+					Ajouter ma recette pour
+				</Text>
+				<MaterialCommunityIcons
+					name="close"
+					size={28}
+					color="#ddd"
+					onPress={() => { setCalendarModalOpen(false) }}
+				/>
+
+				{weekButtonsList}
+
+
+			</View>
+		</Modal>
+	)
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
 
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
@@ -696,7 +811,7 @@ const onShare = async () => {
 						fontStyle: "italic",
 					}}
 				>
-					{`le ${new Date(x.date).getDate()}/${new Date(x.date).getMonth()+1}/${new Date(x.date).getFullYear()}`}
+					{`le ${new Date(x.date).getDate()}/${new Date(x.date).getMonth() + 1}/${new Date(x.date).getFullYear()}`}
 				</Text>
 			</View>
 			<Text
@@ -730,9 +845,9 @@ const onShare = async () => {
 					</Text>
 					<TouchableOpacity
 						style={{
-							marginRight:"2%"
+							marginRight: "2%"
 						}}
-						onPress={() => navigation.navigate("PlannerScreen")}
+						onPress={() => { setCalendarModalOpen(true) }}
 					>
 						<MaterialCommunityIcons
 							name="calendar"
@@ -778,16 +893,16 @@ const onShare = async () => {
 								{recipeData.prepTime < 60
 									? `${recipeData.prepTime} min`
 									: recipeData.prepTime % 60 > 9
-									? `${Math.floor(
+										? `${Math.floor(
 											recipeData.prepTime / 60
-									  )}h${recipeData.prepTime % 60}min`
-									: recipeData.prepTime % 60 > 0
-									? `${Math.floor(
-											recipeData.prepTime / 60
-									  )}h0${recipeData.prepTime % 60}min`
-									: `${Math.floor(
-											recipeData.prepTime / 60
-									  )}h`}
+										)}h${recipeData.prepTime % 60}min`
+										: recipeData.prepTime % 60 > 0
+											? `${Math.floor(
+												recipeData.prepTime / 60
+											)}h0${recipeData.prepTime % 60}min`
+											: `${Math.floor(
+												recipeData.prepTime / 60
+											)}h`}
 							</Text>
 							<Text>Préparation</Text>
 						</View>
@@ -802,16 +917,16 @@ const onShare = async () => {
 								{recipeData.cookTime < 60
 									? `${recipeData.cookTime} min`
 									: recipeData.cookTime % 60 > 9
-									? `${Math.floor(
+										? `${Math.floor(
 											recipeData.cookTime / 60
-									  )}h${recipeData.cookTime % 60}min`
-									: recipeData.cookTime % 60 > 0
-									? `${Math.floor(
-											recipeData.cookTime / 60
-									  )}h0${recipeData.cookTime % 60}min`
-									: `${Math.floor(
-											recipeData.cookTime / 60
-									  )}h`}
+										)}h${recipeData.cookTime % 60}min`
+										: recipeData.cookTime % 60 > 0
+											? `${Math.floor(
+												recipeData.cookTime / 60
+											)}h0${recipeData.cookTime % 60}min`
+											: `${Math.floor(
+												recipeData.cookTime / 60
+											)}h`}
 							</Text>
 							<Text>Cuisson</Text>
 						</View>
@@ -986,46 +1101,47 @@ const onShare = async () => {
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
 
 
-				
 
-	<View style={styles.ligne}>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => handleGoBack()}
-				>
 
-					<MaterialCommunityIcons
-						name="arrow-left"
-						size={28}
-						color="#2f3542"
-						style={{
-							paddingLeft: 20,
-							paddingRight: 20,
-							paddingTop: 10,
-							zIndex: 1,
-						}}
-					/>
-				</TouchableOpacity>
+				<View style={styles.ligne}>
+					<TouchableOpacity
+						style={{}}
+						onPress={() => handleGoBack()}
+					>
 
-				<TouchableOpacity
-				style={{}}
-				onPress={onShare}
-			>
-				<MaterialCommunityIcons
-					name="share-variant"
-					size={25}
-					color="#2f3542"
-					style={{
-						paddingLeft: 10,
-						marginRight: "3%"
-					}}
-				/>			
-			</TouchableOpacity>
-	</View>
-			</ScrollView>
+						<MaterialCommunityIcons
+							name="arrow-left"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={{}}
+						onPress={onShare}
+					>
+						<MaterialCommunityIcons
+							name="share-variant"
+							size={25}
+							color="#2f3542"
+							style={{
+								paddingLeft: 10,
+								marginRight: "3%"
+							}}
+						/>
+					</TouchableOpacity>
+				</View >
+			</ScrollView >
 			{DeleteModalVerif}
 			{overlayShadow}
-		</View>
+			{CalendarModal}
+		</View >
 	);
 }
 
@@ -1065,7 +1181,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#f5f6fa",
-		paddingTop:35
+		paddingTop: 35
 	},
 	recipeName: {
 		textAlign: "center",
@@ -1098,7 +1214,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginTop: 5,
 		zIndex: 1,
-		textAlign:"center"
+		textAlign: "center"
 	},
 	tagligne: {
 		flexDirection: "row",
