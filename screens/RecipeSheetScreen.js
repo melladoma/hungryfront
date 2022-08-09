@@ -207,7 +207,7 @@ function RecipeSheetScreen(props) {
 	};
 
 	// ------------------------------------------------------------CALENDAR FUNCTION
-	const [recipeToCalendar, setRecipeToCalendar] = useState("")
+
 	var today = new Date()
 	function addDays(date, days) {
 		var result = new Date(date);
@@ -216,20 +216,20 @@ function RecipeSheetScreen(props) {
 	}
 	var weekdays = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4), addDays(today, 5), addDays(today, 6)];
 
-	var handleCalendarAdd = async (date, token) => {
-		// console.log(recipeToCalendar, date, token)
+	var handleCalendarAdd = async (date, token, recipe) => {
+		// console.log(recipeId, date, token)
 		let calendarObj = {
 			date,
-			recipeId: recipeToCalendar
+			recipe: recipe._id,
+			token
+
 		}
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,
 			{
 				method: "post",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
-				},
-				body: `calendarObj=${JSON.stringify(calendarObj)}&token=${token}`,
+				headers: { 'Content-type': 'application/json; charset=UTF-8' },
+				body: JSON.stringify(calendarObj)
 			}
 		);
 		var response = await rawResponse.json();
@@ -442,7 +442,7 @@ function RecipeSheetScreen(props) {
 	const weekButtonsList = weekdays.map((item, i) => {
 		return (
 			<TouchableOpacity
-				onPress={() => handleCalendarAdd(item, props.token)}
+				onPress={() => handleCalendarAdd(item, props.token, props.recipe)}
 				style={{
 					marginTop: 5,
 					elevation: 8,
@@ -577,7 +577,7 @@ function RecipeSheetScreen(props) {
 					name="close"
 					size={28}
 					color="#ddd"
-					onPress={() => { setCalendarModalOpen(false); setRecipeToCalendar(props.recipe._id) }}
+					onPress={() => { setCalendarModalOpen(false) }}
 				/>
 
 				{weekButtonsList}
@@ -679,7 +679,7 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<TouchableOpacity
 						style={{}}
-						onPress={() => setCalendarModalOpen(true)}
+						onPress={() => { setCalendarModalOpen(true) }}
 					>
 						<MaterialCommunityIcons
 							name="calendar"
@@ -930,11 +930,11 @@ function RecipeSheetScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-			</ScrollView>
+			</ScrollView >
 			{DeleteModalVerif}
 			{overlayShadow}
 			{CalendarModal}
-		</View>
+		</View >
 	);
 }
 
