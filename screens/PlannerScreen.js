@@ -44,6 +44,7 @@ function PlannerScreen(props) {
 				var response = await rawResponse.json();
 				if (response) {
 					setWeeklyPlanRecipes(response.weeklyPlan)
+					// console.log(response.weeklyPlan)
 				}
 			}
 			initialFetch();
@@ -56,17 +57,17 @@ function PlannerScreen(props) {
 	// }
 
 
-	var today = new Date()
+	// var today = new Date()
 	// var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 	//getDay en 0 to 6
 
-	var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
+	// var days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
 	// var weekDay = days[today.getDay()]
 	// console.log(date, weekDay)
 
-	var weekDays = weeklyPlanRecipes.map(item => {
+	var weekDays = weeklyPlanRecipes.map((item, i) => {
 		return (
-			<View><Text>{item.date}</Text></View>
+			<View key={i}><Text>{item.date}</Text></View>
 		)
 	})
 
