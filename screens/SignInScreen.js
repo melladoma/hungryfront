@@ -164,7 +164,7 @@ function SignInScreen(props) {
 								placeholder="Votre mot de passe"
 								secureTextEntry={passwordVisibility}
 								onChangeText={(val) => setSignInPassword(val)}
-								value={signInPassword}								
+								value={signInPassword}					
 							/>
 							
 							<Pressable onPress={handlePasswordVisibility}>

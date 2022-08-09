@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import {
 	useNavigation,
@@ -21,6 +21,8 @@ import {
 	ScrollView,
 	Modal,
 	Dimensions,
+	KeyboardAvoidingView,
+	TextInput,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -46,9 +48,6 @@ function RecipeSheetScreen(props) {
 
 	const window = Dimensions.get("window");
 
-
-
-
 	useEffect(() => {
 		if (isFocused) {
 			setRecipeData(props.recipe);
@@ -67,7 +66,7 @@ function RecipeSheetScreen(props) {
 				var response = await rawResponse.json();
 
 				setAddedRecipes(response.addedRecipes);
-				setLikedRecipes(response.likedRecipes)
+				setLikedRecipes(response.likedRecipes);
 			}
 			initialFetch();
 
@@ -76,14 +75,9 @@ function RecipeSheetScreen(props) {
 				: setIsThisRecipeMine(false);
 		}
 	}, [isFocused]);
-	
-			
-		
-	
-
 
 	//likeIcon
-	var heartIcon
+	var heartIcon;
 	if (likedRecipes.includes(recipeData._id)) {
 		heartIcon = (
 			<TouchableOpacity
@@ -99,8 +93,6 @@ function RecipeSheetScreen(props) {
 					color="#ff4757"
 					style={{}}
 				/>
-
-				
 			</TouchableOpacity>
 		);
 	} else {
@@ -118,8 +110,6 @@ function RecipeSheetScreen(props) {
 					color="grey"
 					style={{}}
 				/>
-	
-				
 			</TouchableOpacity>
 		);
 	}
@@ -136,12 +126,15 @@ function RecipeSheetScreen(props) {
 					body: `id=${id}&token=${token}`,
 				}
 			);
-	
+
 			var response = await rawResponse.json();
-	
+
 			setLikedRecipes(response.likedRecipes);
-	
-			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
+
+			setRecipeData({
+				...recipeData,
+				likeCount: Number(response.likeCount),
+			});
 		} else {
 			var rawResponse = await fetch(
 				`http://${privateIP}:3000/recipesheet/like-recipe`,
@@ -153,12 +146,15 @@ function RecipeSheetScreen(props) {
 					body: `id=${id}&token=${token}`,
 				}
 			);
-	
+
 			var response = await rawResponse.json();
-	
+
 			setLikedRecipes(response.likedRecipes);
-	
-			setRecipeData({ ...recipeData, likeCount: Number(response.likeCount) });
+
+			setRecipeData({
+				...recipeData,
+				likeCount: Number(response.likeCount),
+			});
 		}
 	};
 
@@ -216,7 +212,7 @@ function RecipeSheetScreen(props) {
 
 	let modificationPencilIcon = null;
 	let trashIcon = null;
-	let addBookIcon = null
+	let addBookIcon = null;
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
 			<TouchableOpacity
@@ -265,8 +261,6 @@ function RecipeSheetScreen(props) {
 					color="#ff4757"
 					style={{}}
 				/>
-
-				
 			</View>
 		);
 	} else {
@@ -323,25 +317,23 @@ function RecipeSheetScreen(props) {
 			}
 		);
 
-
 		var response = await rawResponse.json();
 		if (response.result === true) {
-			navigation.navigate("HomeDrawer2");  //vérifier s'il faut pas mettre "home"------------
+			navigation.navigate("HomeDrawer2"); //vérifier s'il faut pas mettre "home"------------
 		}
 	};
-	
-
 
 	if (recipeData.ingredients && recipeData.ingredients.length > 0) {
 		var ingredientList = recipeData.ingredients.map((ingredient, i) => {
-			let finalQuantity = ""
+			let finalQuantity = "";
 			if (ingredient.quantity.match(/\d/) != null) {
 				let quantity = parseInt(ingredient.quantity);
-				finalQuantity = Math.round((quantity / recipeData.servings)*nbPersonne)
+				finalQuantity = Math.round(
+					(quantity / recipeData.servings) * nbPersonne
+				);
 			}
 			//et la je le remplace
 			var grammes = ingredient.quantity.replace(/\d/gi, "");
-			
 
 			return (
 				<View key={i} style={styles.ligne}>
@@ -445,7 +437,6 @@ function RecipeSheetScreen(props) {
 						flexWrap: "wrap",
 						marginLeft: "8%",
 						marginLeft: "8%",
-
 					}}
 				>
 					Êtes-vous certain de vouloir supprimer cette recette ?
@@ -480,7 +471,6 @@ function RecipeSheetScreen(props) {
 		);
 	}
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
-
 
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
 	var handlePressTrashIcon = async (id) => {
@@ -526,8 +516,6 @@ function RecipeSheetScreen(props) {
 					onValueChange={(data, selectedIndex) => {
 						//data = la valeur que la scrollPicker renvoi et on le set dans un etat
 						setNbPersonne(data);
-
-						//console.log(data)
 					}}
 					wrapperHeight={180}
 					wrapperWidth={150}
@@ -541,15 +529,141 @@ function RecipeSheetScreen(props) {
 	}
 
 	var handleGoBack = () => {
-	
 		if (props.fromWhichScreen === "FormScreen") {
-			navigation.navigate("Home")
+			navigation.navigate("Home");
 		} else {
-			navigation.goBack()
+			navigation.goBack();
 		}
-		
-	}
+	};
 
+	//Commentaires----------------------------------------------------------------------------------------------------
+	const [commentsVisible, setCommentsVisible] = useState(false);
+	const [inputCommentValue, setInputCommentValue] = useState("");
+	/* const refInput = useRef(null); */
+	console.log(inputCommentValue, "aaa---");
+	const handlePressCommentsComponent = () => {
+		setCommentsVisible(true);
+	};
+
+	const handleSubmitComment = (inputCommentValue) => {
+		if (inputCommentValue != "") {
+			async function saveComment() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/recipesheet/save-comment`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}&id=${recipeData._id}&content=${inputCommentValue}&username=${props.username}`,
+					}
+				);
+
+				var response = await rawResponse.json();
+				console.log("response que tu cherches-----", response);
+				setRecipeData({
+					...recipeData,
+					comments: JSON.parse(response.newComments),
+				});
+			}
+			saveComment();
+		}
+	};
+
+	var inputNewComment = (
+		<View>
+			<Text style={{ padding: 20, paddingBottom: 0 }}>
+				Nouveau commentaire:
+			</Text>
+			<TextInput
+				/* ref={refInput} */
+				style={{
+					height: 80,
+					margin: 12,
+					borderWidth: 1,
+					padding: 10,
+					backgroundColor: "#dfe4ea",
+					borderWidth: 0.7,
+					borderRadius: 10,
+				}}
+				multiline
+				onChangeText={(value) => setInputCommentValue(value)}
+				value={inputCommentValue}
+			/>
+			<TouchableOpacity
+				style={{}}
+				onPress={() => {
+					handleSubmitComment(inputCommentValue);
+				}}
+			>
+				<MaterialCommunityIcons
+					name="send"
+					size={28}
+					color="green"
+					style={{
+						paddingLeft: 20,
+						paddingRight: 20,
+						paddingTop: 10,
+						paddingBottom: 10,
+						zIndex: 1,
+					}}
+				/>
+			</TouchableOpacity>
+		</View>
+	);
+
+	var commentsSection = recipeData.comments.map((x, i) => (
+		<View
+			key={i}
+			style={{
+				width: "90%",
+				padding: 10,
+				margin: 5,
+				borderRadius: 10,
+				backgroundColor: "white",
+				shadowColor: "#470000",
+				shadowOffset: { width: 0, height: 1 },
+				shadowOpacity: 0.2,
+				elevation: 1,
+				alignSelf: "center",
+			}}
+		>
+			<View
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 12,
+						color: "black",
+					}}
+				>
+					{x.author}
+				</Text>
+				<Text
+					style={{
+						fontSize: 12,
+						color: "black",
+						fontStyle: "italic",
+					}}
+				>
+					{`le ${new Date(x.date).getDate()}/${new Date(x.date).getMonth()+1}/${new Date(x.date).getFullYear()}`}
+				</Text>
+			</View>
+			<Text
+				style={{
+					fontSize: 15,
+					color: "black",
+				}}
+			>
+				{x.content}
+			</Text>
+		</View>
+	));
 
 	return (
 		<View style={styles.container}>
@@ -749,7 +863,6 @@ function RecipeSheetScreen(props) {
 				</View>
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
-
 						<ScrollView style={{ marginTop: 30 }}>
 							<View
 								style={{
@@ -759,11 +872,9 @@ function RecipeSheetScreen(props) {
 									textAlign: "justify",
 								}}
 							>
-
 								<Text h1 style={styles.recipeName}>
 									{recipeData.name}
 								</Text>
-
 
 								<Text
 									style={{
@@ -771,7 +882,6 @@ function RecipeSheetScreen(props) {
 										marginTop: 30,
 									}}
 								>
-
 									{recipeData.directions}
 								</Text>
 								{/* pour dire que les instruction sont pour le nombre de personne qui a etait mit dans le formulaire */}
@@ -790,26 +900,49 @@ function RecipeSheetScreen(props) {
 				</Modal>
 
 				{/* -----------------------------------------------------Commentaires----------------------------------------------------------------- */}
-<TouchableOpacity
-onPress={() =>{}}
->
-				<View style={styles.like}>
-					<Text style={{ fontSize: 18 }}>Commentaires </Text>
-					<MaterialCommunityIcons
-						name="comment-multiple"
-						size={25}
-						color="green"
-						style={{}}
-					/>
-					<Text>{recipeData.comments.length}</Text>
-				</View>
-</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => {
+						handlePressCommentsComponent();
+					}}
+				>
+					<View style={styles.like}>
+						<Text style={{ fontSize: 18 }}>Commentaires </Text>
+						<MaterialCommunityIcons
+							name="comment-multiple"
+							size={25}
+							color="green"
+							style={{}}
+						/>
+						<Text>{recipeData.comments.length}</Text>
+					</View>
+				</TouchableOpacity>
+
+				<Modal visible={commentsVisible} animationType="slide">
+					<View>
+						<View style={{ marginTop: 30 }}>{inputNewComment}</View>
+						<ScrollView style={{ marginTop: 5, height: 450 }}>
+							{commentsSection}
+						</ScrollView>
+						<View style={styles.appButtonContainer}>
+							<TouchableOpacity
+								onPress={() => setCommentsVisible(false)}
+							>
+								<Text style={styles.appButtonText}>
+									Retourner à la recette
+								</Text>
+								<MaterialCommunityIcons
+									name="close"
+									size={28}
+									color="#ffffff"
+								/>
+							</TouchableOpacity>
+						</View>
+					</View>
+				</Modal>
+
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
 
-				<TouchableOpacity
-					style={{}}
-					onPress={() => handleGoBack()}
-				>
+				<TouchableOpacity style={{}} onPress={() => handleGoBack()}>
 					<MaterialCommunityIcons
 						name="arrow-left"
 						size={28}
@@ -835,7 +968,8 @@ function mapStateToProps(state) {
 		recipe: state.recipe,
 		token: state.token,
 		likedRecipes: state.likedRecipes,
-		fromWhichScreen: state.fromWhichScreen
+		fromWhichScreen: state.fromWhichScreen,
+		username: state.username,
 	};
 }
 
