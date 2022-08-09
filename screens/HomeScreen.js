@@ -460,27 +460,36 @@ function HomeScreen(props) {
 						}}
 						source={{ uri: item.image }}
 					/>
-					<View style={{ display: "flex", flexDirection: "row" }}>
+					<View style={{
+							 display: "flex",
+							 flexDirection: "row",
+							 justifyContent: "space-between",
+							 marginRight: "2%",
+							 marginLeft: "2%" 
+							 }}>
 						<View style={styles.like}>
 							<Text style={{ fontSize: 15 }}>
 								{item.likeCount}
 							</Text>
 							<MaterialCommunityIcons
 								name="heart"
-								size={25}
+								size={21}
 								color="#ff4757"
 								style={{}}
 							/>
 						</View>
 						<View style={styles.like}>
 							<Text style={{ fontSize: 15 }}>
-								{item.comments.length}
+								{item.comments.length} 								
 							</Text>
 							<MaterialCommunityIcons
-								name="comment-multiple"
-								size={25}
-								color="green"
-								style={{}}
+								name="comment-multiple-outline"
+								size={22}
+								color="#e67e22"
+								style={{
+									marginLeft:"5%",
+									marginTop:"1%"
+								}}
 							/>
 						</View>
 					</View>
@@ -547,7 +556,7 @@ function HomeScreen(props) {
 						source={{ uri: item.image }}
 					/>
 					<View style={styles.align}>
-						<View style={{ display: "flex", flexDirection: "row" }}>
+						
 							<View style={styles.like}>
 								<Text style={{ fontSize: 15 }}>
 									{item.likeCount}
@@ -564,13 +573,13 @@ function HomeScreen(props) {
 									{item.comments.length}
 								</Text>
 								<MaterialCommunityIcons
-									name="comment-multiple"
+									name="comment-multiple-outline"
 									size={25}
-									color="green"
+									color="#e67e22"
 									style={{}}
 								/>
 							</View>
-						</View>
+						
 						<Text
 							style={{
 								fontSize: 25,

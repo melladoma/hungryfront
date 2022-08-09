@@ -55,15 +55,20 @@ function RecipeSheetScreen(props) {
 
 
 	//---------------Share function ----------------
-	// let ingredientObj = {};
-	// recipeData.ingredients.map()
-	let ingredientToMessage = JSON.stringify(recipeData.ingredients)
-	let shareMessage = recipeData.name + "  " +
-		"Temps de cuisson : " + recipeData.cookTime + " min" + "   " +
-		"Temps de préparation : " + recipeData.prepTime + " min" + "  " +
-		"Nombre de personnes : " + nbPersonne + "   " +
-		"Listes des ingédients : " + ingredientToMessage + "   " +
-		"Méthodologie : " + recipeData.directions + "  ";
+	
+	let ingredientToMessage = recipeData.ingredients.map(x=>x.name + " " + x.quantity + "\u000A").join("")
+	let upperName = recipeData.name.toUpperCase()
+    let shareMessage =
+		"Cette recette vous a était envoyé via The Hungry-Book, téléchargement bientôt disponible !" + '\n' +
+		'\n' +
+		upperName + "  " + "\u000A" +
+		'\n' +
+        "Temps de cuisson : " + recipeData.cookTime + " min" + "   " + "\u000A" +
+        "Temps de préparation : " + recipeData.prepTime + " min" + "  " + "\u000A" +
+        "Nombre de personnes : " + nbPersonne + "   " + "\u000A" +
+		'\n' +
+        "Listes des ingédients : " + "\u000A" + ingredientToMessage + "   " + "\u000A" +
+        "Méthodologie : " + "\u000A" + '\n' + recipeData.directions + "  "; "\u000A"
 
 	const onShare = async () => {
 		try {
@@ -281,6 +286,7 @@ function RecipeSheetScreen(props) {
 		var response = await rawResponse.json();
 		if (response) {
 			setCalendarModalOpen(false)
+			
 		}
 
 	}
@@ -469,7 +475,9 @@ function RecipeSheetScreen(props) {
 				name="close"
 				size={28}
 				color="#ffffff"
-				onPress={() => setModalOpen(false)}
+				onPress={() => 
+					setModalOpen(false)
+				}
 			/>
 		</TouchableOpacity>
 	);
@@ -492,12 +500,17 @@ function RecipeSheetScreen(props) {
 					marginTop: 5,
 					elevation: 8,
 					backgroundColor: "#F19066",
-					// borderRadius: 25,
 					paddingVertical: 10,
 					paddingHorizontal: 12,
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
+					borderRadius:20,
+					width:"70%",
+					marginRight:"15%",
+					marginLeft:"15%",
+					marginBottom:"3%"
+					
 				}}
 				key={i}
 			>
@@ -538,6 +551,7 @@ function RecipeSheetScreen(props) {
 					height: 360,
 					marginTop: "50%",
 					marginLeft: "5%",
+					
 				}}
 			>
 				<Text
@@ -580,7 +594,7 @@ function RecipeSheetScreen(props) {
 	var overlayShadow;
 	if (shadow) {
 		overlayShadow = (
-			<View style={[styles.overlayShadow, { height: "100%" }]} />
+			<View style={[styles.overlayShadow, { height: "100%", }]} />
 		);
 	}
 
@@ -598,30 +612,34 @@ function RecipeSheetScreen(props) {
 					borderRadius: 100,
 					backgroundColor: "#fff",
 					width: "90%",
-					height: 360,
-					marginTop: "50%",
+					height: "80%",
+					marginTop: "15%",
 					marginLeft: "5%",
+					marginBottom:"10%"
 				}}
 			>
 				<Text
 					style={{
 						fontSize: 20,
-
 						marginTop: "30%",
-
+						textAlign: "center",
+						alignItems:"center",
 						flexWrap: "wrap",
 						marginLeft: "8%",
 						marginLeft: "8%",
 
 					}}
 				>
-					Ajouter ma recette pour
+					Ajouter ma recette le :
 				</Text>
 				<MaterialCommunityIcons
 					name="close"
 					size={28}
 					color="#ddd"
-					onPress={() => { setCalendarModalOpen(false) }}
+					onPress={() => { 
+						setCalendarModalOpen(false);
+						setShadow(false)
+					}}
 				/>
 
 				{weekButtonsList}
@@ -726,26 +744,20 @@ function RecipeSheetScreen(props) {
 					comments: JSON.parse(response.newComments),
 				});
 			}
+			setInputCommentValue("");
 			saveComment();
 		}
 	};
 
 	var inputNewComment = (
-		<View>
-			<Text style={{ padding: 20, paddingBottom: 0 }}>
-				Nouveau commentaire:
+		<KeyboardAvoidingView>
+			<Text style={{ padding: 20, paddingBottom: 0, fontSize:18, marginTop:"10%",  }}>
+				Ajouter un commentaire: 
 			</Text>
+			<View style={styles.inputContainer}>
 			<TextInput
 				/* ref={refInput} */
-				style={{
-					height: 80,
-					margin: 12,
-					borderWidth: 1,
-					padding: 10,
-					backgroundColor: "#dfe4ea",
-					borderWidth: 0.7,
-					borderRadius: 10,
-				}}
+				style={styles.inputPass}
 				multiline
 				onChangeText={(value) => setInputCommentValue(value)}
 				value={inputCommentValue}
@@ -759,7 +771,7 @@ function RecipeSheetScreen(props) {
 				<MaterialCommunityIcons
 					name="send"
 					size={28}
-					color="green"
+					color="#e67e22"
 					style={{
 						paddingLeft: 20,
 						paddingRight: 20,
@@ -767,9 +779,11 @@ function RecipeSheetScreen(props) {
 						paddingBottom: 10,
 						zIndex: 1,
 					}}
+					
 				/>
 			</TouchableOpacity>
-		</View>
+			</View>
+		</KeyboardAvoidingView>
 	);
 
 	var commentsSection = recipeData.comments.map((x, i) => (
@@ -786,6 +800,7 @@ function RecipeSheetScreen(props) {
 				shadowOpacity: 0.2,
 				elevation: 1,
 				alignSelf: "center",
+				borderWidth:0.75
 			}}
 		>
 			<View
@@ -798,8 +813,9 @@ function RecipeSheetScreen(props) {
 			>
 				<Text
 					style={{
-						fontSize: 12,
-						color: "black",
+						fontSize: 14,
+						color: "orange",
+						fontWeight:"bold"
 					}}
 				>
 					{x.author}
@@ -847,7 +863,11 @@ function RecipeSheetScreen(props) {
 						style={{
 							marginRight: "2%"
 						}}
-						onPress={() => { setCalendarModalOpen(true) }}
+						onPress={() => {
+							setCalendarModalOpen(true);
+							setShadow(true);
+						}}
+						
 					>
 						<MaterialCommunityIcons
 							name="calendar"
@@ -1068,8 +1088,10 @@ function RecipeSheetScreen(props) {
 						<MaterialCommunityIcons
 							name="comment-multiple"
 							size={25}
-							color="green"
-							style={{}}
+							color="#e67e22"
+							style={{
+								marginRight:"2%"
+							}}
 						/>
 						<Text>{recipeData.comments.length}</Text>
 					</View>
@@ -1077,14 +1099,24 @@ function RecipeSheetScreen(props) {
 
 				<Modal visible={commentsVisible} animationType="slide">
 					<View>
-						<View style={{ marginTop: 30 }}>{inputNewComment}</View>
-						<ScrollView style={{ marginTop: 5, height: 450 }}>
+						
+						<ScrollView style={{ marginTop:"10%", height: 500 }}>
 							{commentsSection}
 						</ScrollView>
+						<KeyboardAvoidingView>{inputNewComment}</KeyboardAvoidingView>
 						<View style={styles.appButtonContainer}>
 							<TouchableOpacity
 								onPress={() => setCommentsVisible(false)}
+								style={{
+									
+								}}
 							>
+								<View style={{ 
+									display: "flex",
+									flexDirection: "row",
+									justifyContent: "space-between",
+
+								}}>
 								<Text style={styles.appButtonText}>
 									Retourner à la recette
 								</Text>
@@ -1093,6 +1125,7 @@ function RecipeSheetScreen(props) {
 									size={28}
 									color="#ffffff"
 								/>
+								</View>
 							</TouchableOpacity>
 						</View>
 					</View>
@@ -1261,6 +1294,9 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		// marginTop: 10,
+		width:"90%",
+		marginRight:"5%",
+		marginLeft:"5%"
 	},
 	appButtonText: {
 		fontSize: 18,
@@ -1320,5 +1356,29 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		// marginRight:25,
 		width: 100,
+	},
+	inputContainer: {
+		backgroundColor: "#dfe4ea",
+		borderRadius: 15,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		borderWidth: 0.75,
+		padding: 10,
+		paddingLeft: 20,
+		height:80,
+		marginTop: 10,
+		marginBottom:"5%",
+		width:"95%",
+		marginRight:"2.5%",
+		marginLeft:"2.5%"
+	},
+	inputPass: {
+		backgroundColor: "#dfe4ea",
+		borderRadius: 15,
+		width: 210,
+		alignItems: "center",
+		// marginTop: 10,
+		// marginBottom: 10,
 	},
 });
