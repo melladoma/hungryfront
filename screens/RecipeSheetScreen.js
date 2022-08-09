@@ -272,7 +272,11 @@ function RecipeSheetScreen(props) {
 	var handleCalendarAdd = async (date, token, recipe) => {
 		// console.log(recipeId, date, token)
 		let calendarObj = {
-			date,
+			date: date.toLocaleString('fr-FR', {
+				year: 'numeric',
+				month: 'numeric',
+				day: 'numeric',
+			}),
 			recipe: recipe._id,
 			token
 		}
