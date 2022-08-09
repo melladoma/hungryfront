@@ -9,6 +9,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { privateIP } from "../env.js";
 
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Sharing from 'expo-sharing';
+
 
 import {
 	StatusBar,
@@ -21,6 +23,7 @@ import {
 	ScrollView,
 	Modal,
 	Dimensions,
+	Share
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -39,11 +42,48 @@ function RecipeSheetScreen(props) {
 	const [shadow, setShadow] = useState(false);
 	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
 	const [addedRecipes, setAddedRecipes] = useState([]);
-	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
-		useState(false);
+	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] = useState(false);
 	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
 
 	const window = Dimensions.get("window");
+
+	
+
+//---------------Share function ----------------
+// let ingredientObj = {};
+// recipeData.ingredients.map()
+let ingredientToMessage = JSON.stringify(recipeData.ingredients)
+let shareMessage = recipeData.name + "  "+
+					    "Temps de cuisson : " + recipeData.cookTime + " min"  + "   " +
+					    "Temps de préparation : " + recipeData.prepTime + " min" + "  " +
+					    "Nombre de personnes : " + nbPersonne + "   " + 
+						"Listes des ingédients : " + ingredientToMessage + "   " +
+					    "Méthodologie : " + recipeData.directions + "  " ;
+
+const onShare = async () => {
+    try {
+      const result = await Share.share({
+									
+	  message: shareMessage ,
+	
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+
+
+//----------------Fin share function -----------
 
 
 
@@ -215,7 +255,9 @@ function RecipeSheetScreen(props) {
 	if (isThisRecipeMine) {
 		modificationPencilIcon = (
 			<TouchableOpacity
-				style={{}}
+				style={{
+					justifyContent:"flex-end"
+				}}
 				onPress={() => navigation.navigate("FormScreen")}
 			>
 				<MaterialCommunityIcons
@@ -225,6 +267,7 @@ function RecipeSheetScreen(props) {
 					style={{
 						paddingLeft: 10,
 						marginTop: 5,
+						
 					}}
 				/>
 			</TouchableOpacity>
@@ -565,7 +608,9 @@ function RecipeSheetScreen(props) {
 						{recipeData.author.username}
 					</Text>
 					<TouchableOpacity
-						style={{}}
+						style={{
+							marginRight:"2%"
+						}}
 						onPress={() => navigation.navigate("PlannerScreen")}
 					>
 						<MaterialCommunityIcons
@@ -573,10 +618,6 @@ function RecipeSheetScreen(props) {
 							size={28}
 							color="#2f3542"
 							style={{
-								paddingLeft: 20,
-								paddingRight: 20,
-								paddingTop: 10,
-								paddingBottom: 10,
 								zIndex: 1,
 							}}
 						/>
@@ -800,7 +841,7 @@ onPress={() =>{}}
 				</View>
 </TouchableOpacity>
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
-
+	<View style={styles.ligne}>
 				<TouchableOpacity
 					style={{}}
 					onPress={() => handleGoBack()}
@@ -817,6 +858,22 @@ onPress={() =>{}}
 						}}
 					/>
 				</TouchableOpacity>
+
+				<TouchableOpacity
+				style={{}}
+				onPress={onShare}
+			>
+				<MaterialCommunityIcons
+					name="share-variant"
+					size={25}
+					color="#2f3542"
+					style={{
+						paddingLeft: 10,
+						marginRight: "3%"
+					}}
+				/>			
+			</TouchableOpacity>
+	</View>
 			</ScrollView>
 			{DeleteModalVerif}
 			{overlayShadow}
@@ -859,7 +916,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#f5f6fa",
-		marginTop: 35,
+		paddingTop:35
 	},
 	recipeName: {
 		textAlign: "center",
@@ -892,6 +949,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginTop: 5,
 		zIndex: 1,
+		textAlign:"center"
 	},
 	tagligne: {
 		flexDirection: "row",

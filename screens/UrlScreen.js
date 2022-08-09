@@ -14,6 +14,8 @@ import {
 	TouchableOpacity,
 	Text,
 	TextInput,
+	Modal,
+	Image
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -24,6 +26,7 @@ function UrlScreen(props) {
 	const navigation = useNavigation();
 
 	const [webView, setWebView] = useState(false);
+	const [loadModalOpen, setLoadModalOpen] = useState(false);
 	const onNavigationStateChange = (webViewState) => {
 		console.log(webViewState.url);
 	};
@@ -32,6 +35,7 @@ function UrlScreen(props) {
 
 	const handleUrlSubmit = async (searchInput) => {
 		// async function UrlSearch() {
+		setLoadModalOpen(true)
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/api/url-scrapper`,
 			{
@@ -50,6 +54,7 @@ function UrlScreen(props) {
 		// UrlSearch();
 		if (response.status) {
 			props.setRecipe(response.recipe);
+			setLoadModalOpen(false)
 			navigation.navigate("FormScreen")
 		}
 
@@ -109,7 +114,22 @@ function UrlScreen(props) {
 
 
 	//-------------------------------------------------------Fin boutons ---------------------------------------------
+	
+	//-----------------------------------Modal chargement 
 
+	var LoadingModal = (
+		<Modal visible={loadModalOpen}>
+			<View style={{ justifyContent: 'center', flex: 1 }}>
+				<Image style={{}}
+					source={require("../assets/chef.gif")}
+					resizeMode="contain"
+					resizeMethod="resize"
+				/>
+			</View>
+		</Modal>
+	);
+
+	//-----------------------------------Fin modal chargment 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -191,6 +211,7 @@ function UrlScreen(props) {
 						{/* <Text style={{ fontSize: 20 }}>UrlScreen</Text> */}
 
 						<View style={styles.screenContainer}>
+							
 							<OpenNavigator title="Rechercher une recette sur internet" size="sm" />
 						</View>
 						<TextInput
@@ -231,9 +252,11 @@ function UrlScreen(props) {
 									}}
 								/>
 							</TouchableOpacity>
+							
 						</View>
 					</View>
 				</View>
+				{LoadingModal}
 			</View>
 		);
 	}
