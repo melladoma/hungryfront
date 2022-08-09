@@ -6,6 +6,8 @@ import {
 	useIsFocused,
 } from "@react-navigation/native";
 
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { privateIP } from "../env.js";
 
@@ -42,6 +44,11 @@ function FeedScreen(props) {
 	const [initialData, setInitialData] = useState([]); //sert pour filtrer recettes par nom et tags
 	const [searchInput, setSearchInput] = useState(""); //value du TextInput de la barre de recherche
 	//pour connaître la taille utilisée sur chaque téléphone par TabNavigator:
+	const tabBarHeight = useBottomTabBarHeight();
+	//pour envoyer cette taille dans le store et l'utiliser dans d'autres composants, notamment DrawerScreen:
+	useEffect(() => {
+		props.sendBottomTabHeight(tabBarHeight);
+	}, []);
 
 	//------------------------------------------------------------------
 

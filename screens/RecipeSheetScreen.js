@@ -70,6 +70,7 @@ function RecipeSheetScreen(props) {
         "Listes des ingédients : " + "\u000A" + ingredientToMessage + "   " + "\u000A" +
         "Méthodologie : " + "\u000A" + '\n' + recipeData.directions + "  "; "\u000A"
 
+
 	const onShare = async () => {
 		try {
 			const result = await Share.share({

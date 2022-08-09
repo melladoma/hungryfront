@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { WebView } from 'react-native-webview';
+import { WebView } from "react-native-webview";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -15,7 +15,7 @@ import {
 	Text,
 	TextInput,
 	Modal,
-	Image
+	Image,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -24,18 +24,20 @@ import { privateIP } from "../env.js";
 
 function UrlScreen(props) {
 	const navigation = useNavigation();
-
+	const [currentWebViewURL, setCurrentWebViewURL] = useState("");
 	const [webView, setWebView] = useState(false);
 	const [loadModalOpen, setLoadModalOpen] = useState(false);
+
 	const onNavigationStateChange = (webViewState) => {
-		console.log(webViewState.url);
+		setCurrentWebViewURL(webViewState.url);
 	};
 
-	const [searchInput, setSearchInput] = useState("")
+	const [searchInput, setSearchInput] = useState("");
 
-	const handleUrlSubmit = async (searchInput) => {
+	const handleUrlSubmit = async (url) => {
 		// async function UrlSearch() {
-		setLoadModalOpen(true)
+		setWebView(false);
+		setLoadModalOpen(true);
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/api/url-scrapper`,
 			{
@@ -43,29 +45,29 @@ function UrlScreen(props) {
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				body: `url=${searchInput}`,
+				body: `url=${url}`,
 			}
 		);
 
 		var response = await rawResponse.json();
-		console.log(response)
+		console.log(response);
 
 		// }
 		// UrlSearch();
 		if (response.status) {
 			props.setRecipe(response.recipe);
-			setLoadModalOpen(false)
-			navigation.navigate("FormScreen")
+			setLoadModalOpen(false);
+			navigation.navigate("FormScreen");
 		}
-
-
-	}
+	};
 
 	//-------------------------------------------------------Boutons ------------------------------------------------
 
 	const OpenNavigator = ({ onPress, title }) => (
 		<TouchableOpacity
-			onPress={() => { setWebView(true) }}
+			onPress={() => {
+				setWebView(true);
+			}}
 			style={styles.appButtonContainer}
 		>
 			<Text style={styles.appButtonText}>{title}</Text>
@@ -73,32 +75,36 @@ function UrlScreen(props) {
 				name="web"
 				size={28}
 				color="#ffffff"
-				onPress={() => { setWebView(true) }}
+				onPress={() => {
+					setWebView(true);
+				}}
 			/>
 		</TouchableOpacity>
 	);
 
 	const AddUrl = ({ onPress, title }) => (
-		<View style={{
-			marginRight: "8%"
-		}}>
+		<TouchableOpacity
+			style={{
+				marginRight: "8%",
+			}}
+			onPress={() => handleUrlSubmit(currentWebViewURL)}
+		>
 			<MaterialCommunityIcons
 				name="plus-circle"
 				size={50}
 				color="#d35400"
 				style={{
 					zIndex: 1,
-
 				}}
-				onPress={() => handleConversion()}
 			/>
-		</View>
+		</TouchableOpacity>
 	);
 
 	const ValidateUrl = ({ onPress, title }) => (
-
 		<TouchableOpacity
-			onPress={() => { handleUrlSubmit(searchInput) }}
+			onPress={() => {
+				handleUrlSubmit(searchInput);
+			}}
 			style={styles.validateButtonContainer}
 		>
 			<Text style={styles.validateText}>{title}</Text>
@@ -108,19 +114,17 @@ function UrlScreen(props) {
 				color="#ffffff"
 			/>
 		</TouchableOpacity>
-
 	);
 
-
-
 	//-------------------------------------------------------Fin boutons ---------------------------------------------
-	
-	//-----------------------------------Modal chargement 
+
+	//-----------------------------------Modal chargement
 
 	var LoadingModal = (
 		<Modal visible={loadModalOpen}>
-			<View style={{ justifyContent: 'center', flex: 1 }}>
-				<Image style={{}}
+			<View style={{ justifyContent: "center", flex: 1 }}>
+				<Image
+					style={{}}
 					source={require("../assets/chef.gif")}
 					resizeMode="contain"
 					resizeMethod="resize"
@@ -129,7 +133,7 @@ function UrlScreen(props) {
 		</Modal>
 	);
 
-	//-----------------------------------Fin modal chargment 
+	//-----------------------------------Fin modal chargment
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
 		<View style={[styles.statusBar, { backgroundColor }]}>
@@ -145,74 +149,82 @@ function UrlScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 	if (webView) {
-		return (<View style={styles.container}><MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
+		return (
+			<View style={styles.container}>
+				<MyStatusBar
+					backgroundColor="#dfe4ea"
+					barStyle="dark-content"
+				/>
 
-			<WebView
-				style={styles.container}
-				source={{ uri: 'https://google.com' }}
-				onNavigationStateChange={onNavigationStateChange}
-				javaScriptEnabled
-				domStorageEnabled
-				startInLoadingState={false}
-			/>
+				<WebView
+					style={styles.container}
+					source={{ uri: "https://google.com" }}
+					onNavigationStateChange={onNavigationStateChange}
+					javaScriptEnabled
+					domStorageEnabled
+					startInLoadingState={false}
+				/>
 
+				<View style={styles.bottomTab}>
+					<View
+						style={{
+							height: props.bottomTabHeight,
 
-
-
-			<View style={styles.bottomTab}>
-
-				<View
-					style={{
-						height: props.bottomTabHeight,
-						backgroundColor: "#f5f6fa",
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginBottom: 20
-					}}
-				>
-					<TouchableOpacity
-						style={{}}
-						onPress={() => setWebView(false)}
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginBottom: 20,
+						}}
 					>
-						<MaterialCommunityIcons
-							name="arrow-left"
-							size={28}
-							color="#2f3542"
-							style={{
-								paddingLeft: 20,
-								paddingRight: 20,
-								paddingTop: 10,
-								paddingBottom: 10,
-								zIndex: 1,
-							}}
-						/>
-
-					</TouchableOpacity>
-					<AddUrl size="xl" />
+						<TouchableOpacity
+							style={{}}
+							onPress={() => setWebView(false)}
+						>
+							<MaterialCommunityIcons
+								name="arrow-left"
+								size={28}
+								color="#2f3542"
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingTop: 10,
+									paddingBottom: 10,
+									zIndex: 1,
+								}}
+							/>
+						</TouchableOpacity>
+						<AddUrl size="xl" />
+					</View>
 				</View>
-
 			</View>
-		</View>)
+		);
 	} else {
 		return (
 			<View style={styles.container}>
-				<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
+				<MyStatusBar
+					backgroundColor="#dfe4ea"
+					barStyle="dark-content"
+				/>
 				<View style={styles.title}>
-					<Text style={{
-						fontSize: 24,
-						textAlign: "center",
-					}}
-					>Ajouter via Internet</Text>
+					<Text
+						style={{
+							fontSize: 24,
+							textAlign: "center",
+						}}
+					>
+						Ajouter via Internet
+					</Text>
 				</View>
 				<View style={{ flex: 1 }}>
 					<View style={styles.content}>
 						{/* <Text style={{ fontSize: 20 }}>UrlScreen</Text> */}
 
 						<View style={styles.screenContainer}>
-							
-							<OpenNavigator title="Rechercher une recette sur internet" size="sm" />
+							<OpenNavigator
+								title="Rechercher une recette sur internet"
+								size="sm"
+							/>
 						</View>
 						<TextInput
 							style={styles.searchInput}
@@ -252,7 +264,6 @@ function UrlScreen(props) {
 									}}
 								/>
 							</TouchableOpacity>
-							
 						</View>
 					</View>
 				</View>
@@ -271,7 +282,6 @@ function mapDispatchToProps(dispatch) {
 		setRecipe: function (recipe) {
 			dispatch({ type: "setRecipe", recipe: recipe });
 		},
-
 	};
 }
 
@@ -292,10 +302,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#f1f2f6"
+		backgroundColor: "#f1f2f6",
 	},
 	screenContainer: {
-		marginBottom: "15%"
+		marginBottom: "15%",
 	},
 	appButtonContainer: {
 		elevation: 8,
@@ -324,8 +334,6 @@ const styles = StyleSheet.create({
 		borderWidth: 1.1,
 		width: "85%",
 		borderColor: "#d35400",
-
-
 	},
 	title: {
 		backgroundColor: "#dfe4ea",
@@ -346,13 +354,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		marginTop: "10%",
 		borderWidth: 1,
-		borderColor: "#fff"
-
+		borderColor: "#fff",
 	},
 	validateText: {
 		fontSize: 20,
 		color: "#fff",
 		fontWeight: "bold",
 		alignSelf: "center",
-	}
+	},
 });
