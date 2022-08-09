@@ -118,11 +118,9 @@ function HomeScreen(props) {
 				// console.log(response.addedRecipes, "---------------------------------------")
 			}
 			initialFetch();
-
-
 		} else {
-			setSelectedTagsArray([])
-			setSearchInput("")
+			setSelectedTagsArray([]);
+			setSearchInput("");
 		}
 	}, [isFocused]);
 
@@ -248,7 +246,10 @@ function HomeScreen(props) {
 							backgroundColor: "#f5f6fa",
 							width: "100%",
 							height: 360,
-							marginTop: Platform.OS === "ios" ? STATUSBAR_HEIGHT + APPBAR_HEIGHT : APPBAR_HEIGHT
+							marginTop:
+								Platform.OS === "ios"
+									? STATUSBAR_HEIGHT + APPBAR_HEIGHT
+									: APPBAR_HEIGHT,
 						}}
 					>
 						<View style={{ marginVertical: 10 }}>
@@ -390,13 +391,42 @@ function HomeScreen(props) {
 	//Début FlatList affichant les Cards de recettes
 
 	var flatlist;
+
+	var whenEmpty = (
+		<View
+			style={{
+				width: "90%",
+				height: 300,
+				borderRadius: 10,
+				backgroundColor: "white",
+				shadowColor: "#470000",
+				shadowOffset: { width: 0, height: 1 },
+				shadowOpacity: 0.2,
+				elevation: 1,
+				alignSelf: "center",
+				display: "flex",
+				justifyContent: "center",
+			}}
+		>
+			<Text
+				style={{
+					fontSize: 25,
+					color: "#470000",
+					textAlign: "center",
+					alignSelf: "center",
+				}}
+			>
+				Ajoute ta première recette en cliquant sur le + en bas !
+				
+			</Text>
+		</View>
+	);
+
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
 
 		const renderItem = ({ item }) => (
-			<TouchableOpacity
-				onPress={() => handlePressOnCard(item)}
-			>
+			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 				<View
 					style={{
 						height: 260,
@@ -406,17 +436,19 @@ function HomeScreen(props) {
 						borderWidth: 1.5,
 						borderColor: "#000",
 						backgroundColor: "#Fff",
-						borderRadius: 15
+						borderRadius: 15,
 					}}
 				>
-					<Text style={{
-						height: "15%",
-						padding: 5,
-						textAlign: "center",
-						color: "#e67e22",
-						fontSize: 18,
-						fontWeight: "bold"
-					}}>
+					<Text
+						style={{
+							height: "15%",
+							padding: 5,
+							textAlign: "center",
+							color: "#e67e22",
+							fontSize: 18,
+							fontWeight: "bold",
+						}}
+					>
 						{item.name}
 					</Text>
 					<Image
@@ -428,29 +460,30 @@ function HomeScreen(props) {
 						}}
 						source={{ uri: item.image }}
 					/>
-					<View style={{display:"flex", flexDirection:"row"}}>
-					<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.likeCount}
-						</Text>
-						<MaterialCommunityIcons
-							name="heart"
-							size={25}
-							color="#ff4757"
-							style={{}}
-						/>
+					<View style={{ display: "flex", flexDirection: "row" }}>
+						<View style={styles.like}>
+							<Text style={{ fontSize: 15 }}>
+								{item.likeCount}
+							</Text>
+							<MaterialCommunityIcons
+								name="heart"
+								size={25}
+								color="#ff4757"
+								style={{}}
+							/>
+						</View>
+						<View style={styles.like}>
+							<Text style={{ fontSize: 15 }}>
+								{item.comments.length}
+							</Text>
+							<MaterialCommunityIcons
+								name="comment-multiple"
+								size={25}
+								color="green"
+								style={{}}
+							/>
+						</View>
 					</View>
-					<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.comments.length}
-						</Text>
-						<MaterialCommunityIcons
-							name="comment-multiple"
-							size={25}
-							color="green"
-							style={{}}
-						/>
-					</View></View>
 				</View>
 			</TouchableOpacity>
 		);
@@ -464,15 +497,14 @@ function HomeScreen(props) {
 				data={DATA}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				ListEmptyComponent={whenEmpty}
 			/>
 		);
 	} else if (typeAffichage === "liste") {
 		//--------------------------------affichage en "liste"
 
 		const renderItem = ({ item }) => (
-			<TouchableOpacity
-				onPress={() => handlePressOnCard(item)}
-			>
+			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 				<View
 					style={{
 						display: "flex",
@@ -488,16 +520,25 @@ function HomeScreen(props) {
 						borderTopRightRadius: 22,
 						borderWidth: 1.5,
 						borderColor: "#000",
-						backgroundColor: "#fff"
+						backgroundColor: "#fff",
 					}}
 				>
-
-					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20, marginTop: 10, color: "#e67e22" }}>{item.name}</Text>
+					<Text
+						style={{
+							fontSize: 25,
+							fontWeight: "bold",
+							marginLeft: 20,
+							marginTop: 10,
+							color: "#e67e22",
+						}}
+					>
+						{item.name}
+					</Text>
 					<Image
 						style={{
 							height: "82%",
 							width: "100%",
-							marginTop: "1%"
+							marginTop: "1%",
 							// borderBottomLeftRadius: 0,
 							// borderBottomRightRadius: 0,
 							// borderTopLeftRadius: 20,
@@ -506,35 +547,40 @@ function HomeScreen(props) {
 						source={{ uri: item.image }}
 					/>
 					<View style={styles.align}>
-
-					<View style={{display:"flex", flexDirection:"row"}}>
-						<View style={styles.like}>
-							<Text style={{ fontSize: 15 }}>
-								{item.likeCount}
-							</Text>
-							<MaterialCommunityIcons
-								name="heart"
-								size={25}
-								color="#ff4757"
-								style={{}}
-							/>
+						<View style={{ display: "flex", flexDirection: "row" }}>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.likeCount}
+								</Text>
+								<MaterialCommunityIcons
+									name="heart"
+									size={25}
+									color="#ff4757"
+									style={{}}
+								/>
+							</View>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.comments.length}
+								</Text>
+								<MaterialCommunityIcons
+									name="comment-multiple"
+									size={25}
+									color="green"
+									style={{}}
+								/>
+							</View>
 						</View>
-						<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.comments.length}
-						</Text>
-						<MaterialCommunityIcons
-							name="comment-multiple"
-							size={25}
-							color="green"
-							style={{}}
-						/>
-					</View></View>
-						<Text style={{ fontSize: 25, fontWeight: "bold", marginRight: 10 }}>
+						<Text
+							style={{
+								fontSize: 25,
+								fontWeight: "bold",
+								marginRight: 10,
+							}}
+						>
 							@{item.author.username}
 						</Text>
 					</View>
-
 				</View>
 			</TouchableOpacity>
 		);
@@ -546,14 +592,15 @@ function HomeScreen(props) {
 				data={DATA}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				ListEmptyComponent={whenEmpty}
 			/>
 		);
 	}
 
 	const handlePressOnCard = (recipe) => {
 		props.sendPressedRecipeToStore(recipe);
-		navigation.navigate("RecipeSheetScreen")
-	}
+		navigation.navigate("RecipeSheetScreen");
+	};
 	//-----------------------------------------------------------------Fin de la flatList
 
 	//-----------------------------------RENDER-----------------------------------
@@ -651,7 +698,7 @@ function mapDispatchToProps(dispatch) {
 			});
 		},
 		sendPressedRecipeToStore: function (recipe) {
-			console.log(recipe)
+			console.log(recipe);
 			dispatch({
 				type: "setRecipe",
 				recipe: recipe,
@@ -749,5 +796,4 @@ const styles = StyleSheet.create({
 		marginRight: 5,
 		// marginTop: 5,
 	},
-
 });

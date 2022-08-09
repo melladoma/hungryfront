@@ -184,6 +184,7 @@ function SignUpScreen(props) {
 						secureTextEntry={passwordVisibility}
 						onChangeText={(val) => setSignUpPassword(val)}
 						value={signUpPassword}
+						textContentType="oneTimeCode"
 					/>
 					<Pressable onPress={handlePasswordVisibility}>
 						<MaterialCommunityIcons
@@ -202,6 +203,7 @@ function SignUpScreen(props) {
 						secureTextEntry={confirmationVisibility}
 						onChangeText={(val) => setSignUpConfirmPassword(val)}
 						value={signUpConfirmPassword}
+						textContentType="oneTimeCode"
 					/>
 					<Pressable onPress={handleConfirmationVisibility}>
 						<MaterialCommunityIcons
