@@ -57,13 +57,14 @@ function RecipeSheetScreen(props) {
 	//---------------Share function ----------------
 	// let ingredientObj = {};
 	// recipeData.ingredients.map()
-	let ingredientToMessage = JSON.stringify(recipeData.ingredients)
-	let shareMessage = recipeData.name + "  " +
-		"Temps de cuisson : " + recipeData.cookTime + " min" + "   " +
-		"Temps de préparation : " + recipeData.prepTime + " min" + "  " +
-		"Nombre de personnes : " + nbPersonne + "   " +
-		"Listes des ingédients : " + ingredientToMessage + "   " +
-		"Méthodologie : " + recipeData.directions + "  ";
+	let ingredientToMessage = recipeData.ingredients.map(x=>x.name + " " + x.quantity + "\u000A").join("")
+
+	let shareMessage = recipeData.name + "  " + "\u000A" +
+		"Temps de cuisson : " + recipeData.cookTime + " min" + "   " + "\u000A" +
+		"Temps de préparation : " + recipeData.prepTime + " min" + "  " + "\u000A" +
+		"Nombre de personnes : " + nbPersonne + "   " + "\u000A" +
+		"Listes des ingédients : " + "\u000A" + ingredientToMessage + "   " + "\u000A" +
+		"Méthodologie : " + "\u000A" + recipeData.directions + "  "; "\u000A" 
 
 	const onShare = async () => {
 		try {

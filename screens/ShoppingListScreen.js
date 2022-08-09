@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
-import { StatusBar } from "expo-status-bar";
+
 import { privateIP } from "../env.js";
 
-
 import {
+	StatusBar,
 	View,
 	ScrollView,
 	Platform,
@@ -19,7 +19,11 @@ import {
 	Text,
 	TextInput,
 } from "react-native";
-import { useNavigation, DrawerActions , useIsFocused} from "@react-navigation/native";
+import {
+	useNavigation,
+	DrawerActions,
+	useIsFocused,
+} from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -30,6 +34,16 @@ function ShoppingListScreen(props) {
 	const isFocused = useIsFocused();
 	const [shoppingListData, setShoppingListData] = useState([]);
 
+	const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+
+	const handlePressedCheckbox = async (id) => {
+		if (selectedCheckboxes.includes(id)) {
+			let tempArray = selectedCheckboxes.filter((x) => x !== id);
+			setSelectedCheckboxes(tempArray);
+		} else {
+			setSelectedCheckboxes([...selectedCheckboxes, id]);
+		}
+	};
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -71,49 +85,111 @@ function ShoppingListScreen(props) {
 				);
 
 				var response = await rawResponse.json();
-				setShoppingListData(response.shoppingList)
+				setShoppingListData(response.shoppingList);
 			}
 			initialFetch();
-
-			
 		}
 	}, [isFocused]);
-	
-	console.log(shoppingListData,'front shop');
-	
-	var item =({item}) => {
-			return(
-				<View style={{flexDirection: 'row' }}>
-					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
+
+	console.log(shoppingListData, "front shop");
+
+	var item = ({ item }) => {
+		return (
+			<View style={{ flexDirection: "row" }}>
+				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
 					<TouchableOpacity
-							style={{}}
-							onPress={() => navigation.goBack()}
-						>
-							<MaterialCommunityIcons
-								name="checkbox-blank-outline"
-								size={28}
-								color="#2f3542"
-								style={{
-									paddingLeft: 20,
-									paddingRight: 20,
-									paddingTop: 10,
-									paddingBottom: 10,
-									zIndex: 1,
-								}}
-							/>
-						</TouchableOpacity>
-					</View>
-					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
-						<Text style={{textAlign: "center",fontSize: 20,}}>{item.name}</Text>
-					</View>
-					<View style={{width: 110 , backgroundColor: '#dfe4ea'}}>
-						<Text style={{textAlign: "center",fontSize: 20,}}>{item.quantity}</Text>
-					</View>
+						style={{}}
+						onPress={() => handlePressedCheckbox(item._id)}
+					>
+						<MaterialCommunityIcons
+							name={
+								selectedCheckboxes.includes(item._id)
+									? "checkbox-marked-outline"
+									: "checkbox-blank-outline"
+							}
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
 				</View>
-			)
+				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
+					<Text
+						style={{
+							textAlign: "center",
+							fontSize: 20,
+							textDecorationLine: selectedCheckboxes.includes(
+								item._id
+							)
+								? "line-through"
+								: "none",
+						}}
+					>
+						{item.name}
+					</Text>
+				</View>
+				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
+					<Text
+						style={{
+							textAlign: "center",
+							fontSize: 20,
+							textDecorationLine: selectedCheckboxes.includes(
+								item._id
+							)
+								? "line-through"
+								: "none",
+						}}
+					>
+						{item.quantity}
+					</Text>
+				</View>
+			</View>
+		);
+	};
+
+	const handleDeleteSelected = (arrayOfSelected) => {
+		async function deleteSelected() {
+			var rawResponse = await fetch(
+				`http://${privateIP}:3000/recipesheet/delete-selected-shoppingList`,
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `token=${props.token}&selection=${JSON.stringify(arrayOfSelected)}`,
+				}
+			);
+
+			var response = await rawResponse.json();
+			setShoppingListData(response.shoppingList);
 		}
-		
-	
+		deleteSelected();
+	}
+
+	const handleDeleteAll = () => {
+		async function deleteAll() {
+			var rawResponse = await fetch(
+				`http://${privateIP}:3000/recipesheet/delete-all-shoppingList`,
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: `token=${props.token}`,
+				}
+			);
+
+			var response = await rawResponse.json();
+			setShoppingListData(response.shoppingList);
+		}
+		deleteAll();
+	}
 
 	return (
 		<View style={styles.container}>
@@ -138,30 +214,102 @@ function ShoppingListScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
+				<TouchableOpacity
+						style={{}}
+						onPress={() => handleDeleteSelected(selectedCheckboxes)}
+					>
+						<MaterialCommunityIcons
+							name="delete-sweep"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={{}}
+						onPress={() => handleDeleteAll()}
+					>
+						<MaterialCommunityIcons
+							name="delete"
+							size={28}
+							color="#2f3542"
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingTop: 10,
+								paddingBottom: 10,
+								zIndex: 1,
+							}}
+						/>
+					</TouchableOpacity>
 			</View>
 			<View style={{ flex: 1 }}>
 				<View style={styles.content}>
-					<View style={{
-						flex:1,
-						justifyContent:'center',
-						alignItems:'center',
-						marginTop:'10%',
-					}}>
-						<View style={{flexDirection:'row', margin:3,}}>
-							<View style={{width: 110 , backgroundColor: '#F19066'}}>
-								<Text style={{textAlign: "center",fontSize: 20,}}>valide</Text>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							marginTop: "10%",
+						}}
+					>
+						<View style={{ flexDirection: "row", margin: 3 }}>
+							<View
+								style={{
+									width: 110,
+									backgroundColor: "#F19066",
+								}}
+							>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 20,
+									}}
+								>
+									valide
+								</Text>
 							</View>
-							<View style={{width: 110 , backgroundColor: '#F19066'}}>
-								<Text style={{textAlign: "center",fontSize: 20,}}>vos produits</Text>
+							<View
+								style={{
+									width: 110,
+									backgroundColor: "#F19066",
+								}}
+							>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 20,
+									}}
+								>
+									vos produits
+								</Text>
 							</View>
-							<View style={{width: 110 , backgroundColor: '#F19066'}}>
-								<Text style={{textAlign: "center",fontSize: 20,}}>quantity</Text>
+							<View
+								style={{
+									width: 110,
+									backgroundColor: "#F19066",
+								}}
+							>
+								<Text
+									style={{
+										textAlign: "center",
+										fontSize: 20,
+									}}
+								>
+									quantity
+								</Text>
 							</View>
 						</View>
 						<FlatList
 							data={shoppingListData}
 							renderItem={item}
-							keyExtractor={(item,index)=>index.toString()}
+							keyExtractor={(item, index) => index.toString()}
 						/>
 					</View>
 				</View>
@@ -198,13 +346,12 @@ function ShoppingListScreen(props) {
 	);
 }
 
-
 function mapStateToProps(state) {
-	return { 
-			bottomTabHeight: state.bottomTabHeight,
-			recipe: state.recipe,
-			token: state.token,
-		};
+	return {
+		bottomTabHeight: state.bottomTabHeight,
+		recipe: state.recipe,
+		token: state.token,
+	};
 }
 
 /*function mapDispatchToProps(dispatch) {
@@ -216,8 +363,6 @@ function mapStateToProps(state) {
 }*/
 
 export default connect(mapStateToProps, null)(ShoppingListScreen);
-
-
 
 const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
