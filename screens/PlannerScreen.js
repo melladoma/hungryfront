@@ -4,6 +4,7 @@ import { useNavigation, DrawerActions, useIsFocused } from "@react-navigation/na
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 import { LocaleConfig } from "react-native-calendars";
+import { privateIP } from "../env.js";
 
 LocaleConfig.locales["fr"] = {
 	monthNames: [
@@ -68,14 +69,15 @@ function PlannerScreen(props) {
 	const [items, setItems] = useState({})
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
-	const [addedRecipes, setAddedRecipes] = useState([]);
+	const [addedRecipes, setAddedRecipes] = useState(props.addedRecipes);
 	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
 
 	useEffect(() => {
 		if (isFocused) {
-			setRecipeData(props.recipe);
+			// setRecipeData(props.recipe);
 			async function initialFetch() {
 				var rawResponse = await fetch(
+					
 					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
 					{
 						method: "post",
@@ -87,9 +89,14 @@ function PlannerScreen(props) {
 				);
 
 				var response = await rawResponse.json();
+				console.log(response, "salut");
 
+				if(response) {
 				setAddedRecipes(response.addedRecipes);
+				console.log(addedRecipes, "coucou");
 				setLikedRecipes(response.likedRecipes)
+				console.log(likedRecipes, "hello")
+				}
 			}
 			initialFetch();
 		}
@@ -104,7 +111,7 @@ function PlannerScreen(props) {
 	const loadItems = (day, item) => {
 	
 		setTimeout(() => {
-		  for (let i = 0; i < 8; i++) {
+		  for (let i = 0; i < 2; i++) {
 			const time = day.timestamp + i * 24 * 60 * 60 * 1000;
 			const strTime = timeToString(time);	
 
@@ -113,8 +120,8 @@ function PlannerScreen(props) {
 			  const numItems = 1;
 			  for (let j = 0; j < numItems; j++) {
 				items[strTime].push({
-				  
-				  height: Math.max(50, Math.floor(Math.random() * 150)),
+				  name : addedRecipes[j],
+				//   height: Math.max(50, Math.floor(Math.random() * 150)),
 				  day: strTime
 				});
 			  }
@@ -138,7 +145,7 @@ function PlannerScreen(props) {
 				>
 				<View>
 					<Text>
-					ok
+					{item.name}
 					</Text>
 				</View>
 			</TouchableOpacity>
@@ -327,26 +334,13 @@ function mapStateToProps(state) {
 		token: state.token,
 		likedRecipes: state.likedRecipes,
 		fromWhichScreen: state.fromWhichScreen
+		
 	};
 }
 
-function mapDispatchToProps(dispatch) {
-	return {
-		sendBottomTabHeight: function (bottomTabHeight) {
-			dispatch({
-				type: "sendBottomTabHeight",
-				bottomTabHeight: bottomTabHeight,
-			});
-		},
-		sendPressedRecipeToStore: function (recipe) {
-			console.log(recipe)
-			dispatch({
-				type: "setRecipe",
-				recipe: recipe,
-			});
-		},
-	};
-}
+// function mapDispatchToProps(dispatch) {
+// return{};
+// }
 
 export default connect(mapStateToProps, null)(PlannerScreen);
 
