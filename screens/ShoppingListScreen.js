@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import { StatusBar } from "expo-status-bar";
+import { privateIP } from "../env.js";
+
 
 import {
 	View,
@@ -17,7 +19,7 @@ import {
 	Text,
 	TextInput,
 } from "react-native";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions , useIsFocused} from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
@@ -25,7 +27,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 function ShoppingListScreen(props) {
 	const navigation = useNavigation();
-	const [recipeData, setRecipeData] = useState(props.recipe);
+	const isFocused = useIsFocused();
+	const [shoppingListData, setShoppingListData] = useState([]);
 
 
 	//----------------------------- ------------------------------------Début StatusBar
@@ -53,8 +56,31 @@ function ShoppingListScreen(props) {
 	// ]
 
 	// var DATA = props.recipe.ingredients
+	useEffect(() => {
+		if (isFocused) {
+			async function initialFetch() {
+				var rawResponse = await fetch(
+					`http://${privateIP}:3000/recipesheet/initial-fetch-shoppingList`,
+					{
+						method: "post",
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded",
+						},
+						body: `token=${props.token}`,
+					}
+				);
 
-	console.log(recipeData,'dylan');
+				var response = await rawResponse.json();
+				setShoppingListData(response.shoppingList)
+			}
+			initialFetch();
+
+			
+		}
+	}, [isFocused]);
+	
+	console.log(shoppingListData,'front shop');
+	
 	var item =({item}) => {
 			return(
 				<View style={{flexDirection: 'row' }}>
@@ -133,7 +159,7 @@ function ShoppingListScreen(props) {
 							</View>
 						</View>
 						<FlatList
-							data={recipeData.ingredients}
+							data={shoppingListData}
 							renderItem={item}
 							keyExtractor={(item,index)=>index.toString()}
 						/>

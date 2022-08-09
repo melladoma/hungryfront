@@ -39,6 +39,7 @@ function RecipeSheetScreen(props) {
 	const [shadow, setShadow] = useState(false);
 	const [likedRecipes, setLikedRecipes] = useState(props.likedRecipes);
 	const [addedRecipes, setAddedRecipes] = useState([]);
+	const [shoppingList, setShoppingList] = useState([]);
 	const [isAlreadyAddedToMyRecipes, setIsAlreadyAddedToMyRecipes] =
 		useState(false);
 	const [nbPersonne, setNbPersonne] = useState(recipeData.servings);
@@ -191,7 +192,7 @@ function RecipeSheetScreen(props) {
 		setAddedRecipes(JSON.parse(response.addedRecipes));
 	};
 
-	var handleCard = async (recipe, token) => {
+	var handleCart = async (recipe, token) => {
 		console.log('salut toi');
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/addToShoppingList`,
@@ -203,7 +204,11 @@ function RecipeSheetScreen(props) {
 				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
 			}
 		);
-		console.log('salut vous');		
+			console.log('salut vous');
+			var response = await rawResponse.json();
+
+			console.log(response.shoppingList,'hello pour la 5eme fois');
+
 			navigation.navigate("ShoppingListScreen"); 
 		
 		
@@ -717,7 +722,7 @@ function RecipeSheetScreen(props) {
 					<TouchableOpacity
 						style={{ zIndex: 1 }}
 						onPress={() =>
-							handleCard(recipeData, props.token)
+							handleCart(recipeData, props.token)
 							// navigation.navigate("ShoppingListScreen")
 						}
 					>
