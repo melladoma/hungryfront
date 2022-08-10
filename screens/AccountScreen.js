@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 import {
 	StatusBar,
@@ -76,9 +75,7 @@ function mapStateToProps(state) {
 
 /*function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
-		},
+	
 	};
 }*/
 
@@ -92,12 +89,12 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
 	content: {
 		backgroundColor: "#f5f6fa",
 		flex: 1,
 		justifyContent: "space-between",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

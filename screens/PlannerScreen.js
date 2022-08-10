@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useNavigation, DrawerActions, useIsFocused } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+	useNavigation,
+	DrawerActions,
+	useIsFocused,
+} from "@react-navigation/native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -11,14 +14,11 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
-	TextInput,
 	Image,
-	Button
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import { privateIP } from "../env.js";
-
 
 function PlannerScreen(props) {
 	const navigation = useNavigation();
@@ -26,7 +26,7 @@ function PlannerScreen(props) {
 	const [recipeData, setRecipeData] = useState(props.recipe);
 	const [isThisRecipeMine, setIsThisRecipeMine] = useState(false);
 	const [weeklyPlanRecipes, setWeeklyPlanRecipes] = useState([]);
-	const [weekDays, setWeekDays] = useState([])
+	const [weekDays, setWeekDays] = useState([]);
 
 	function addDays(date, days) {
 		var result = new Date(date);
@@ -34,10 +34,17 @@ function PlannerScreen(props) {
 		return result;
 	}
 	var calculateWeek = () => {
-		var today = new Date()
-		return [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4), addDays(today, 5), addDays(today, 6)]
-
-	}
+		var today = new Date();
+		return [
+			today,
+			addDays(today, 1),
+			addDays(today, 2),
+			addDays(today, 3),
+			addDays(today, 4),
+			addDays(today, 5),
+			addDays(today, 6),
+		];
+	};
 	var handleGoBack = () => {
 		if (props.fromWhichScreen === "FormScreen") {
 			navigation.navigate("Home");
@@ -48,7 +55,7 @@ function PlannerScreen(props) {
 
 	useEffect(() => {
 		if (isFocused) {
-			setWeekDays(calculateWeek())
+			setWeekDays(calculateWeek());
 			async function initialFetch() {
 				var rawResponse = await fetch(
 					`http://${privateIP}:3000/initial-fetch-calendar`,
@@ -63,40 +70,44 @@ function PlannerScreen(props) {
 
 				var response = await rawResponse.json();
 				if (response) {
-					setWeeklyPlanRecipes(response.weeklyPlan)
-					// console.log("weeklyplan", response.weeklyPlan)
+					setWeeklyPlanRecipes(response.weeklyPlan);
 				}
 			}
 			initialFetch();
 		}
 	}, [isFocused]);
 
-
-
 	var week = weekDays.map((item, i) => {
-		let result = weeklyPlanRecipes.filter(x => x.date == item.toLocaleString('fr-FR', {
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-		}))
+		let result = weeklyPlanRecipes.filter(
+			(x) =>
+				x.date ==
+				item.toLocaleString("fr-FR", {
+					year: "numeric",
+					month: "numeric",
+					day: "numeric",
+				})
+		);
 		if (result.length > 0) {
 			var content = (
 				<View>
-					<Text style={{ alignSelf: "center" }}>{result[0].meal.name}</Text>
+					<Text style={{ alignSelf: "center" }}>
+						{result[0].meal.name}
+					</Text>
 					<Image
 						style={{
 							width: 100,
 							height: 100,
 						}}
 						source={{
-							uri: result[0].meal.image
-						}}></Image>
-
+							uri: result[0].meal.image,
+						}}
+					></Image>
 				</View>
-			)
+			);
 		}
 		return (
-			<View key={i}
+			<View
+				key={i}
 				style={{
 					height: 150,
 					width: 150,
@@ -104,36 +115,46 @@ function PlannerScreen(props) {
 					backgroundColor: "#dfe4ea",
 					alignItems: "center",
 					margin: 5,
-					borderRadius: 20
+					borderRadius: 20,
 				}}
 			>
-				<Text style={{ fontWeight: "bold", marginBottom: 5 }}>{item.toLocaleString('fr-FR', {
-					weekday: 'long',
-				})}
+				<Text style={{ fontWeight: "bold", marginBottom: 5 }}>
+					{item.toLocaleString("fr-FR", {
+						weekday: "long",
+					})}
 				</Text>
 				{content}
+			</View>
+		);
+	});
 
-			</View >
-		)
-	})
-
-	var intro
+	var intro;
 
 	if (weekDays.length > 0) {
 		intro = (
 			<Text
-				style={{ fontWeight: "bold", marginBottom: 5, marginTop: 5, color: "#F19066" }}>
-				Semaine du {weekDays[0].toLocaleString('fr-FR', {
-					year: 'numeric',
-					month: 'numeric',
-					day: 'numeric',
-				})} au {weekDays[6].toLocaleString('fr-FR', {
-					year: 'numeric',
-					month: 'numeric',
-					day: 'numeric',
-				})}</Text>)
+				style={{
+					fontWeight: "bold",
+					marginBottom: 5,
+					marginTop: 5,
+					color: "#F19066",
+				}}
+			>
+				Semaine du{" "}
+				{weekDays[0].toLocaleString("fr-FR", {
+					year: "numeric",
+					month: "numeric",
+					day: "numeric",
+				})}{" "}
+				au{" "}
+				{weekDays[6].toLocaleString("fr-FR", {
+					year: "numeric",
+					month: "numeric",
+					day: "numeric",
+				})}
+			</Text>
+		);
 	}
-
 
 	//----------------------------- ------------------------------------Début StatusBar
 	const MyStatusBar = ({ backgroundColor, ...props }) => (
@@ -177,24 +198,20 @@ function PlannerScreen(props) {
 
 			<View style={styles.content}>
 				{intro}
-				<View style={{
-					alignItems: "center",
-					justifyContent: "center",
-					flexWrap: "wrap",
-					flexDirection: "row",
-					marginTop: 10
-
-				}}>
+				<View
+					style={{
+						alignItems: "center",
+						justifyContent: "center",
+						flexWrap: "wrap",
+						flexDirection: "row",
+						marginTop: 10,
+					}}
+				>
 					{week}
 				</View>
-
 			</View>
 			<View style={styles.ligne}>
-				<TouchableOpacity
-					style={{}}
-					onPress={() => handleGoBack()}
-				>
-
+				<TouchableOpacity style={{}} onPress={() => handleGoBack()}>
 					<MaterialCommunityIcons
 						name="arrow-left"
 						size={28}
@@ -208,10 +225,7 @@ function PlannerScreen(props) {
 					/>
 				</TouchableOpacity>
 			</View>
-
-
 		</View>
-
 	);
 }
 
@@ -221,7 +235,7 @@ function mapStateToProps(state) {
 		recipe: state.recipe,
 		token: state.token,
 		likedRecipes: state.likedRecipes,
-		fromWhichScreen: state.fromWhichScreen
+		fromWhichScreen: state.fromWhichScreen,
 	};
 }
 
@@ -234,7 +248,6 @@ function mapDispatchToProps(dispatch) {
 			});
 		},
 		sendPressedRecipeToStore: function (recipe) {
-			// console.log(recipe)
 			dispatch({
 				type: "setRecipe",
 				recipe: recipe,
@@ -277,6 +290,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		marginTop: 5,
 		zIndex: 1,
-		textAlign: "center"
+		textAlign: "center",
 	},
 });

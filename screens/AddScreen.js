@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useNavigation, DrawerActions, useIsFocused } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+	useNavigation,
+	DrawerActions,
+	useIsFocused,
+} from "@react-navigation/native";
 
 import {
 	StatusBar,
@@ -10,7 +13,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
-	ImageBackground
+	ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,7 +21,6 @@ import { MaterialCommunityIcons } from "react-native-vector-icons";
 
 function AddScreen(props) {
 	const navigation = useNavigation();
-	const [searchInput, setSearchInput] = useState("");
 	const isFocused = useIsFocused();
 
 	//Clear Recipe dans le store
@@ -45,10 +47,11 @@ function AddScreen(props) {
 
 	// -----------------------------------------------------------BOUTONS---------------------------------------------------------
 	const AppButton = ({ onPress, title }) => (
-		<TouchableOpacity onPress={() => navigation.navigate("SnapScreen")} style={styles.appButtonContainer}>
-			<Text style={styles.appButtonText}>
-				{title}
-			</Text>
+		<TouchableOpacity
+			onPress={() => navigation.navigate("SnapScreen")}
+			style={styles.appButtonContainer}
+		>
+			<Text style={styles.appButtonText}>{title}</Text>
 			<MaterialCommunityIcons
 				name="camera"
 				size={28}
@@ -64,10 +67,11 @@ function AddScreen(props) {
 		</TouchableOpacity>
 	);
 	const UrlButton = ({ onPress, title }) => (
-		<TouchableOpacity onPress={() => navigation.navigate("UrlScreen")} style={styles.appButtonContainer}>
-			<Text style={styles.appButtonText}>
-				{title}
-			</Text>
+		<TouchableOpacity
+			onPress={() => navigation.navigate("UrlScreen")}
+			style={styles.appButtonContainer}
+		>
+			<Text style={styles.appButtonText}>{title}</Text>
 			<MaterialCommunityIcons
 				name="web"
 				size={28}
@@ -83,10 +87,11 @@ function AddScreen(props) {
 		</TouchableOpacity>
 	);
 	const ManualButton = ({ onPress, title }) => (
-		<TouchableOpacity onPress={() => navigation.navigate("FormScreen")} style={styles.appButtonContainer}>
-			<Text style={styles.appButtonText}>
-				{title}
-			</Text>
+		<TouchableOpacity
+			onPress={() => navigation.navigate("FormScreen")}
+			style={styles.appButtonContainer}
+		>
+			<Text style={styles.appButtonText}>{title}</Text>
 			<MaterialCommunityIcons
 				name="pencil"
 				size={28}
@@ -103,15 +108,17 @@ function AddScreen(props) {
 	);
 	// -----------------------------------------------------------FIN BOUTONS --------------------------------------------------------------
 	return (
-		<ImageBackground source={require('../assets/cook.jpg')} style={styles.container} blurRadius={2}>
-
+		<ImageBackground
+			source={require("../assets/cook.jpg")}
+			style={styles.container}
+			blurRadius={2}
+		>
 			<MyStatusBar backgroundColor="#dfe4ea" barStyle="dark-content" />
 			<View style={styles.appBar}>
 				<TouchableOpacity
 					style={{}}
 					onPress={() =>
 						navigation.dispatch(DrawerActions.openDrawer())
-
 					}
 				>
 					<MaterialCommunityIcons
@@ -127,11 +134,17 @@ function AddScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-				<Text style={{ fontSize: 18, textAlign: "center", color: "#2F3542" }}>Ma nouvelle recette.</Text>
+				<Text
+					style={{
+						fontSize: 18,
+						textAlign: "center",
+						color: "#2F3542",
+					}}
+				>
+					Ma nouvelle recette.
+				</Text>
 			</View>
-			<View>
-
-			</View>
+			<View></View>
 
 			<View style={{ marginTop: 120 }}>
 				<View style={styles.screenContainer}>
@@ -144,15 +157,6 @@ function AddScreen(props) {
 					<ManualButton title="Saisie manuelle" size="sm" />
 				</View>
 			</View>
-
-
-
-
-
-
-
-
-
 		</ImageBackground>
 	);
 }
@@ -179,12 +183,6 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
 	appBar: {
 		display: "flex",
 		flexDirection: "row",
@@ -194,12 +192,7 @@ const styles = StyleSheet.create({
 		height: APPBAR_HEIGHT,
 		width: "100%",
 	},
-	content: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#f5f6fa",
-	},
+
 	appButtonContainer: {
 		elevation: 8,
 		backgroundColor: "#f5f6fa",
@@ -210,27 +203,34 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: 40,
-		border: 1
-
+		border: 1,
 	},
 	appButtonText: {
 		fontSize: 18,
 		color: "#d35400",
 		fontWeight: "bold",
 		alignSelf: "center",
-		textAlign: "center"
+		textAlign: "center",
+	},
+	container: {
+		flex: 1,
+	},
+	content: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#f5f6fa",
 	},
 	screenContainer: {
-		//flex: 1,
 		justifyContent: "center",
-		padding: 16
+		padding: 16,
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 	text: {
 		textAlign: "center",
 		fontSize: 22,
-		marginTop: 45
-
-
-	}
-
+		marginTop: 45,
+	},
 });

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { privateIP } from "../env.js";
 
 import {
@@ -10,7 +9,6 @@ import {
 	View,
 	Platform,
 	StyleSheet,
-	Button,
 	Text,
 	TextInput,
 	TouchableOpacity,
@@ -21,7 +19,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import { set } from "react-native-reanimated";
 
 function SignUpScreen(props) {
 	const navigation = useNavigation();
@@ -77,12 +74,11 @@ function SignUpScreen(props) {
 	useEffect(() => {
 		if (userExists) {
 			navigation.navigate("FeedDrawer2");
-			setSignUpUsername('')
-			setSignUpEmail('')
-			setSignUpPassword('')
-			setSignUpConfirmPassword('')
-			setUserExists(false)
-
+			setSignUpUsername("");
+			setSignUpEmail("");
+			setSignUpPassword("");
+			setSignUpConfirmPassword("");
+			setUserExists(false);
 		}
 	}, [userExists]);
 
@@ -97,7 +93,6 @@ function SignUpScreen(props) {
 	// -------------------------------------------------------REGEX verification email -----------------------------------------------------------
 	const validateMail = (text) => {
 		const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-		console.log(text, reg.test(text));
 	};
 	//------------------------------------------------------Fin REGEX -------------------------------------------------------------------------
 
@@ -191,6 +186,7 @@ function SignUpScreen(props) {
 						onChangeText={(val) => setSignUpPassword(val)}
 						value={signUpPassword}
 						textContentType="oneTimeCode"
+						
 					/>
 					<Pressable onPress={handlePasswordVisibility}>
 						<MaterialCommunityIcons
@@ -249,7 +245,7 @@ function SignUpScreen(props) {
 }
 
 /* function mapStateToProps(state) {
-	return { listPOIFromState: state.listPOI };
+	return {  };
 }
 */
 function mapDispatchToProps(dispatch) {
@@ -273,17 +269,22 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#f5f6fa",
-	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
-	content: {
-		flex: 1,
+	appButtonContainer: {
+		elevation: 8,
+		backgroundColor: "#e67e22",
+		borderRadius: 25,
+		paddingVertical: 10,
+		paddingHorizontal: 12,
+		flexDirection: "row",
+		alignItems: "center",
 		justifyContent: "center",
-		margin: "15%",
+		marginTop: 10,
+	},
+	appButtonText: {
+		fontSize: 18,
+		color: "#fff",
+		fontWeight: "bold",
+		alignSelf: "center",
 	},
 	baseText: {
 		fontWeight: "bold",
@@ -299,6 +300,16 @@ const styles = StyleSheet.create({
 		textShadowColor: "#2c3e50",
 		textShadowOffset: { width: 3, height: 3 },
 		textShadowRadius: 10,
+	},
+	container: {
+		flex: 1,
+		backgroundColor: "#f5f6fa",
+	},
+
+	content: {
+		flex: 1,
+		justifyContent: "center",
+		margin: "15%",
 	},
 	inputContainer: {
 		backgroundColor: "#dfe4ea",
@@ -320,27 +331,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginTop: 10,
 		marginBottom: 10,
+		height:20
 	},
 	screenContainer: {
 		//flex: 1,
 		justifyContent: "center",
 		padding: 16,
 	},
-	appButtonContainer: {
-		elevation: 8,
-		backgroundColor: "#e67e22",
-		borderRadius: 25,
-		paddingVertical: 10,
-		paddingHorizontal: 12,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		marginTop: 10,
-	},
-	appButtonText: {
-		fontSize: 18,
-		color: "#fff",
-		fontWeight: "bold",
-		alignSelf: "center",
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

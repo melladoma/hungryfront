@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from "react-native-webview";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +9,6 @@ import {
 	View,
 	Platform,
 	StyleSheet,
-	Button,
 	TouchableOpacity,
 	Text,
 	TextInput,
@@ -35,7 +33,6 @@ function UrlScreen(props) {
 	const [searchInput, setSearchInput] = useState("");
 
 	const handleUrlSubmit = async (url) => {
-		// async function UrlSearch() {
 		setWebView(false);
 		setLoadModalOpen(true);
 		var rawResponse = await fetch(
@@ -50,7 +47,6 @@ function UrlScreen(props) {
 		);
 
 		var response = await rawResponse.json();
-		console.log(response);
 
 		// }
 		// UrlSearch();
@@ -292,21 +288,6 @@ const STATUSBAR_HEIGHT =
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
-	content: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#f1f2f6",
-	},
-	screenContainer: {
-		marginBottom: "15%",
-	},
 	appButtonContainer: {
 		elevation: 8,
 		backgroundColor: "#F19066",
@@ -324,6 +305,18 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		alignSelf: "center",
 	},
+	container: {
+		flex: 1,
+	},
+	content: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#f1f2f6",
+	},
+	screenContainer: {
+		marginBottom: "15%",
+	},
 	searchInput: {
 		height: 40,
 		margin: 12,
@@ -334,6 +327,9 @@ const styles = StyleSheet.create({
 		borderWidth: 1.1,
 		width: "85%",
 		borderColor: "#d35400",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 	title: {
 		backgroundColor: "#dfe4ea",

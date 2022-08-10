@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
-
 import { privateIP } from "../env.js";
 
 import {
 	StatusBar,
 	View,
-	ScrollView,
 	Platform,
-	Image,
 	FlatList,
 	StyleSheet,
-	Button,
-	Pressable,
 	TouchableOpacity,
-	TouchableHighlight,
 	Text,
-	TextInput,
 } from "react-native";
 import {
 	useNavigation,
@@ -27,7 +20,6 @@ import {
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 function ShoppingListScreen(props) {
 	const navigation = useNavigation();
@@ -60,16 +52,6 @@ function ShoppingListScreen(props) {
 	);
 	//----------------------------- ------------------------------------Fin de StatusBar
 
-	// var DATA = recipeData.ingredients.map((data, i)=>
-	// 	{id : i , ingredients : data.name , quantity : data.quantity},
-	// )
-	// var DATA = [
-	// 	// {id : i , ingredients : data.name , quantity : data.quantity},
-	// 	{id:2 , ingredients:'creme' , quantity:'100cl'},
-	// 	{id:3 , ingredients:'sucre' , quantity:'80cl'},
-	// ]
-
-	// var DATA = props.recipe.ingredients
 	useEffect(() => {
 		if (isFocused) {
 			async function initialFetch() {
@@ -91,21 +73,19 @@ function ShoppingListScreen(props) {
 		}
 	}, [isFocused]);
 
-	console.log(shoppingListData, "front shop");
-
 	var item = ({ item }) => {
 		return (
-			<View style={{ 
-				flexDirection: "row",
-				justifyContent:"space-between",
-				borderBottomWidth:0.75,
-				
-				// texteAlign:"center",
-				marginTop:"2%",
-		        marginBottom:"5%"
-				
-				
-				 }}>
+			<View
+				style={{
+					flexDirection: "row",
+					justifyContent: "space-between",
+					borderBottomWidth: 0.75,
+
+					// texteAlign:"center",
+					marginTop: "2%",
+					marginBottom: "5%",
+				}}
+			>
 				<View style={styles.list}>
 					<TouchableOpacity
 						style={{}}
@@ -125,7 +105,7 @@ function ShoppingListScreen(props) {
 								// paddingTop: 10,
 								// paddingBottom: 10,
 								zIndex: 1,
-							
+
 								// width:50,
 							}}
 						/>
@@ -136,7 +116,7 @@ function ShoppingListScreen(props) {
 						style={{
 							// textAlign: "center",
 							fontSize: 20,
-							width:150,
+							width: 150,
 							textDecorationLine: selectedCheckboxes.includes(
 								item._id
 							)
@@ -152,7 +132,7 @@ function ShoppingListScreen(props) {
 						style={{
 							textAlign: "center",
 							fontSize: 20,
-							width:120,
+							width: 120,
 							textDecorationLine: selectedCheckboxes.includes(
 								item._id
 							)
@@ -176,7 +156,9 @@ function ShoppingListScreen(props) {
 					headers: {
 						"Content-Type": "application/x-www-form-urlencoded",
 					},
-					body: `token=${props.token}&selection=${JSON.stringify(arrayOfSelected)}`,
+					body: `token=${props.token}&selection=${JSON.stringify(
+						arrayOfSelected
+					)}`,
 				}
 			);
 
@@ -184,7 +166,7 @@ function ShoppingListScreen(props) {
 			setShoppingListData(response.shoppingList);
 		}
 		deleteSelected();
-	}
+	};
 
 	const handleDeleteAll = () => {
 		async function deleteAll() {
@@ -203,7 +185,7 @@ function ShoppingListScreen(props) {
 			setShoppingListData(response.shoppingList);
 		}
 		deleteAll();
-	}
+	};
 
 	return (
 		<View style={styles.container}>
@@ -245,23 +227,20 @@ function ShoppingListScreen(props) {
 							}}
 						/>
 					</TouchableOpacity> */}
-					<TouchableOpacity
-						style={{}}
-						onPress={() => handleDeleteAll()}
-					>
-						<MaterialCommunityIcons
-							name="delete"
-							size={28}
-							color="#2f3542"
-							style={{
-								paddingLeft: 20,
-								paddingRight: 20,
-								paddingTop: 10,
-								paddingBottom: 10,
-								zIndex: 1,
-							}}
-						/>
-					</TouchableOpacity>
+				<TouchableOpacity style={{}} onPress={() => handleDeleteAll()}>
+					<MaterialCommunityIcons
+						name="delete"
+						size={28}
+						color="#2f3542"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
 			</View>
 			<View style={{ flex: 1 }}>
 				<View style={styles.content}>
@@ -271,27 +250,25 @@ function ShoppingListScreen(props) {
 							justifyContent: "center",
 							alignItems: "center",
 							marginTop: "5%",
-							
 						}}
 					>
-						<View style={{ flexDirection: "row",
-									   margin: 3,
-									   justifyContent :"space-between",
-									   marginBottom:"5%",
-									   
-									  
-									}}>
+						<View
+							style={{
+								flexDirection: "row",
+								margin: 3,
+								justifyContent: "space-between",
+								marginBottom: "5%",
+							}}
+						>
 							<View
 								style={{
-									width:"30%",
+									width: "30%",
 									// backgroundColor: "#F19066",
 								}}
-							>
-								
-							</View>
+							></View>
 							<View
 								style={{
-									width:"30%",
+									width: "30%",
 									// backgroundColor: "#F19066",
 								}}
 							>
@@ -299,8 +276,8 @@ function ShoppingListScreen(props) {
 									style={{
 										// textAlign: "center",
 										fontSize: 20,
-										fontWeight:"bold",
-										color:"#F19066"
+										fontWeight: "bold",
+										color: "#F19066",
 									}}
 								>
 									Produits
@@ -308,7 +285,7 @@ function ShoppingListScreen(props) {
 							</View>
 							<View
 								style={{
-									width:"30%",
+									width: "30%",
 									// backgroundColor: "#F19066",
 								}}
 							>
@@ -316,8 +293,8 @@ function ShoppingListScreen(props) {
 									style={{
 										// textAlign: "center",
 										fontSize: 20,
-										fontWeight:"bold",
-										color:"#F19066"
+										fontWeight: "bold",
+										color: "#F19066",
 									}}
 								>
 									Quantités
@@ -374,9 +351,6 @@ function mapStateToProps(state) {
 
 /*function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
-		},
 	};
 }*/
 
@@ -388,12 +362,6 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
 	appBar: {
 		display: "flex",
 		flexDirection: "row",
@@ -402,6 +370,9 @@ const styles = StyleSheet.create({
 		height: APPBAR_HEIGHT,
 		width: "100%",
 	},
+	container: {
+		flex: 1,
+	},
 	content: {
 		flex: 1,
 		justifyContent: "center",
@@ -409,13 +380,9 @@ const styles = StyleSheet.create({
 		backgroundColor: "#f5f6fa",
 	},
 	list: {
-		width:"35%",
-		// justifyContent:"center"
-		// backgroundColor: "#dfe4ea",
-		
-		
-	}
-
-
-	
+		width: "35%",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
+	},
 });

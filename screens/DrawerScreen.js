@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { privateIP } from "../env.js";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -10,7 +8,6 @@ import {
 	Platform,
 	Image,
 	StyleSheet,
-	Button,
 	TouchableOpacity,
 	Text,
 	StatusBar,
@@ -36,10 +33,24 @@ function DrawerScreen(props) {
 		</View>
 	);
 
-	var avatar = <View style={{backgroundColor: 'white', width: 60,
-	height: 60,
-	
-	borderRadius: 100, display: "flex", justifyContent:"center", alignItems:"center"}}><Text style={{fontSize:24}}>{props.username[0].toUpperCase()}</Text></View>
+	var avatar = (
+		<View
+			style={{
+				backgroundColor: "white",
+				width: 60,
+				height: 60,
+
+				borderRadius: 100,
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			<Text style={{ fontSize: 24 }}>
+				{props.username[0].toUpperCase()}
+			</Text>
+		</View>
+	);
 	if (props.avatar !== "") {
 		avatar = (
 			<Image
@@ -47,26 +58,12 @@ function DrawerScreen(props) {
 				style={{
 					width: 60,
 					height: 60,
-					
+
 					borderRadius: 100,
 				}}
 			></Image>
 		);
-	} 
-
-	// var handeleDec = async (token) => {
-	// 	var rawResponse = await fetch(
-	// 	  `http://${privateIP}:3000/users/deconnexion`,
-	// 	  {
-	// 		method: "post",
-	// 		headers: {
-	// 		  "Content-Type": "application/x-www-form-urlencoded",
-	// 		},
-	// 		body: `token=${token}`,
-	// 	  }
-	// 	);
-	// 	navigation.navigate("SignIn")
-	//   };
+	}
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -89,8 +86,8 @@ function DrawerScreen(props) {
 							borderWidth: 1,
 							borderRadius: 100,
 							display: "flex",
-					justifyContent:"center",
-					alignItems:"center",
+							justifyContent: "center",
+							alignItems: "center",
 						}}
 					>
 						{avatar}
@@ -110,7 +107,15 @@ function DrawerScreen(props) {
 								alignItems: "flex-start",
 							}}
 						>
-							<Text style={{ marginBottom: 10, color:"white", fontSize:24 }}>Bonjour {props.username}</Text>
+							<Text
+								style={{
+									marginBottom: 10,
+									color: "white",
+									fontSize: 24,
+								}}
+							>
+								Bonjour {props.username}
+							</Text>
 							{/* <MaterialCommunityIcons
 								name="pencil"
 								size={15}
@@ -131,8 +136,7 @@ function DrawerScreen(props) {
 									textAlign: "justify",
 								}}
 							>
-								J'habite pas à Saint FRANCISco et je suis pas
-								FRANCIScain. J'aime la cuisine FRANCAISe !
+								Bonjour à tous, je suis cuisinier depuis 5 ans et j'habite à Paris. Venez voir mes recettes !
 							</Text>
 							<MaterialCommunityIcons
 								name="pencil"
@@ -228,11 +232,9 @@ function DrawerScreen(props) {
 								</Text>
 							</TouchableOpacity>
 						</View>
-						
 					</View>
 					<View
 						style={{
-							// height: props.bottomTabHeight,
 							backgroundColor: "#2f3542",
 							display: "flex",
 							justifyContent: "center",
@@ -245,12 +247,11 @@ function DrawerScreen(props) {
 								alignItems: "center",
 								justifySelf: "flex-end",
 								paddingLeft: 20,
-								marginBottom:"5%",
-								marginTop:"5%"
+								marginBottom: "5%",
+								marginTop: "5%",
 							}}
 							onPress={() => navigation.navigate("SignIn")}
 						>
-
 							<MaterialCommunityIcons
 								name="login"
 								size={28}
@@ -261,12 +262,10 @@ function DrawerScreen(props) {
 									color: "#f5f6fa",
 									fontSize: 18,
 									marginLeft: 10,
-									
 								}}
 							>
 								Déconnexion
 							</Text>
-							
 						</TouchableOpacity>
 					</View>
 					{/* <View
@@ -315,14 +314,17 @@ function DrawerScreen(props) {
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username, avatar: state.avatar };
+	return {
+		bottomTabHeight: state.bottomTabHeight,
+		token: state.token,
+		username: state.username,
+		avatar: state.avatar,
+	};
 }
 
 /*function mapDispatchToProps(dispatch) {
 	return {
-		onSubmitBottomTabHeight: function (bottomTabHeight) {
-			dispatch({ type: "initializeBottomTabHeight", bottomTabHeight: bottomTabHeight });
-		},
+		
 	};
 }*/
 
@@ -332,11 +334,11 @@ const STATUSBAR_HEIGHT =
 	Platform.OS === "android" ? StatusBar.currentHeight : 44;
 
 const styles = StyleSheet.create({
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
 	content: {
 		flex: 1,
 		backgroundColor: "#f5f6fa",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

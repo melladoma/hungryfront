@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { privateIP } from "../env.js";
 
 import {
@@ -9,7 +9,6 @@ import {
 	View,
 	Platform,
 	StyleSheet,
-	Button,
 	TouchableOpacity,
 	Text,
 	TextInput,
@@ -20,7 +19,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import { color } from "react-native-reanimated";
 
 function SignInScreen(props) {
 	const navigation = useNavigation();
@@ -60,30 +58,24 @@ function SignInScreen(props) {
 		const response = await rawResponse.json();
 
 		if (response.result == true) {
-			console.log("HELLO1");
 			props.addToken(response.token);
 			props.addUsername(response.username);
 			props.addAvatar(response.avatar);
 			props.addLikedRecipes(response.likedRecipes);
 			setUserExists(true);
 		} else {
-			console.log("HELLOLUCAS");
 			setErrorsSignin(response.error);
 		}
 	};
-	console.log(userExists, "userexi======")
+
 	useEffect(() => {
 		if (userExists) {
-
-			
 			navigation.navigate("FeedDrawer2");
 			setSignInPassword("");
 			setSignInEmail("");
-			setUserExists(false)
-			console.log(userExists, "userexi==******====")
+			setUserExists(false);
 
-
-			navigation.navigate("FeedDrawer2");			
+			navigation.navigate("FeedDrawer2");
 		}
 	}, [userExists]);
 
@@ -156,7 +148,6 @@ function SignInScreen(props) {
 					<KeyboardAvoidingView
 						behavior={Platform.OS === "ios" ? "padding" : "height"}
 					>
-						{/* <TouchableOpacity> */}
 						<TextInput
 							style={styles.inputContainer}
 							inputStyle={{ marginLeft: 10 }}
@@ -168,16 +159,15 @@ function SignInScreen(props) {
 							value={signInEmail}
 						/>
 						<View style={styles.inputContainer}>
-						
 							<TextInput
 								style={styles.inputPass}
 								inputStyle={{ marginLeft: 10 }}
 								placeholder="Votre mot de passe"
 								secureTextEntry={passwordVisibility}
 								onChangeText={(val) => setSignInPassword(val)}
-								value={signInPassword}					
+								value={signInPassword}
 							/>
-							
+
 							<Pressable onPress={handlePasswordVisibility}>
 								<MaterialCommunityIcons
 									name={rightIcon}
@@ -185,8 +175,6 @@ function SignInScreen(props) {
 									color="#232323"
 								/>
 							</Pressable>
-						
-							
 						</View>
 
 						{tabErrorsSignin}
@@ -195,6 +183,7 @@ function SignInScreen(props) {
 							<AppButton title="Me connecter" size="sm" />
 						</View>
 					</KeyboardAvoidingView>
+
 					<View style={{ marginTop: 120 }}>
 						<Text style={styles.goSignup}>
 							Vous n'avez pas encore de compte ?

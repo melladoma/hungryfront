@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { privateIP } from "../env.js";
 
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	StatusBar,
 	View,
@@ -13,15 +11,14 @@ import {
 	TouchableOpacity,
 	Text,
 	Image,
-	Modal
+	Modal,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import { Camera } from 'expo-camera';
-import { useIsFocused } from '@react-navigation/native';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import * as ImagePicker from 'expo-image-picker';
-
+import { Camera } from "expo-camera";
+import { useIsFocused } from "@react-navigation/native";
+import IconFontAwesome from "react-native-vector-icons/FontAwesome";
+import * as ImagePicker from "expo-image-picker";
 
 function SnapScreen(props) {
 	const navigation = useNavigation();
@@ -51,7 +48,6 @@ function SnapScreen(props) {
 	var camera = useRef(null);
 	const isFocused = useIsFocused();
 
-
 	// -------------------------------------------------------------------Gallerie photo --------------------------------------------------------
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -61,29 +57,23 @@ function SnapScreen(props) {
 			aspect: [4, 3],
 			quality: 1,
 		});
-		setModalOpen(true)
+		setModalOpen(true);
 		if (!result.cancelled) {
 			setImage(result.uri);
-
 		}
-
 	};
 
 	const handleSubmitPhoto = async (image) => {
-
-		// console.log("image", image)
 		var data = new FormData();
-		setModalOpen(false)
+		setModalOpen(false);
 		setLoadModalOpen(true);
-		let regExjpg = /$jp*g/
-		// console.log(image.match(regExjpg[0]) === "")
+		let regExjpg = /$jp*g/;
 		if (image.match(regExjpg)) {
 			data.append("image", {
 				uri: image,
 				type: "image/png",
 				name: "recipe.png",
 			});
-
 		} else {
 			data.append("image", {
 				uri: image,
@@ -91,8 +81,6 @@ function SnapScreen(props) {
 				name: "recipe.png",
 			});
 		}
-
-		console.log("data", data)
 
 		var rawResponseImg = await fetch(
 			`http://${privateIP}:3000/upload-image`,
@@ -106,8 +94,6 @@ function SnapScreen(props) {
 
 		if (responseImg.result) {
 			var imageToTreat = responseImg.resultObj.imageUrl;
-			// console.log("imageToTreat", imageToTreat)
-
 		}
 
 		//---- envoi recette en traitement Tesseract
@@ -117,7 +103,7 @@ function SnapScreen(props) {
 			userToken: props.token,
 			userName: props.username,
 		};
-		console.log("recipeData", recipeData)
+
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/api/tesseract`,
 			{
@@ -131,34 +117,28 @@ function SnapScreen(props) {
 		var response = await rawResponse.json();
 
 		var recipeToStore = response.recipeTreated;
-		console.log(response.recipeTreated, "--------");
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {
-			// console.log("set to store")
 			props.setRecipe(recipeToStore);
-			// redirection vers fiche recette	
+			// redirection vers fiche recette
 			setLoadModalOpen(false);
-			navigation.navigate("FormScreen")
+			navigation.navigate("FormScreen");
 		}
-
-	}
+	};
 
 	const handleSubmitPhotoCamera = async (image) => {
-
-		// console.log("image", image)
 		var data = new FormData();
-		setModalOpen(false)
+		setModalOpen(false);
 		setLoadModalOpen(true);
-		let regExjpg = /$jp*g/
-		// console.log(image.match(regExjpg[0]) === "")
+		let regExjpg = /$jp*g/;
+
 		if (image.match(regExjpg)) {
 			data.append("image", {
 				uri: image,
 				type: "image/png",
 				name: "recipe.png",
 			});
-
 		} else {
 			data.append("image", {
 				uri: image,
@@ -166,8 +146,6 @@ function SnapScreen(props) {
 				name: "recipe.png",
 			});
 		}
-
-		console.log("data", data)
 
 		var rawResponseImg = await fetch(
 			`http://${privateIP}:3000/upload-image-camera`,
@@ -181,8 +159,6 @@ function SnapScreen(props) {
 
 		if (responseImg.result) {
 			var imageToTreat = responseImg.resultObj.imageUrl;
-			// console.log("imageToTreat", imageToTreat)
-
 		}
 
 		//---- envoi recette en traitement Tesseract
@@ -192,7 +168,7 @@ function SnapScreen(props) {
 			userToken: props.token,
 			userName: props.username,
 		};
-		console.log("recipeData", recipeData)
+
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/api/tesseract`,
 			{
@@ -206,66 +182,72 @@ function SnapScreen(props) {
 		var response = await rawResponse.json();
 
 		var recipeToStore = response.recipeTreated;
-		console.log(response.recipeTreated, "--------");
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {
-			// console.log("set to store")
 			props.setRecipe(recipeToStore);
 			setLoadModalOpen(false);
-			navigation.navigate("FormScreen")
+			navigation.navigate("FormScreen");
 		}
-	}
-
-
-
+	};
 
 	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
 	useEffect(() => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
-			setHasPermission(status === 'granted');
+			setHasPermission(status === "granted");
 		})();
 	}, []);
 
 	var cameraDisplay;
 	if (hasPermission && isFocused) {
-		cameraDisplay = <Camera
-			style={{ flex: 1 }}
-			flashMode={flash}
-			ref={ref => (camera = ref)}
-		>
-			<View
-				style={{
-					flex: 1,
-					backgroundColor: 'transparent',
-					flexDirection: 'row',
-				}}>
-				<TouchableOpacity
+		cameraDisplay = (
+			<Camera
+				style={{ flex: 1 }}
+				flashMode={flash}
+				ref={(ref) => (camera = ref)}
+			>
+				<View
 					style={{
-
-						alignSelf: 'flex-end',
-						alignItems: 'center',
-					}}
-					onPress={() => {
-						setFlash(
-							flash === Camera.Constants.FlashMode.off
-								? Camera.Constants.FlashMode.torch
-								: Camera.Constants.FlashMode.off
-						);
+						flex: 1,
+						backgroundColor: "transparent",
+						flexDirection: "row",
 					}}
 				>
-					<IconFontAwesome
-						name="flash"
-						size={20}
-						color="#ffffff"
-					/><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flash </Text>
-				</TouchableOpacity>
-
-			</View>
-		</Camera>
+					<TouchableOpacity
+						style={{
+							alignSelf: "flex-end",
+							alignItems: "center",
+						}}
+						onPress={() => {
+							setFlash(
+								flash === Camera.Constants.FlashMode.off
+									? Camera.Constants.FlashMode.torch
+									: Camera.Constants.FlashMode.off
+							);
+						}}
+					>
+						<IconFontAwesome
+							name="flash"
+							size={20}
+							color="#ffffff"
+						/>
+						<Text
+							style={{
+								fontSize: 18,
+								marginBottom: 10,
+								color: "white",
+							}}
+						>
+							{" "}
+							Flash{" "}
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</Camera>
+		);
 	} else {
-		cameraDisplay = <View style={{ flex: 1 }}></View>
+		cameraDisplay = <View style={{ flex: 1 }}></View>;
 	}
 	//---------------------------------------------------------------------Fin composant camera ----------------------------------------------------
 	//---------------------------------------------------Tentative Modale screenshot ---------------------------------------
@@ -289,20 +271,23 @@ function SnapScreen(props) {
 					width: "100%",
 					height: "80%",
 					marginTop: "10%",
-
 				}}
 			>
-				{image && <TouchableOpacity
-					onPress={() => handleSubmitPhoto(image)}
-					style={{ flex: 1 }}>
-					<Image source={{ uri: image }}
-						style={{
-							width: 300,
-							height: 300,
-							marginTop: "20%"
-
-						}} />
-				</TouchableOpacity>}
+				{image && (
+					<TouchableOpacity
+						onPress={() => handleSubmitPhoto(image)}
+						style={{ flex: 1 }}
+					>
+						<Image
+							source={{ uri: image }}
+							style={{
+								width: 300,
+								height: 300,
+								marginTop: "20%",
+							}}
+						/>
+					</TouchableOpacity>
+				)}
 				<Text
 					style={{
 						fontSize: 20,
@@ -317,13 +302,15 @@ function SnapScreen(props) {
 					<TouchableOpacity
 						style={styles.buttonContainer}
 						onPress={() => handleSubmitPhoto(image)}
-					// handlePressTrashIcon(props.recipe._id);
+						// handlePressTrashIcon(props.recipe._id);
 					>
-						<Text style={{
-							color: "#fff",
-							fontSize: 18,
-							fontWeight: "bold",
-						}}>
+						<Text
+							style={{
+								color: "#fff",
+								fontSize: 18,
+								fontWeight: "bold",
+							}}
+						>
 							Oui
 						</Text>
 					</TouchableOpacity>
@@ -331,15 +318,15 @@ function SnapScreen(props) {
 						style={styles.buttonContainer}
 						onPress={() => {
 							setModalOpen(false);
-
-
 						}}
 					>
-						<Text style={{
-							color: "#fff",
-							fontSize: 18,
-							fontWeight: "bold"
-						}}>
+						<Text
+							style={{
+								color: "#fff",
+								fontSize: 18,
+								fontWeight: "bold",
+							}}
+						>
 							Non
 						</Text>
 					</TouchableOpacity>
@@ -352,8 +339,9 @@ function SnapScreen(props) {
 	//--------------------------------------------------Modal chargement ------------------------------------------------------
 	var LoadingModal = (
 		<Modal visible={loadModalOpen}>
-			<View style={{ justifyContent: 'center', flex: 1 }}>
-				<Image style={{}}
+			<View style={{ justifyContent: "center", flex: 1 }}>
+				<Image
+					style={{}}
 					source={require("../assets/chef.gif")}
 					resizeMode="contain"
 					resizeMethod="resize"
@@ -404,19 +392,18 @@ function SnapScreen(props) {
 						<TouchableOpacity
 							style={{}}
 							onPress={async () => {
-
 								if (camera) {
+									var photo = await camera.takePictureAsync({
+										quality: 0.7,
+										base64: true,
+										exif: true,
+									});
 
-									var photo = await camera.takePictureAsync({ quality: 0.7, base64: true, exif: true });
-									// console.log("photo", photo.uri);
-									setImage(photo.uri)
-									handleSubmitPhotoCamera(photo.uri)
-
+									setImage(photo.uri);
+									handleSubmitPhotoCamera(photo.uri);
 								}
-							}
-							}
+							}}
 						>
-
 							<View
 								style={{
 									display: "flex",
@@ -474,14 +461,16 @@ function SnapScreen(props) {
 			{ModalScreenShot}
 			{LoadingModal}
 		</View>
-
 	);
 }
 
 function mapStateToProps(state) {
-	return { bottomTabHeight: state.bottomTabHeight, token: state.token, username: state.username };
+	return {
+		bottomTabHeight: state.bottomTabHeight,
+		token: state.token,
+		username: state.username,
+	};
 }
-
 
 function mapDispatchToProps(dispatch) {
 	return {
@@ -498,28 +487,12 @@ const STATUSBAR_HEIGHT =
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
-	},
-
-	content: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	modal: {
-		width: 150,
-		height: 150,
-	},
 	button: {
 		flexDirection: "row",
 		justifyContent: "center",
 		marginTop: 40,
 		alignItems: "center",
-		marginBottom: "20%"
+		marginBottom: "20%",
 	},
 	buttonContainer: {
 		elevation: 8,
@@ -533,6 +506,21 @@ const styles = StyleSheet.create({
 		// marginRight:25,
 		width: 100,
 		marginLeft: "5%",
-		marginRight: "5%"
+		marginRight: "5%",
+	},
+	container: {
+		flex: 1,
+	},
+	content: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	modal: {
+		width: 150,
+		height: 150,
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

@@ -99,7 +99,6 @@ function FeedScreen(props) {
 
 	useEffect(() => {
 		if (isFocused) {
-
 			async function initialFetch() {
 				var rawResponse = await fetch(
 					`http://${privateIP}:3000/search/initial-fetch-feedrecipes`,
@@ -118,10 +117,9 @@ function FeedScreen(props) {
 				setInitialData(response.allPublicRecipes);
 			}
 			initialFetch();
-
 		} else {
-			setSelectedTagsArray([])
-			setSearchInput("")
+			setSelectedTagsArray([]);
+			setSearchInput("");
 		}
 	}, [isFocused]);
 
@@ -247,7 +245,10 @@ function FeedScreen(props) {
 							backgroundColor: "#f5f6fa",
 							width: "100%",
 							height: 360,
-							marginTop: Platform.OS === "ios" ? STATUSBAR_HEIGHT + APPBAR_HEIGHT : APPBAR_HEIGHT
+							marginTop:
+								Platform.OS === "ios"
+									? STATUSBAR_HEIGHT + APPBAR_HEIGHT
+									: APPBAR_HEIGHT,
 						}}
 					>
 						<View style={{ marginVertical: 10 }}>
@@ -400,80 +401,84 @@ function FeedScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if(recipeName.length > 24){
-				elipse = "..."
+			if (recipeName.length > 24) {
+				elipse = "...";
 			}
 			var maxCaracters = recipeName.substring(0, 24) + elipse;
-	return (
-			<TouchableOpacity
-				onPress={() => handlePressOnCard(item)}
-			>
-				<View
-					style={{
-						height: 260,
-						width: 180,
-						marginBottom: 5,
-						marginTop: 5,
-						borderWidth: 1.5,
-						borderColor: "#000",
-						backgroundColor: "#Fff",
-						borderRadius: 15
-					}}
-				>
-					<Text style={{
-						height: "15%",
-						padding: 5,
-						textAlign: "center",
-						color: "#e67e22",
-						fontSize: 18,
-						fontWeight: "bold"
-					}}>
-						{maxCaracters}
-					</Text>
-					<Image
+			return (
+				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
+					<View
 						style={{
-							height: "75%",
-							width: "100%",
-							// marginBottom:"1%",
-							// borderRadius:10
+							height: 260,
+							width: 180,
+							marginBottom: 5,
+							marginTop: 5,
+							borderWidth: 1.5,
+							borderColor: "#000",
+							backgroundColor: "#Fff",
+							borderRadius: 15,
 						}}
-						source={{ uri: item.image }}
-					/>
-					<View style={{
-						 display: "flex",
-						 flexDirection: "row",
-						 justifyContent: "space-between",
-						 marginRight: "2%",
-						 marginLeft: "2%" 
-						 }}>
-					<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.likeCount}
-						</Text>
-						<MaterialCommunityIcons
-							name="heart"
-							size={22}
-							color="#ff4757"
-							style={{}}
-						/>
-					</View>
-					<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.comments.length}
-						</Text>
-						<MaterialCommunityIcons
-							name="comment-multiple-outline"
-							size={22}
-							color="#e67e22"
+					>
+						<Text
 							style={{
-								marginLeft:"5%",
-								marginTop:"1%"
+								height: "15%",
+								padding: 5,
+								textAlign: "center",
+								color: "#e67e22",
+								fontSize: 18,
+								fontWeight: "bold",
 							}}
+						>
+							{maxCaracters}
+						</Text>
+						<Image
+							style={{
+								height: "75%",
+								width: "100%",
+								// marginBottom:"1%",
+								// borderRadius:10
+							}}
+							source={{ uri: item.image }}
 						/>
-					</View></View>
-				</View>
-			</TouchableOpacity>
-		)};
+						<View
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								justifyContent: "space-between",
+								marginRight: "2%",
+								marginLeft: "2%",
+							}}
+						>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.likeCount}
+								</Text>
+								<MaterialCommunityIcons
+									name="heart"
+									size={22}
+									color="#ff4757"
+									style={{}}
+								/>
+							</View>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.comments.length}
+								</Text>
+								<MaterialCommunityIcons
+									name="comment-multiple-outline"
+									size={22}
+									color="#e67e22"
+									style={{
+										marginLeft: "5%",
+										marginTop: "1%",
+									}}
+								/>
+							</View>
+						</View>
+					</View>
+				</TouchableOpacity>
+			);
+		};
 
 		flatlist = (
 			<FlatList
@@ -492,75 +497,90 @@ function FeedScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if(recipeName.length > 24){
-				elipse = "..."
+			if (recipeName.length > 24) {
+				elipse = "...";
 			}
 			var maxCaracters = recipeName.substring(0, 24) + elipse;
-	return (
-			<TouchableOpacity
-				onPress={() => handlePressOnCard(item)}
-			>
-				<View
-					style={{
-						display: "flex",
-						// flexDirection: "row",
-						height: 500,
-						width: "98%",
-						alignSelf: "center",
-
-						marginTop: 10,
-						borderBottomLeftRadius: 22,
-						borderBottomRightRadius: 22,
-						borderTopLeftRadius: 22,
-						borderTopRightRadius: 22,
-						borderWidth: 1.5,
-						borderColor: "#000",
-						backgroundColor: "#fff"
-					}}
-				>
-					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20, marginTop: 10, color: "#e67e22" }}>{maxCaracters}</Text>
-					<Image
+			return (
+				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
+					<View
 						style={{
-							height: "82%",
-							width: "100%",
-							marginTop: "1%"
-							// borderBottomLeftRadius: 0,
-							// borderBottomRightRadius: 0,
-							// borderTopLeftRadius: 20,
-							// borderTopRightRadius: 20,
+							display: "flex",
+							// flexDirection: "row",
+							height: 500,
+							width: "98%",
+							alignSelf: "center",
+
+							marginTop: 10,
+							borderBottomLeftRadius: 22,
+							borderBottomRightRadius: 22,
+							borderTopLeftRadius: 22,
+							borderTopRightRadius: 22,
+							borderWidth: 1.5,
+							borderColor: "#000",
+							backgroundColor: "#fff",
 						}}
-						source={{ uri: item.image }}
-					/>
-					<View style={styles.align}>
-						<View style={styles.like}>
-							<Text style={{ fontSize: 15 }}>
-								{item.likeCount}
-							</Text>
-							<MaterialCommunityIcons
-								name="heart"
-								size={25}
-								color="#ff4757"
-								style={{}}
-							/>
-						</View>
-						<View style={styles.like}>
-						<Text style={{ fontSize: 15 }}>
-							{item.comments.length}
+					>
+						<Text
+							style={{
+								fontSize: 25,
+								fontWeight: "bold",
+								marginLeft: 20,
+								marginTop: 10,
+								color: "#e67e22",
+							}}
+						>
+							{maxCaracters}
 						</Text>
-						<MaterialCommunityIcons
-							name="comment-multiple-outline"
-							size={25}
-							color="#e67e22"
-							style={{}}
+						<Image
+							style={{
+								height: "82%",
+								width: "100%",
+								marginTop: "1%",
+								// borderBottomLeftRadius: 0,
+								// borderBottomRightRadius: 0,
+								// borderTopLeftRadius: 20,
+								// borderTopRightRadius: 20,
+							}}
+							source={{ uri: item.image }}
 						/>
+						<View style={styles.align}>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.likeCount}
+								</Text>
+								<MaterialCommunityIcons
+									name="heart"
+									size={25}
+									color="#ff4757"
+									style={{}}
+								/>
+							</View>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.comments.length}
+								</Text>
+								<MaterialCommunityIcons
+									name="comment-multiple-outline"
+									size={25}
+									color="#e67e22"
+									style={{}}
+								/>
+							</View>
+							<Text
+								style={{
+									fontSize: 25,
+									fontWeight: "bold",
+									marginRight: 10,
+								}}
+							>
+								@{item.author.username}
+							</Text>
+						</View>
 					</View>
-						<Text style={{ fontSize: 25, fontWeight: "bold", marginRight: 10 }}>
-							@{item.author.username}
-						</Text>
-					</View>
-				</View>
-			</TouchableOpacity>
-		)};
+				</TouchableOpacity>
+			);
+		};
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return
@@ -575,8 +595,8 @@ function FeedScreen(props) {
 
 	const handlePressOnCard = (recipe) => {
 		props.sendPressedRecipeToStore(recipe);
-		navigation.navigate("RecipeSheetScreen")
-	}
+		navigation.navigate("RecipeSheetScreen");
+	};
 	//----------------------------- ------------------------------------Fin de la flatList
 
 	//-----------------------------------RENDER-----------------------------------
@@ -674,7 +694,6 @@ function mapDispatchToProps(dispatch) {
 			});
 		},
 		sendPressedRecipeToStore: function (recipe) {
-			console.log(recipe)
 			dispatch({
 				type: "setRecipe",
 				recipe: recipe,
@@ -686,9 +705,16 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(FeedScreen);
 
 const styles = StyleSheet.create({
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
+	align: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginRight: 8,
+		marginLeft: 8,
+		textAlign: "center",
+		marginTop: 5,
 	},
+
 	appBar: {
 		display: "flex",
 		flexDirection: "row",
@@ -702,31 +728,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#f5f6fa",
 	},
 
-	searchSection: {
-		flex: 1,
-		height: 40,
-		marginTop: 12,
-		marginBottom: 12,
-
-		borderRadius: 5,
-
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff",
-	},
-	searchIcon: {
-		padding: 5,
-	},
-	searchInput: {
-		flex: 1,
-		paddingTop: 10,
-		paddingRight: 10,
-		paddingBottom: 10,
-		paddingLeft: 20,
-		backgroundColor: "#fff",
-		color: "#424242",
-	},
 	filterContainer: {
 		alignSelf: "center",
 		paddingVertical: 5,
@@ -734,6 +735,10 @@ const styles = StyleSheet.create({
 		margin: 5,
 		borderWidth: 1,
 		borderRadius: 100,
+	},
+	like: {
+		flexDirection: "row",
+		marginLeft: 5,
 	},
 	overlay: {
 		flex: 1,
@@ -756,18 +761,33 @@ const styles = StyleSheet.create({
 		backgroundColor: "black",
 		width: "100%",
 	},
-	align: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginRight: 8,
-		marginLeft: 8,
-		textAlign: "center",
-		marginTop: 5,
+
+	searchIcon: {
+		padding: 5,
 	},
-	like: {
+	searchInput: {
+		flex: 1,
+		paddingTop: 10,
+		paddingRight: 10,
+		paddingBottom: 10,
+		paddingLeft: 20,
+		backgroundColor: "#fff",
+		color: "#424242",
+	},
+	searchSection: {
+		flex: 1,
+		height: 40,
+		marginTop: 12,
+		marginBottom: 12,
+
+		borderRadius: 5,
+
 		flexDirection: "row",
-		// justifyContent: "center",
-		marginLeft: 5,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#fff",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

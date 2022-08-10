@@ -35,6 +35,7 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56; //permet de faire varier 
 function HomeScreen(props) {
 	const isFocused = useIsFocused();
 	const navigation = useNavigation(); //nécessaire pour la navigation par boutons/drawer/tab
+	const [isLoading, setIsLoading] = useState(true);
 
 	const [alert, setAlert] = useState(false); //pour afficher la modal des filtres
 	const [isOverlayVisible, setIsOverlayVisible] = useState(false); //sert à afficher l'ombre derrière la modal
@@ -46,7 +47,7 @@ function HomeScreen(props) {
 	//pour connaître la taille utilisée sur chaque téléphone par TabNavigator:
 	const tabBarHeight = useBottomTabBarHeight();
 	//pour envoyer cette taille dans le store et l'utiliser dans d'autres composants, notamment DrawerScreen:
-	
+
 	useEffect(() => {
 		props.sendBottomTabHeight(tabBarHeight);
 	}, []);
@@ -116,12 +117,13 @@ function HomeScreen(props) {
 
 				setDATA(response.addedRecipes);
 				setInitialData(response.addedRecipes);
-				// console.log(response.addedRecipes, "---------------------------------------")
+				setIsLoading(false)
 			}
 			initialFetch();
 		} else {
 			setSelectedTagsArray([]);
 			setSearchInput("");
+			setIsLoading(true)
 		}
 	}, [isFocused]);
 
@@ -392,8 +394,10 @@ function HomeScreen(props) {
 	//Début FlatList affichant les Cards de recettes
 
 	var flatlist;
-	
-	var whenEmpty = (
+
+	var whenEmpty = null 
+	if (!isLoading) {
+		whenEmpty = (
 		<View
 			style={{
 				width: "90%",
@@ -418,10 +422,9 @@ function HomeScreen(props) {
 				}}
 			>
 				Ajoute ta première recette en cliquant sur le + en bas !
-				
 			</Text>
 		</View>
-	);
+	)}
 
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
@@ -429,81 +432,84 @@ function HomeScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if(recipeName.length > 24){
-				elipse = "..."
+			if (recipeName.length > 24) {
+				elipse = "...";
 			}
 			var maxCaracters = recipeName.substring(0, 24) + elipse;
-	return (
-			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
-				<View
-					style={{
-						height: 260,
-						width: 180,
-						marginBottom: 5,
-						marginTop: 5,
-						borderWidth: 1.5,
-						borderColor: "#000",
-						backgroundColor: "#Fff",
-						borderRadius: 15,
-					}}
-				>
-					<Text
+			return (
+				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
+					<View
 						style={{
-							height: "15%",
-							padding: 5,
-							textAlign: "center",
-							color: "#e67e22",
-							fontSize: 18,
-							fontWeight: "bold",
+							height: 260,
+							width: 180,
+							marginBottom: 5,
+							marginTop: 5,
+							borderWidth: 1.5,
+							borderColor: "#000",
+							backgroundColor: "#Fff",
+							borderRadius: 15,
 						}}
 					>
-						{maxCaracters}
-					</Text>
-					<Image
-						style={{
-							height: "75%",
-							width: "100%",
-							// marginBottom:"1%",
-							// borderRadius:10
-						}}
-						source={{ uri: item.image }}
-					/>
-					<View style={{
-							 display: "flex",
-							 flexDirection: "row",
-							 justifyContent: "space-between",
-							 marginRight: "2%",
-							 marginLeft: "2%" 
-							 }}>
-						<View style={styles.like}>
-							<Text style={{ fontSize: 15 }}>
-								{item.likeCount}
-							</Text>
-							<MaterialCommunityIcons
-								name="heart"
-								size={21}
-								color="#ff4757"
-								style={{}}
-							/>
-						</View>
-						<View style={styles.like}>
-							<Text style={{ fontSize: 15 }}>
-								{item.comments.length} 								
-							</Text>
-							<MaterialCommunityIcons
-								name="comment-multiple-outline"
-								size={22}
-								color="#e67e22"
-								style={{
-									marginLeft:"5%",
-									marginTop:"1%"
-								}}
-							/>
+						<Text
+							style={{
+								height: "15%",
+								padding: 5,
+								textAlign: "center",
+								color: "#e67e22",
+								fontSize: 18,
+								fontWeight: "bold",
+							}}
+						>
+							{maxCaracters}
+						</Text>
+						<Image
+							style={{
+								height: "75%",
+								width: "100%",
+								// marginBottom:"1%",
+								// borderRadius:10
+							}}
+							source={{ uri: item.image }}
+						/>
+						<View
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								justifyContent: "space-between",
+								marginRight: "2%",
+								marginLeft: "2%",
+							}}
+						>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.likeCount}
+								</Text>
+								<MaterialCommunityIcons
+									name="heart"
+									size={21}
+									color="#ff4757"
+									style={{}}
+								/>
+							</View>
+							<View style={styles.like}>
+								<Text style={{ fontSize: 15 }}>
+									{item.comments.length}
+								</Text>
+								<MaterialCommunityIcons
+									name="comment-multiple-outline"
+									size={22}
+									color="#e67e22"
+									style={{
+										marginLeft: "5%",
+										marginTop: "1%",
+									}}
+								/>
+							</View>
 						</View>
 					</View>
-				</View>
-			</TouchableOpacity>
-		)}
+				</TouchableOpacity>
+			);
+		};
 
 		flatlist = (
 			<FlatList
@@ -523,55 +529,54 @@ function HomeScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if(recipeName.length > 24){
-				elipse = "..."
+			if (recipeName.length > 24) {
+				elipse = "...";
 			}
 			var maxCaracters = recipeName.substring(0, 24) + elipse;
-	return (
-			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
-				<View
-					style={{
-						display: "flex",
-						// flexDirection: "row",
-						height: 500,
-						width: "98%",
-						alignSelf: "center",
-
-						marginTop: 10,
-						borderBottomLeftRadius: 22,
-						borderBottomRightRadius: 22,
-						borderTopLeftRadius: 22,
-						borderTopRightRadius: 22,
-						borderWidth: 1.5,
-						borderColor: "#000",
-						backgroundColor: "#fff",
-					}}
-				>
-					<Text
+			return (
+				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
+					<View
 						style={{
-							fontSize: 25,
-							fontWeight: "bold",
-							marginLeft: 20,
+							display: "flex",
+							// flexDirection: "row",
+							height: 500,
+							width: "98%",
+							alignSelf: "center",
+
 							marginTop: 10,
-							color: "#e67e22",
+							borderBottomLeftRadius: 22,
+							borderBottomRightRadius: 22,
+							borderTopLeftRadius: 22,
+							borderTopRightRadius: 22,
+							borderWidth: 1.5,
+							borderColor: "#000",
+							backgroundColor: "#fff",
 						}}
 					>
-						{maxCaracters}
-					</Text>
-					<Image
-						style={{
-							height: "82%",
-							width: "100%",
-							marginTop: "1%",
-							// borderBottomLeftRadius: 0,
-							// borderBottomRightRadius: 0,
-							// borderTopLeftRadius: 20,
-							// borderTopRightRadius: 20,
-						}}
-						source={{ uri: item.image }}
-					/>
-					<View style={styles.align}>
-						
+						<Text
+							style={{
+								fontSize: 25,
+								fontWeight: "bold",
+								marginLeft: 20,
+								marginTop: 10,
+								color: "#e67e22",
+							}}
+						>
+							{maxCaracters}
+						</Text>
+						<Image
+							style={{
+								height: "82%",
+								width: "100%",
+								marginTop: "1%",
+								// borderBottomLeftRadius: 0,
+								// borderBottomRightRadius: 0,
+								// borderTopLeftRadius: 20,
+								// borderTopRightRadius: 20,
+							}}
+							source={{ uri: item.image }}
+						/>
+						<View style={styles.align}>
 							<View style={styles.like}>
 								<Text style={{ fontSize: 15 }}>
 									{item.likeCount}
@@ -594,20 +599,21 @@ function HomeScreen(props) {
 									style={{}}
 								/>
 							</View>
-						
-						<Text
-							style={{
-								fontSize: 25,
-								fontWeight: "bold",
-								marginRight: 10,
-							}}
-						>
-							@{item.author.username}
-						</Text>
+
+							<Text
+								style={{
+									fontSize: 25,
+									fontWeight: "bold",
+									marginRight: 10,
+								}}
+							>
+								@{item.author.username}
+							</Text>
+						</View>
 					</View>
-				</View>
-			</TouchableOpacity>
-		)};
+				</TouchableOpacity>
+			);
+		};
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return
@@ -722,7 +728,6 @@ function mapDispatchToProps(dispatch) {
 			});
 		},
 		sendPressedRecipeToStore: function (recipe) {
-			console.log(recipe);
 			dispatch({
 				type: "setRecipe",
 				recipe: recipe,
@@ -734,9 +739,16 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
-	statusBar: {
-		height: STATUSBAR_HEIGHT,
+	align: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginRight: 8,
+		marginLeft: 8,
+		textAlign: "center",
+		marginTop: 5,
 	},
+
 	appBar: {
 		display: "flex",
 		flexDirection: "row",
@@ -749,32 +761,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "#f5f6fa",
 	},
-
-	searchSection: {
-		flex: 1,
-		height: 40,
-		marginTop: 12,
-		marginBottom: 12,
-
-		borderRadius: 5,
-
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff",
-	},
-	searchIcon: {
-		padding: 5,
-	},
-	searchInput: {
-		flex: 1,
-		paddingTop: 10,
-		paddingRight: 10,
-		paddingBottom: 10,
-		paddingLeft: 20,
-		backgroundColor: "#fff",
-		color: "#424242",
-	},
 	filterContainer: {
 		alignSelf: "center",
 		paddingVertical: 5,
@@ -782,6 +768,12 @@ const styles = StyleSheet.create({
 		margin: 5,
 		borderWidth: 1,
 		borderRadius: 100,
+	},
+	like: {
+		flexDirection: "row",
+
+		justifyContent: "center",
+		marginRight: 5,
 	},
 	overlay: {
 		flex: 1,
@@ -800,24 +792,33 @@ const styles = StyleSheet.create({
 		left: 0,
 		top: 0,
 		opacity: 0.6,
-
 		backgroundColor: "black",
 		width: "100%",
 	},
-	align: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginRight: 8,
-		marginLeft: 8,
-		textAlign: "center",
-		marginTop: 5,
+	searchIcon: {
+		padding: 5,
 	},
-	like: {
+	searchInput: {
+		flex: 1,
+		paddingTop: 10,
+		paddingRight: 10,
+		paddingBottom: 10,
+		paddingLeft: 20,
+		backgroundColor: "#fff",
+		color: "#424242",
+	},
+	searchSection: {
+		flex: 1,
+		height: 40,
+		marginTop: 12,
+		marginBottom: 12,
+		borderRadius: 5,
 		flexDirection: "row",
-		// alignItems: "",
 		justifyContent: "center",
-		marginRight: 5,
-		// marginTop: 5,
+		alignItems: "center",
+		backgroundColor: "#fff",
+	},
+	statusBar: {
+		height: STATUSBAR_HEIGHT,
 	},
 });

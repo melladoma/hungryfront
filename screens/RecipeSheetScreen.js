@@ -1,16 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import {
-	useNavigation,
-	DrawerActions,
-	useIsFocused,
-} from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+
 import { privateIP } from "../env.js";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Sharing from 'expo-sharing';
-
 
 import {
 	StatusBar,
@@ -25,7 +17,7 @@ import {
 	Dimensions,
 	KeyboardAvoidingView,
 	TextInput,
-	Share
+	Share,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -53,30 +45,51 @@ function RecipeSheetScreen(props) {
 
 	const window = Dimensions.get("window");
 
-
 	//---------------Share function ----------------
-	
-	let ingredientToMessage = recipeData.ingredients.map(x=>x.name + " " + x.quantity + "\n").join("")
-	let upperName = recipeData.name.toUpperCase()
-    let shareMessage =
-		"Cette recette vous a été envoyé via The Hungry-Book, téléchargement bientôt disponible !" + '\n' +
-		'\n' +
-		upperName + "  " + "\n" +
-		'\n' +
-        "Temps de cuisson : " + recipeData.cookTime + " min" + "   " + "\n" +
-        "Temps de préparation : " + recipeData.prepTime + " min" + "  " + "\n" +
-        "Nombre de personnes : " + nbPersonne + "   " + "\n" +
-		'\n' +
-        "Listes des ingédients : " + "\n" + ingredientToMessage + "   " + "\n" +
-        "Méthodologie : " + "\n" + '\n' + recipeData.directions + "  "; "\n"
 
+	let ingredientToMessage = recipeData.ingredients
+		.map((x) => x.name + " " + x.quantity + "\n")
+		.join("");
+	let upperName = recipeData.name.toUpperCase();
+	let shareMessage =
+		"Cette recette vous a été envoyé via The Hungry-Book, téléchargement bientôt disponible !" +
+		"\n" +
+		"\n" +
+		upperName +
+		"  " +
+		"\n" +
+		"\n" +
+		"Temps de cuisson : " +
+		recipeData.cookTime +
+		" min" +
+		"   " +
+		"\n" +
+		"Temps de préparation : " +
+		recipeData.prepTime +
+		" min" +
+		"  " +
+		"\n" +
+		"Nombre de personnes : " +
+		nbPersonne +
+		"   " +
+		"\n" +
+		"\n" +
+		"Listes des ingédients : " +
+		"\n" +
+		ingredientToMessage +
+		"   " +
+		"\n" +
+		"Méthodologie : " +
+		"\n" +
+		"\n" +
+		recipeData.directions +
+		"  ";
+	("\n");
 
 	const onShare = async () => {
 		try {
 			const result = await Share.share({
-
 				message: shareMessage,
-
 			});
 			if (result.action === Share.sharedAction) {
 				if (result.activityType) {
@@ -92,10 +105,7 @@ function RecipeSheetScreen(props) {
 		}
 	};
 
-
-
 	//----------------Fin share function -----------
-
 
 	useEffect(() => {
 		if (isFocused) {
@@ -238,7 +248,6 @@ function RecipeSheetScreen(props) {
 	};
 
 	var handleCart = async (recipe, token) => {
-		console.log('salut toi');
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/addToShoppingList`,
 			{
@@ -249,43 +258,46 @@ function RecipeSheetScreen(props) {
 				body: `recipe=${JSON.stringify(recipe)}&token=${token}`,
 			}
 		);
-		// console.log('salut vous');
+
 		var response = await rawResponse.json();
 
-		// console.log(response.shoppingList,'hello pour la 5eme fois');
-
 		navigation.navigate("ShoppingListScreen");
-
-
 	};
 
 	// ------------------------------------------------------------CALENDAR FUNCTION
 
-	var today = new Date()
+	var today = new Date();
 	function addDays(date, days) {
 		var result = new Date(date);
 		result.setDate(result.getDate() + days);
 		return result;
 	}
-	var weekdays = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4), addDays(today, 5), addDays(today, 6)];
+	var weekdays = [
+		today,
+		addDays(today, 1),
+		addDays(today, 2),
+		addDays(today, 3),
+		addDays(today, 4),
+		addDays(today, 5),
+		addDays(today, 6),
+	];
 
 	var handleCalendarAdd = async (date, token, recipe) => {
-		// console.log(recipeId, date, token)
 		let calendarObj = {
-			date: date.toLocaleString('fr-FR', {
-				year: 'numeric',
-				month: 'numeric',
-				day: 'numeric',
+			date: date.toLocaleString("fr-FR", {
+				year: "numeric",
+				month: "numeric",
+				day: "numeric",
 			}),
 			recipe: recipe._id,
-			token
-		}
+			token,
+		};
 		var rawResponse = await fetch(
 			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,
 			{
 				method: "post",
-				headers: { 'Content-type': 'application/json; charset=UTF-8' },
-				body: JSON.stringify(calendarObj)
+				headers: { "Content-type": "application/json; charset=UTF-8" },
+				body: JSON.stringify(calendarObj),
 			}
 		);
 		var response = await rawResponse.json();
@@ -293,8 +305,7 @@ function RecipeSheetScreen(props) {
 			setCalendarModalOpen(false);
 			setShadow(false);
 		}
-
-	}
+	};
 
 	//-------------------------------------------------------------FIN CALENDAR
 
@@ -305,7 +316,7 @@ function RecipeSheetScreen(props) {
 		modificationPencilIcon = (
 			<TouchableOpacity
 				style={{
-					justifyContent: "flex-end"
+					justifyContent: "flex-end",
 				}}
 				onPress={() => navigation.navigate("FormScreen")}
 			>
@@ -316,7 +327,6 @@ function RecipeSheetScreen(props) {
 					style={{
 						paddingLeft: 10,
 						marginTop: 5,
-
 					}}
 				/>
 			</TouchableOpacity>
@@ -352,7 +362,7 @@ function RecipeSheetScreen(props) {
 					color="#ff4757"
 					style={{}}
 				/>
-			</View >
+			</View>
 		);
 	} else {
 		if (addedRecipes.includes(recipeData._id)) {
@@ -480,9 +490,7 @@ function RecipeSheetScreen(props) {
 				name="close"
 				size={28}
 				color="#ffffff"
-				onPress={() => 
-					setModalOpen(false)
-				}
+				onPress={() => setModalOpen(false)}
 			/>
 		</TouchableOpacity>
 	);
@@ -496,11 +504,12 @@ function RecipeSheetScreen(props) {
 		/>
 	);
 
-
 	const weekButtonsList = weekdays.map((item, i) => {
 		return (
 			<TouchableOpacity
-				onPress={() => handleCalendarAdd(item, props.token, props.recipe)}
+				onPress={() =>
+					handleCalendarAdd(item, props.token, props.recipe)
+				}
 				style={{
 					marginTop: 5,
 					elevation: 8,
@@ -510,29 +519,25 @@ function RecipeSheetScreen(props) {
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius:20,
-					width:"70%",
-					marginRight:"15%",
-					marginLeft:"15%",
-					marginBottom:"3%"
-					
+					borderRadius: 20,
+					width: "70%",
+					marginRight: "15%",
+					marginLeft: "15%",
+					marginBottom: "3%",
 				}}
 				key={i}
 			>
-				<Text style={styles.appButtonText}>{item.toLocaleString('fr-FR', {
-					weekday: 'long',
-					year: 'numeric',
-					month: 'numeric',
-					day: 'numeric',
-				})}</Text>
-
+				<Text style={styles.appButtonText}>
+					{item.toLocaleString("fr-FR", {
+						weekday: "long",
+						year: "numeric",
+						month: "numeric",
+						day: "numeric",
+					})}
+				</Text>
 			</TouchableOpacity>
-
-
-		)
-	})
-
-
+		);
+	});
 
 	// -----------------------------------------------------------Fin Boutons ----------------------------------------------------------------
 
@@ -556,7 +561,6 @@ function RecipeSheetScreen(props) {
 					height: 360,
 					marginTop: "50%",
 					marginLeft: "5%",
-					
 				}}
 			>
 				<Text
@@ -599,7 +603,7 @@ function RecipeSheetScreen(props) {
 	var overlayShadow;
 	if (shadow) {
 		overlayShadow = (
-			<View style={[styles.overlayShadow, { height: "100%", }]} />
+			<View style={[styles.overlayShadow, { height: "100%" }]} />
 		);
 	}
 
@@ -612,59 +616,53 @@ function RecipeSheetScreen(props) {
 		>
 			<View
 				style={{
-
-
 					borderRadius: 100,
 					backgroundColor: "#fff",
 					width: "90%",
 					height: "70%",
 					marginTop: "15%",
 					marginLeft: "5%",
-					marginBottom:"10%"
+					marginBottom: "10%",
 				}}
 			>
-				<View style={{
+				<View
+					style={{
 						// marginBottom:"5%",
-						alignItems:"flex-end",
-						marginRight:"14%",
-						marginLeft:"5%",
-						marginTop:"3%"
-						
-					}}>
-				<MaterialCommunityIcons
-					name="close"
-					size={32}
-					color="#000"
-					onPress={() => { 
-						setCalendarModalOpen(false);
-						setShadow(false)
+						alignItems: "flex-end",
+						marginRight: "14%",
+						marginLeft: "5%",
+						marginTop: "3%",
 					}}
-					
-				/>
+				>
+					<MaterialCommunityIcons
+						name="close"
+						size={32}
+						color="#000"
+						onPress={() => {
+							setCalendarModalOpen(false);
+							setShadow(false);
+						}}
+					/>
 				</View>
 				<Text
 					style={{
 						fontSize: 20,
 						marginTop: "8%",
 						textAlign: "center",
-						alignItems:"center",
+						alignItems: "center",
 						flexWrap: "wrap",
 						marginLeft: "8%",
 						marginLeft: "8%",
-						marginBottom:"5%"
-
+						marginBottom: "5%",
 					}}
 				>
 					Ajouter ma recette le :
 				</Text>
-				
 
 				{weekButtonsList}
-
-
 			</View>
 		</Modal>
-	)
+	);
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
 
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
@@ -734,8 +732,6 @@ function RecipeSheetScreen(props) {
 	//Commentaires----------------------------------------------------------------------------------------------------
 	const [commentsVisible, setCommentsVisible] = useState(false);
 	const [inputCommentValue, setInputCommentValue] = useState("");
-	/* const refInput = useRef(null); */
-	console.log(inputCommentValue, "aaa---");
 	const handlePressCommentsComponent = () => {
 		setCommentsVisible(true);
 	};
@@ -755,7 +751,6 @@ function RecipeSheetScreen(props) {
 				);
 
 				var response = await rawResponse.json();
-				console.log("response que tu cherches-----", response);
 				setRecipeData({
 					...recipeData,
 					comments: JSON.parse(response.newComments),
@@ -768,37 +763,43 @@ function RecipeSheetScreen(props) {
 
 	var inputNewComment = (
 		<KeyboardAvoidingView>
-			<Text style={{ padding: 20, paddingBottom: 0, fontSize:18, marginTop:"10%",  }}>
-				Ajouter un commentaire: 
-			</Text>
-			<View style={styles.inputContainer}>
-			<TextInput
-				/* ref={refInput} */
-				style={styles.inputPass}
-				multiline
-				onChangeText={(value) => setInputCommentValue(value)}
-				value={inputCommentValue}
-			/>
-			<TouchableOpacity
-				style={{}}
-				onPress={() => {
-					handleSubmitComment(inputCommentValue);
+			<Text
+				style={{
+					padding: 20,
+					paddingBottom: 0,
+					fontSize: 18,
+					marginTop: "10%",
 				}}
 			>
-				<MaterialCommunityIcons
-					name="send"
-					size={28}
-					color="#e67e22"
-					style={{
-						paddingLeft: 20,
-						paddingRight: 20,
-						paddingTop: 10,
-						paddingBottom: 10,
-						zIndex: 1,
-					}}
-					
+				Ajouter un commentaire:
+			</Text>
+			<View style={styles.inputContainer}>
+				<TextInput
+					/* ref={refInput} */
+					style={styles.inputPass}
+					multiline
+					onChangeText={(value) => setInputCommentValue(value)}
+					value={inputCommentValue}
 				/>
-			</TouchableOpacity>
+				<TouchableOpacity
+					style={{}}
+					onPress={() => {
+						handleSubmitComment(inputCommentValue);
+					}}
+				>
+					<MaterialCommunityIcons
+						name="send"
+						size={28}
+						color="#e67e22"
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 10,
+							paddingBottom: 10,
+							zIndex: 1,
+						}}
+					/>
+				</TouchableOpacity>
 			</View>
 		</KeyboardAvoidingView>
 	);
@@ -817,7 +818,7 @@ function RecipeSheetScreen(props) {
 				shadowOpacity: 0.2,
 				elevation: 1,
 				alignSelf: "center",
-				borderWidth:0.75
+				borderWidth: 0.75,
 			}}
 		>
 			<View
@@ -832,7 +833,7 @@ function RecipeSheetScreen(props) {
 					style={{
 						fontSize: 14,
 						color: "orange",
-						fontWeight:"bold"
+						fontWeight: "bold",
 					}}
 				>
 					{x.author}
@@ -844,7 +845,9 @@ function RecipeSheetScreen(props) {
 						fontStyle: "italic",
 					}}
 				>
-					{`le ${new Date(x.date).getDate()}/${new Date(x.date).getMonth() + 1}/${new Date(x.date).getFullYear()}`}
+					{`le ${new Date(x.date).getDate()}/${
+						new Date(x.date).getMonth() + 1
+					}/${new Date(x.date).getFullYear()}`}
 				</Text>
 			</View>
 			<Text
@@ -878,13 +881,12 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<TouchableOpacity
 						style={{
-							marginRight: "2%"
+							marginRight: "2%",
 						}}
 						onPress={() => {
 							setCalendarModalOpen(true);
 							setShadow(true);
 						}}
-						
 					>
 						<MaterialCommunityIcons
 							name="calendar"
@@ -930,16 +932,16 @@ function RecipeSheetScreen(props) {
 								{recipeData.prepTime < 60
 									? `${recipeData.prepTime} min`
 									: recipeData.prepTime % 60 > 9
-										? `${Math.floor(
+									? `${Math.floor(
 											recipeData.prepTime / 60
-										)}h${recipeData.prepTime % 60}min`
-										: recipeData.prepTime % 60 > 0
-											? `${Math.floor(
-												recipeData.prepTime / 60
-											)}h0${recipeData.prepTime % 60}min`
-											: `${Math.floor(
-												recipeData.prepTime / 60
-											)}h`}
+									  )}h${recipeData.prepTime % 60}min`
+									: recipeData.prepTime % 60 > 0
+									? `${Math.floor(
+											recipeData.prepTime / 60
+									  )}h0${recipeData.prepTime % 60}min`
+									: `${Math.floor(
+											recipeData.prepTime / 60
+									  )}h`}
 							</Text>
 							<Text>Préparation</Text>
 						</View>
@@ -954,16 +956,16 @@ function RecipeSheetScreen(props) {
 								{recipeData.cookTime < 60
 									? `${recipeData.cookTime} min`
 									: recipeData.cookTime % 60 > 9
-										? `${Math.floor(
+									? `${Math.floor(
 											recipeData.cookTime / 60
-										)}h${recipeData.cookTime % 60}min`
-										: recipeData.cookTime % 60 > 0
-											? `${Math.floor(
-												recipeData.cookTime / 60
-											)}h0${recipeData.cookTime % 60}min`
-											: `${Math.floor(
-												recipeData.cookTime / 60
-											)}h`}
+									  )}h${recipeData.cookTime % 60}min`
+									: recipeData.cookTime % 60 > 0
+									? `${Math.floor(
+											recipeData.cookTime / 60
+									  )}h0${recipeData.cookTime % 60}min`
+									: `${Math.floor(
+											recipeData.cookTime / 60
+									  )}h`}
 							</Text>
 							<Text>Cuisson</Text>
 						</View>
@@ -1030,8 +1032,8 @@ function RecipeSheetScreen(props) {
 					</Text>
 					<TouchableOpacity
 						style={{ zIndex: 1 }}
-						onPress={() =>
-							handleCart(recipeData, props.token)
+						onPress={
+							() => handleCart(recipeData, props.token)
 							// navigation.navigate("ShoppingListScreen")
 						}
 					>
@@ -1107,7 +1109,7 @@ function RecipeSheetScreen(props) {
 							size={25}
 							color="#e67e22"
 							style={{
-								marginRight:"2%"
+								marginRight: "2%",
 							}}
 						/>
 						<Text>{recipeData.comments.length}</Text>
@@ -1116,32 +1118,32 @@ function RecipeSheetScreen(props) {
 
 				<Modal visible={commentsVisible} animationType="slide">
 					<View>
-						
-						<ScrollView style={{ marginTop:"10%", height: 500 }}>
+						<ScrollView style={{ marginTop: "10%", height: 500 }}>
 							{commentsSection}
 						</ScrollView>
-						<KeyboardAvoidingView>{inputNewComment}</KeyboardAvoidingView>
+						<KeyboardAvoidingView>
+							{inputNewComment}
+						</KeyboardAvoidingView>
 						<View style={styles.appButtonContainer}>
 							<TouchableOpacity
 								onPress={() => setCommentsVisible(false)}
-								style={{
-									
-								}}
+								style={{}}
 							>
-								<View style={{ 
-									display: "flex",
-									flexDirection: "row",
-									justifyContent: "space-between",
-
-								}}>
-								<Text style={styles.appButtonText}>
-									Retourner à la recette
-								</Text>
-								<MaterialCommunityIcons
-									name="close"
-									size={28}
-									color="#ffffff"
-								/>
+								<View
+									style={{
+										display: "flex",
+										flexDirection: "row",
+										justifyContent: "space-between",
+									}}
+								>
+									<Text style={styles.appButtonText}>
+										Retourner à la recette
+									</Text>
+									<MaterialCommunityIcons
+										name="close"
+										size={28}
+										color="#ffffff"
+									/>
 								</View>
 							</TouchableOpacity>
 						</View>
@@ -1150,15 +1152,8 @@ function RecipeSheetScreen(props) {
 
 				{/*--------------------------------------------------------------Bottom page / retour a la page d'avant ------------------------------------------  */}
 
-
-
-
 				<View style={styles.ligne}>
-					<TouchableOpacity
-						style={{}}
-						onPress={() => handleGoBack()}
-					>
-
+					<TouchableOpacity style={{}} onPress={() => handleGoBack()}>
 						<MaterialCommunityIcons
 							name="arrow-left"
 							size={28}
@@ -1172,26 +1167,23 @@ function RecipeSheetScreen(props) {
 						/>
 					</TouchableOpacity>
 
-					<TouchableOpacity
-						style={{}}
-						onPress={onShare}
-					>
+					<TouchableOpacity style={{}} onPress={onShare}>
 						<MaterialCommunityIcons
 							name="share-variant"
 							size={25}
 							color="#2f3542"
 							style={{
 								paddingLeft: 10,
-								marginRight: "3%"
+								marginRight: "3%",
 							}}
 						/>
 					</TouchableOpacity>
-				</View >
-			</ScrollView >
+				</View>
+			</ScrollView>
 			{DeleteModalVerif}
 			{overlayShadow}
 			{CalendarModal}
-		</View >
+		</View>
 	);
 }
 
@@ -1228,79 +1220,6 @@ const APPBAR_HEIGHT = Platform.OS === "ios" ? 50 : 56;
 // https://stackoverflow.com/a/39300715
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#f5f6fa",
-		paddingTop: 35
-	},
-	recipeName: {
-		textAlign: "center",
-		fontSize: 25,
-	},
-	userName: {
-		fontSize: 20,
-		marginBottom: 5,
-		marginTop: 2,
-		textAlign: "center",
-		alignSelf: "center",
-	},
-	recipePicture: {
-		width: 420,
-		height: 200,
-	},
-	tag: {
-		backgroundColor: "#F19066",
-		borderRadius: 100,
-		marginLeft: 5,
-		textAlign: "center",
-		alignSelf: "center",
-		paddingVertical: 1,
-		paddingHorizontal: 10,
-		// flexDirection: "row",
-	},
-	ligne: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginTop: 5,
-		zIndex: 1,
-		textAlign: "center"
-	},
-	tagligne: {
-		flexDirection: "row",
-		alignItems: "center",
-		// justifyContent: "space-between",
-		marginTop: 5,
-	},
-	like: {
-		flexDirection: "row",
-		alignItems: "center",
-		// alignItems: "",
-		justifyContent: "center",
-		marginTop: 5,
-	},
-	time: {
-		width: 350,
-		height: 80,
-		backgroundColor: "#dfe4ea",
-		borderRadius: 15,
-		marginLeft: 5,
-		marginTop: 15,
-		alignItems: "center",
-		justifyContent: "space-between",
-		flexDirection: "row",
-		textAlign: "center",
-	},
-	center: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	screenContainer: {
-		//flex: 1,
-		justifyContent: "center",
-		padding: 16,
-	},
 	appButtonContainer: {
 		elevation: 8,
 		backgroundColor: "#F19066",
@@ -1310,10 +1229,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		// marginTop: 10,
-		width:"90%",
-		marginRight:"5%",
-		marginLeft:"5%"
+		width: "90%",
+		marginRight: "5%",
+		marginLeft: "5%",
 	},
 	appButtonText: {
 		fontSize: 18,
@@ -1321,39 +1239,15 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		alignSelf: "center",
 	},
-
-	title: {
-		fontSize: 25,
-		marginTop: 15,
-		textAlign: "center",
-		color: "#F19066",
-	},
-	step: {
-		fontSize: 18,
-		textAlign: "justify",
-	},
-	fullSizePicture: {
-		width: window.width / 2,
-		height: window.height / 2,
-		resizeMode: "contain",
-		alignSelf: "center",
-		borderWidth: 1,
-		borderRadius: 20,
-	},
-	deleteModal: {
-		width: 150,
-		height: 150,
-	},
-	overlayShadow: {
+	center: {
 		flex: 1,
-		position: "absolute",
-		left: 0,
-		top: 0,
-		opacity: 0.6,
-
-		backgroundColor: "black",
-		width: "100%",
-		height: "100%",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	container: {
+		flex: 1,
+		backgroundColor: "#f5f6fa",
+		paddingTop: 35,
 	},
 	deleteButton: {
 		flexDirection: "row",
@@ -1371,8 +1265,19 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		// marginRight:25,
 		width: 100,
+	},
+	deleteModal: {
+		width: 150,
+		height: 150,
+	},
+	fullSizePicture: {
+		width: window.width / 2,
+		height: window.height / 2,
+		resizeMode: "contain",
+		alignSelf: "center",
+		borderWidth: 1,
+		borderRadius: 20,
 	},
 	inputContainer: {
 		backgroundColor: "#dfe4ea",
@@ -1383,19 +1288,96 @@ const styles = StyleSheet.create({
 		borderWidth: 0.75,
 		padding: 10,
 		paddingLeft: 20,
-		height:80,
+		height: 80,
 		marginTop: 10,
-		marginBottom:"5%",
-		width:"95%",
-		marginRight:"2.5%",
-		marginLeft:"2.5%"
+		marginBottom: "5%",
+		width: "95%",
+		marginRight: "2.5%",
+		marginLeft: "2.5%",
 	},
 	inputPass: {
 		backgroundColor: "#dfe4ea",
 		borderRadius: 15,
 		width: 210,
 		alignItems: "center",
-		// marginTop: 10,
-		// marginBottom: 10,
+	},
+	ligne: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginTop: 5,
+		zIndex: 1,
+		textAlign: "center",
+	},
+	like: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		marginTop: 5,
+	},
+	overlayShadow: {
+		flex: 1,
+		position: "absolute",
+		left: 0,
+		top: 0,
+		opacity: 0.6,
+		backgroundColor: "black",
+		width: "100%",
+		height: "100%",
+	},
+	recipeName: {
+		textAlign: "center",
+		fontSize: 25,
+	},
+	recipePicture: {
+		width: 420,
+		height: 200,
+	},
+	screenContainer: {
+		justifyContent: "center",
+		padding: 16,
+	},
+	step: {
+		fontSize: 18,
+		textAlign: "justify",
+	},
+	tag: {
+		backgroundColor: "#F19066",
+		borderRadius: 100,
+		marginLeft: 5,
+		textAlign: "center",
+		alignSelf: "center",
+		paddingVertical: 1,
+		paddingHorizontal: 10,
+	},
+	tagligne: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginTop: 5,
+	},
+	time: {
+		width: 350,
+		height: 80,
+		backgroundColor: "#dfe4ea",
+		borderRadius: 15,
+		marginLeft: 5,
+		marginTop: 15,
+		alignItems: "center",
+		justifyContent: "space-between",
+		flexDirection: "row",
+		textAlign: "center",
+	},
+	title: {
+		fontSize: 25,
+		marginTop: 15,
+		textAlign: "center",
+		color: "#F19066",
+	},
+	userName: {
+		fontSize: 20,
+		marginBottom: 5,
+		marginTop: 2,
+		textAlign: "center",
+		alignSelf: "center",
 	},
 });
