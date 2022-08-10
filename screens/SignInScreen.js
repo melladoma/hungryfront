@@ -70,12 +70,10 @@ function SignInScreen(props) {
 
 	useEffect(() => {
 		if (userExists) {
-			navigation.navigate("FeedDrawer2");
+			navigation.navigate("HomeDrawer2");
 			setSignInPassword("");
 			setSignInEmail("");
 			setUserExists(false);
-
-			navigation.navigate("FeedDrawer2");
 		}
 	}, [userExists]);
 

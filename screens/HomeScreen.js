@@ -423,6 +423,17 @@ function HomeScreen(props) {
 			>
 				Ajoute ta première recette en cliquant sur le + en bas !
 			</Text>
+			<Text
+				style={{
+					fontSize: 25,
+					color: "#470000",
+					textAlign: "center",
+					alignSelf: "center",
+					marginTop:"20%"
+				}}
+			>
+				Ou alors clique sur le burger en bas à gauche pour découvrir les recettes de la communauté !
+			</Text>
 		</View>
 	)}
 
