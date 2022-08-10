@@ -60,19 +60,27 @@ function SignInScreen(props) {
 		const response = await rawResponse.json();
 
 		if (response.result == true) {
+			console.log("HELLO1");
 			props.addToken(response.token);
 			props.addUsername(response.username);
 			props.addAvatar(response.avatar);
 			props.addLikedRecipes(response.likedRecipes);
 			setUserExists(true);
 		} else {
+			console.log("HELLOLUCAS");
 			setErrorsSignin(response.error);
 		}
 	};
-
+	console.log(userExists, "userexi======")
 	useEffect(() => {
 		if (userExists) {
+			
 			navigation.navigate("FeedDrawer2");
+			setSignInPassword("");
+			setSignInEmail("");
+			setUserExists(false)
+			console.log(userExists, "userexi==******====")
+
 		}
 	}, [userExists]);
 

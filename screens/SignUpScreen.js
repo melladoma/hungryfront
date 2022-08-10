@@ -77,6 +77,12 @@ function SignUpScreen(props) {
 	useEffect(() => {
 		if (userExists) {
 			navigation.navigate("FeedDrawer2");
+			setSignUpUsername('')
+			setSignUpEmail('')
+			setSignUpPassword('')
+			setSignUpConfirmPassword('')
+			setUserExists(false)
+
 		}
 	}, [userExists]);
 

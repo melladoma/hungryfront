@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { privateIP } from "../env.js";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -52,6 +53,20 @@ function DrawerScreen(props) {
 			></Image>
 		);
 	} 
+
+	// var handeleDec = async (token) => {
+	// 	var rawResponse = await fetch(
+	// 	  `http://${privateIP}:3000/users/deconnexion`,
+	// 	  {
+	// 		method: "post",
+	// 		headers: {
+	// 		  "Content-Type": "application/x-www-form-urlencoded",
+	// 		},
+	// 		body: `token=${token}`,
+	// 	  }
+	// 	);
+	// 	navigation.navigate("SignIn")
+	//   };
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -213,10 +228,11 @@ function DrawerScreen(props) {
 								</Text>
 							</TouchableOpacity>
 						</View>
+						
 					</View>
 					<View
 						style={{
-							height: props.bottomTabHeight,
+							// height: props.bottomTabHeight,
 							backgroundColor: "#2f3542",
 							display: "flex",
 							justifyContent: "center",
@@ -229,9 +245,51 @@ function DrawerScreen(props) {
 								alignItems: "center",
 								justifySelf: "flex-end",
 								paddingLeft: 20,
+								marginBottom:"5%",
+								marginTop:"5%"
+							}}
+							onPress={() => navigation.navigate("SignIn")}
+						>
+
+							<MaterialCommunityIcons
+								name="login"
+								size={28}
+								color="#F19066"
+							/>
+							<Text
+								style={{
+									color: "#f5f6fa",
+									fontSize: 18,
+									marginLeft: 10,
+									
+								}}
+							>
+								Déconnexion
+							</Text>
+							
+						</TouchableOpacity>
+					</View>
+					{/* <View
+						style={{
+							// height: props.bottomTabHeight,
+							backgroundColor: "#2f3542",
+							display: "flex",
+							justifyContent: "center",
+						}}
+					>
+						<TouchableOpacity
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								justifySelf: "flex-end",
+								paddingLeft: 20,
+								marginBottom:"5%",
+								marginTop:"5%"
 							}}
 							onPress={() => navigation.navigate("Account")}
 						>
+
 							<MaterialCommunityIcons
 								name="cog"
 								size={28}
@@ -242,12 +300,14 @@ function DrawerScreen(props) {
 									color: "#f5f6fa",
 									fontSize: 18,
 									marginLeft: 10,
+									
 								}}
 							>
 								Paramètres
 							</Text>
+							
 						</TouchableOpacity>
-					</View>
+					</View> */}
 				</View>
 			</View>
 		</View>
