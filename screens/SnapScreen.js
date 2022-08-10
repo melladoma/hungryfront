@@ -70,6 +70,7 @@ function SnapScreen(props) {
 	};
 
 	const handleSubmitPhoto = async (image) => {
+		// console.log("iam console from submit image picker")
 
 		// console.log("image", image)
 		var data = new FormData();
@@ -148,7 +149,7 @@ function SnapScreen(props) {
 
 		// console.log("image", image)
 		var data = new FormData();
-		setModalOpen(false)
+		// setModalOpen(false)
 		setLoadModalOpen(true);
 		let regExjpg = /$jp*g/
 		// console.log(image.match(regExjpg[0]) === "")
@@ -206,7 +207,7 @@ function SnapScreen(props) {
 		var response = await rawResponse.json();
 
 		var recipeToStore = response.recipeTreated;
-		console.log(response.recipeTreated, "--------");
+		console.log(response.recipeTreated, "cameratreated--------");
 
 		//---------envoi recipe traitee Backend dans store
 		if (recipeToStore) {
@@ -412,21 +413,7 @@ function SnapScreen(props) {
 									setImage(photo.uri)
 									handleSubmitPhotoCamera(photo.uri)
 
-									// var data = new FormData();
 
-									// data.append('recette', {
-									// 	uri: photo.uri,
-									// 	type: 'image/jpeg',
-									// 	name: 'recette.jpg',
-									// });
-									// console.log(data, "data es tu la");
-									// var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
-									// 	method: 'POST',
-									// 	body: data
-									// });
-									// var response = await rawResponse.json();
-									// console.log(response, "repond nous")
-									navigation.navigate("FormScreen")
 								}
 							}
 							}

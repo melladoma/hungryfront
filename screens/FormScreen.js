@@ -40,6 +40,7 @@ function FormScreen(props) {
 
 	//RECUPERATION DU STORE SI EXISTE
 	useEffect(() => {
+
 		if (isFocused) {
 
 			if (props.recipe.name) {
@@ -51,9 +52,8 @@ function FormScreen(props) {
 				setNumInputs(props.recipe.ingredients.length)
 			}
 
-        }
-    }, [isFocused]);
-
+		}
+	}, [isFocused]);
 
 	//-----------------------FONCTION DE SOUMISSION DU FORMULAIRE
 
@@ -66,11 +66,13 @@ function FormScreen(props) {
 		//------recup du multi champs ingredients et push dans l'objet recipe
 		let recipeIngredientsCopy = [];
 		for (let i = 0; i < numInputs; i++) {
-			if (recipe.ingredients.length > 0) {
-				recipeIngredientsCopy.push({ name: recipe.ingredients[i].name, quantity: recipe.ingredients[i].quantity })
-			} else {
-				recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
-			}
+			// if (recipe.ingredients.length > 0) {
+			// 	recipeIngredientsCopy.push({ name: recipe.ingredients[i].name, quantity: recipe.ingredients[i].quantity })
+			// } else {
+			// 	recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
+			// }
+			recipeIngredientsCopy.push({ name: refInputs.current[i], quantity: refInputsQuantity.current[i] })
+
 		}
 		recipeObj.ingredients = [...recipeIngredientsCopy];
 		recipeObj.privateStatus = !isEnabled;
@@ -172,6 +174,7 @@ function FormScreen(props) {
 	//----------------------------------FIN IMAGE PICKER
 
 	// ----------------------------------INPUTS INGREDIENTS
+
 	const [textValue, setTextValue] = useState('');
 	const [numInputs, setNumInputs] = useState(recipe.ingredients.length);
 	const refInputs = useRef([textValue]);
@@ -255,7 +258,7 @@ function FormScreen(props) {
 					<TextInput
 						style={styles.input}
 						onChangeText={(value) => setInputValue(i, value)}
-						// value={{}}}
+
 						value={String(refInputs.current[i])}
 						// value={recipe.ingredients[i].name}
 
@@ -482,7 +485,7 @@ function FormScreen(props) {
 							zIndex: 1,
 						}}
 					/>
-					<Text style={{ fontWeight: 'bold', color: "#fff", fontSize:18 }}> Ajouter un ingrédient</Text>
+					<Text style={{ fontWeight: 'bold', color: "#fff", fontSize: 18 }}> Ajouter un ingrédient</Text>
 				</Pressable>
 
 				{/* FIN MULTIPLE INPUTS */}
@@ -681,7 +684,7 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		color: "#f39c12",
 		fontSize: 19,
-		fontWeight:"bold",
+		fontWeight: "bold",
 		textDecorationLine: 'underline'
 
 	},
