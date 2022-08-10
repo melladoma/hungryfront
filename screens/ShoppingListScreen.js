@@ -95,8 +95,18 @@ function ShoppingListScreen(props) {
 
 	var item = ({ item }) => {
 		return (
-			<View style={{ flexDirection: "row" }}>
-				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
+			<View style={{ 
+				flexDirection: "row",
+				justifyContent:"space-between",
+				borderBottomWidth:0.75,
+				
+				// texteAlign:"center",
+				marginTop:"2%",
+		        marginBottom:"5%"
+				
+				
+				 }}>
+				<View style={styles.list}>
 					<TouchableOpacity
 						style={{}}
 						onPress={() => handlePressedCheckbox(item._id)}
@@ -112,18 +122,21 @@ function ShoppingListScreen(props) {
 							style={{
 								paddingLeft: 20,
 								paddingRight: 20,
-								paddingTop: 10,
-								paddingBottom: 10,
+								// paddingTop: 10,
+								// paddingBottom: 10,
 								zIndex: 1,
+							
+								// width:50,
 							}}
 						/>
 					</TouchableOpacity>
 				</View>
-				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
+				<View style={styles.list}>
 					<Text
 						style={{
-							textAlign: "center",
+							// textAlign: "center",
 							fontSize: 20,
+							width:150,
 							textDecorationLine: selectedCheckboxes.includes(
 								item._id
 							)
@@ -134,11 +147,12 @@ function ShoppingListScreen(props) {
 						{item.name}
 					</Text>
 				</View>
-				<View style={{ width: 110, backgroundColor: "#dfe4ea" }}>
+				<View style={styles.list}>
 					<Text
 						style={{
 							textAlign: "center",
 							fontSize: 20,
+							width:120,
 							textDecorationLine: selectedCheckboxes.includes(
 								item._id
 							)
@@ -214,7 +228,7 @@ function ShoppingListScreen(props) {
 						}}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 						style={{}}
 						onPress={() => handleDeleteSelected(selectedCheckboxes)}
 					>
@@ -230,7 +244,7 @@ function ShoppingListScreen(props) {
 								zIndex: 1,
 							}}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity
 						style={{}}
 						onPress={() => handleDeleteAll()}
@@ -256,53 +270,57 @@ function ShoppingListScreen(props) {
 							flex: 1,
 							justifyContent: "center",
 							alignItems: "center",
-							marginTop: "10%",
+							marginTop: "5%",
+							
 						}}
 					>
-						<View style={{ flexDirection: "row", margin: 3 }}>
+						<View style={{ flexDirection: "row",
+									   margin: 3,
+									   justifyContent :"space-between",
+									   marginBottom:"5%",
+									   
+									  
+									}}>
 							<View
 								style={{
-									width: 110,
-									backgroundColor: "#F19066",
+									width:"30%",
+									// backgroundColor: "#F19066",
+								}}
+							>
+								
+							</View>
+							<View
+								style={{
+									width:"30%",
+									// backgroundColor: "#F19066",
 								}}
 							>
 								<Text
 									style={{
-										textAlign: "center",
+										// textAlign: "center",
 										fontSize: 20,
+										fontWeight:"bold",
+										color:"#F19066"
 									}}
 								>
-									valide
+									Produits
 								</Text>
 							</View>
 							<View
 								style={{
-									width: 110,
-									backgroundColor: "#F19066",
+									width:"30%",
+									// backgroundColor: "#F19066",
 								}}
 							>
 								<Text
 									style={{
-										textAlign: "center",
+										// textAlign: "center",
 										fontSize: 20,
+										fontWeight:"bold",
+										color:"#F19066"
 									}}
 								>
-									vos produits
-								</Text>
-							</View>
-							<View
-								style={{
-									width: 110,
-									backgroundColor: "#F19066",
-								}}
-							>
-								<Text
-									style={{
-										textAlign: "center",
-										fontSize: 20,
-									}}
-								>
-									quantity
+									Quantités
 								</Text>
 							</View>
 						</View>
@@ -390,58 +408,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#f5f6fa",
 	},
+	list: {
+		width:"35%",
+		// justifyContent:"center"
+		// backgroundColor: "#dfe4ea",
+		
+		
+	}
 
-	searchSection: {
-		flex: 1,
-		height: 40,
-		margin: 12,
-		marginLeft: 0,
 
-		borderRadius: 5,
-
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff",
-	},
-	searchIcon: {
-		padding: 5,
-	},
-	searchInput: {
-		flex: 1,
-		paddingTop: 10,
-		paddingRight: 10,
-		paddingBottom: 10,
-		paddingLeft: 20,
-		backgroundColor: "#fff",
-		color: "#424242",
-	},
-	filterContainer: {
-		alignSelf: "center",
-		padding: 12,
-		margin: 5,
-		borderWidth: 1,
-		borderRadius: 100,
-	},
-	overlay: {
-		flex: 1,
-		position: "absolute",
-		left: 0,
-		top: 0,
-		opacity: 0.97,
-		borderBottomLeftRadius: 50,
-		borderBottomRightRadius: 50,
-		backgroundColor: "white",
-		width: "100%",
-	},
-	overlayShadow: {
-		flex: 1,
-		position: "absolute",
-		left: 0,
-		top: 0,
-		opacity: 0.6,
-
-		backgroundColor: "black",
-		width: "100%",
-	},
+	
 });

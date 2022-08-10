@@ -397,7 +397,14 @@ function FeedScreen(props) {
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
 
-		const renderItem = ({ item }) => (
+		const renderItem = ({ item }) => {
+			var recipeName = item.name;
+			let elipse = "";
+			if(recipeName.length > 24){
+				elipse = "..."
+			}
+			var maxCaracters = recipeName.substring(0, 24) + elipse;
+	return (
 			<TouchableOpacity
 				onPress={() => handlePressOnCard(item)}
 			>
@@ -421,7 +428,7 @@ function FeedScreen(props) {
 						fontSize: 18,
 						fontWeight: "bold"
 					}}>
-						{item.name}
+						{maxCaracters}
 					</Text>
 					<Image
 						style={{
@@ -466,7 +473,7 @@ function FeedScreen(props) {
 					</View></View>
 				</View>
 			</TouchableOpacity>
-		);
+		)};
 
 		flatlist = (
 			<FlatList
@@ -482,7 +489,14 @@ function FeedScreen(props) {
 	} else if (typeAffichage === "liste") {
 		//--------------------------------affichage en "liste"
 
-		const renderItem = ({ item }) => (
+		const renderItem = ({ item }) => {
+			var recipeName = item.name;
+			let elipse = "";
+			if(recipeName.length > 24){
+				elipse = "..."
+			}
+			var maxCaracters = recipeName.substring(0, 24) + elipse;
+	return (
 			<TouchableOpacity
 				onPress={() => handlePressOnCard(item)}
 			>
@@ -504,7 +518,7 @@ function FeedScreen(props) {
 						backgroundColor: "#fff"
 					}}
 				>
-					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20, marginTop: 10, color: "#e67e22" }}>{item.name}</Text>
+					<Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: 20, marginTop: 10, color: "#e67e22" }}>{maxCaracters}</Text>
 					<Image
 						style={{
 							height: "82%",
@@ -546,7 +560,7 @@ function FeedScreen(props) {
 					</View>
 				</View>
 			</TouchableOpacity>
-		);
+		)};
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return

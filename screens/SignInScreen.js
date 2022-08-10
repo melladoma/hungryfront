@@ -74,6 +74,7 @@ function SignInScreen(props) {
 	console.log(userExists, "userexi======")
 	useEffect(() => {
 		if (userExists) {
+
 			
 			navigation.navigate("FeedDrawer2");
 			setSignInPassword("");
@@ -81,6 +82,8 @@ function SignInScreen(props) {
 			setUserExists(false)
 			console.log(userExists, "userexi==******====")
 
+
+			navigation.navigate("FeedDrawer2");			
 		}
 	}, [userExists]);
 
@@ -157,7 +160,7 @@ function SignInScreen(props) {
 						<TextInput
 							style={styles.inputContainer}
 							inputStyle={{ marginLeft: 10 }}
-							placeholder="Adresse E-mail"
+							placeholder="Votre Pseudo ou Adresse E-mail"
 							keyboardType="email-address"
 							overflow="hidden"
 							keyboardAppearance="dark"

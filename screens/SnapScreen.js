@@ -412,21 +412,6 @@ function SnapScreen(props) {
 									setImage(photo.uri)
 									handleSubmitPhotoCamera(photo.uri)
 
-									// var data = new FormData();
-
-									// data.append('recette', {
-									// 	uri: photo.uri,
-									// 	type: 'image/jpeg',
-									// 	name: 'recette.jpg',
-									// });
-									// console.log(data, "data es tu la");
-									// var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
-									// 	method: 'POST',
-									// 	body: data
-									// });
-									// var response = await rawResponse.json();
-									// console.log(response, "repond nous")
-									navigation.navigate("FormScreen")
 								}
 							}
 							}

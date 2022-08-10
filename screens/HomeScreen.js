@@ -46,6 +46,7 @@ function HomeScreen(props) {
 	//pour connaître la taille utilisée sur chaque téléphone par TabNavigator:
 	const tabBarHeight = useBottomTabBarHeight();
 	//pour envoyer cette taille dans le store et l'utiliser dans d'autres composants, notamment DrawerScreen:
+	
 	useEffect(() => {
 		props.sendBottomTabHeight(tabBarHeight);
 	}, []);
@@ -391,7 +392,7 @@ function HomeScreen(props) {
 	//Début FlatList affichant les Cards de recettes
 
 	var flatlist;
-
+	
 	var whenEmpty = (
 		<View
 			style={{
@@ -425,7 +426,14 @@ function HomeScreen(props) {
 	if (typeAffichage === "icones") {
 		//-----------------------------affichage en "icones"
 
-		const renderItem = ({ item }) => (
+		const renderItem = ({ item }) => {
+			var recipeName = item.name;
+			let elipse = "";
+			if(recipeName.length > 24){
+				elipse = "..."
+			}
+			var maxCaracters = recipeName.substring(0, 24) + elipse;
+	return (
 			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 				<View
 					style={{
@@ -449,7 +457,7 @@ function HomeScreen(props) {
 							fontWeight: "bold",
 						}}
 					>
-						{item.name}
+						{maxCaracters}
 					</Text>
 					<Image
 						style={{
@@ -495,7 +503,7 @@ function HomeScreen(props) {
 					</View>
 				</View>
 			</TouchableOpacity>
-		);
+		)}
 
 		flatlist = (
 			<FlatList
@@ -512,7 +520,14 @@ function HomeScreen(props) {
 	} else if (typeAffichage === "liste") {
 		//--------------------------------affichage en "liste"
 
-		const renderItem = ({ item }) => (
+		const renderItem = ({ item }) => {
+			var recipeName = item.name;
+			let elipse = "";
+			if(recipeName.length > 24){
+				elipse = "..."
+			}
+			var maxCaracters = recipeName.substring(0, 24) + elipse;
+	return (
 			<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 				<View
 					style={{
@@ -541,7 +556,7 @@ function HomeScreen(props) {
 							color: "#e67e22",
 						}}
 					>
-						{item.name}
+						{maxCaracters}
 					</Text>
 					<Image
 						style={{
@@ -592,7 +607,7 @@ function HomeScreen(props) {
 					</View>
 				</View>
 			</TouchableOpacity>
-		);
+		)};
 
 		flatlist = (
 			<FlatList //composant qu'on met dans le return

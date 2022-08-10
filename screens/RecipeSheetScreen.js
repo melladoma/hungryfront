@@ -56,19 +56,19 @@ function RecipeSheetScreen(props) {
 
 	//---------------Share function ----------------
 	
-	let ingredientToMessage = recipeData.ingredients.map(x=>x.name + " " + x.quantity + "\u000A").join("")
+	let ingredientToMessage = recipeData.ingredients.map(x=>x.name + " " + x.quantity + "\n").join("")
 	let upperName = recipeData.name.toUpperCase()
     let shareMessage =
-		"Cette recette vous a était envoyé via The Hungry-Book, téléchargement bientôt disponible !" + '\n' +
+		"Cette recette vous a été envoyé via The Hungry-Book, téléchargement bientôt disponible !" + '\n' +
 		'\n' +
-		upperName + "  " + "\u000A" +
+		upperName + "  " + "\n" +
 		'\n' +
-        "Temps de cuisson : " + recipeData.cookTime + " min" + "   " + "\u000A" +
-        "Temps de préparation : " + recipeData.prepTime + " min" + "  " + "\u000A" +
-        "Nombre de personnes : " + nbPersonne + "   " + "\u000A" +
+        "Temps de cuisson : " + recipeData.cookTime + " min" + "   " + "\n" +
+        "Temps de préparation : " + recipeData.prepTime + " min" + "  " + "\n" +
+        "Nombre de personnes : " + nbPersonne + "   " + "\n" +
 		'\n' +
-        "Listes des ingédients : " + "\u000A" + ingredientToMessage + "   " + "\u000A" +
-        "Méthodologie : " + "\u000A" + '\n' + recipeData.directions + "  "; "\u000A"
+        "Listes des ingédients : " + "\n" + ingredientToMessage + "   " + "\n" +
+        "Méthodologie : " + "\n" + '\n' + recipeData.directions + "  "; "\n"
 
 
 	const onShare = async () => {
@@ -290,8 +290,8 @@ function RecipeSheetScreen(props) {
 		);
 		var response = await rawResponse.json();
 		if (response) {
-			setCalendarModalOpen(false)
-			
+			setCalendarModalOpen(false);
+			setShadow(false);
 		}
 
 	}
@@ -617,35 +617,47 @@ function RecipeSheetScreen(props) {
 					borderRadius: 100,
 					backgroundColor: "#fff",
 					width: "90%",
-					height: "80%",
+					height: "70%",
 					marginTop: "15%",
 					marginLeft: "5%",
 					marginBottom:"10%"
 				}}
 			>
+				<View style={{
+						// marginBottom:"5%",
+						alignItems:"flex-end",
+						marginRight:"14%",
+						marginLeft:"5%",
+						marginTop:"3%"
+						
+					}}>
+				<MaterialCommunityIcons
+					name="close"
+					size={32}
+					color="#000"
+					onPress={() => { 
+						setCalendarModalOpen(false);
+						setShadow(false)
+					}}
+					
+				/>
+				</View>
 				<Text
 					style={{
 						fontSize: 20,
-						marginTop: "30%",
+						marginTop: "8%",
 						textAlign: "center",
 						alignItems:"center",
 						flexWrap: "wrap",
 						marginLeft: "8%",
 						marginLeft: "8%",
+						marginBottom:"5%"
 
 					}}
 				>
 					Ajouter ma recette le :
 				</Text>
-				<MaterialCommunityIcons
-					name="close"
-					size={28}
-					color="#ddd"
-					onPress={() => { 
-						setCalendarModalOpen(false);
-						setShadow(false)
-					}}
-				/>
+				
 
 				{weekButtonsList}
 
