@@ -72,7 +72,7 @@ function SignInScreen(props) {
 
 	useEffect(() => {
 		if (userExists) {
-			navigation.navigate("FeedDrawer2");
+			navigation.navigate("FeedDrawer2");			
 		}
 	}, [userExists]);
 
@@ -149,7 +149,7 @@ function SignInScreen(props) {
 						<TextInput
 							style={styles.inputContainer}
 							inputStyle={{ marginLeft: 10 }}
-							placeholder="Adresse E-mail"
+							placeholder="Votre Pseudo ou Adresse E-mail"
 							keyboardType="email-address"
 							overflow="hidden"
 							keyboardAppearance="dark"
