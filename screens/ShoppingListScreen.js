@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 
-import { privateIP } from "../env.js";
+
 
 import {
 	StatusBar,
@@ -74,7 +74,7 @@ function ShoppingListScreen(props) {
 		if (isFocused) {
 			async function initialFetch() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/recipesheet/initial-fetch-shoppingList`,
+					`https://hungrybook-back.herokuapp.com/recipesheet/initial-fetch-shoppingList`,
 					{
 						method: "post",
 						headers: {
@@ -156,7 +156,7 @@ function ShoppingListScreen(props) {
 	const handleDeleteSelected = (arrayOfSelected) => {
 		async function deleteSelected() {
 			var rawResponse = await fetch(
-				`http://${privateIP}:3000/recipesheet/delete-selected-shoppingList`,
+				`https://hungrybook-back.herokuapp.com/recipesheet/delete-selected-shoppingList`,
 				{
 					method: "post",
 					headers: {
@@ -175,7 +175,7 @@ function ShoppingListScreen(props) {
 	const handleDeleteAll = () => {
 		async function deleteAll() {
 			var rawResponse = await fetch(
-				`http://${privateIP}:3000/recipesheet/delete-all-shoppingList`,
+				`https://hungrybook-back.herokuapp.com/recipesheet/delete-all-shoppingList`,
 				{
 					method: "post",
 					headers: {

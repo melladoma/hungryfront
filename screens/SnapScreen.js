@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { privateIP } from "../env.js";
+
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -95,7 +95,7 @@ function SnapScreen(props) {
 		console.log("data", data)
 
 		var rawResponseImg = await fetch(
-			`http://${privateIP}:3000/upload-image`,
+			`https://hungrybook-back.herokuapp.com/upload-image`,
 			{
 				method: "post",
 				body: data,
@@ -119,7 +119,7 @@ function SnapScreen(props) {
 		};
 		console.log("recipeData", recipeData)
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/api/tesseract`,
+			`https://hungrybook-back.herokuapp.com/api/tesseract`,
 			{
 				method: "POST",
 				headers: {
@@ -170,7 +170,7 @@ function SnapScreen(props) {
 		console.log("data", data)
 
 		var rawResponseImg = await fetch(
-			`http://${privateIP}:3000/upload-image-camera`,
+			`https://hungrybook-back.herokuapp.com/upload-image-camera`,
 			{
 				method: "post",
 				body: data,
@@ -194,7 +194,7 @@ function SnapScreen(props) {
 		};
 		console.log("recipeData", recipeData)
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/api/tesseract`,
+			`https://hungrybook-back.herokuapp.com/api/tesseract`,
 			{
 				method: "POST",
 				headers: {
@@ -420,7 +420,7 @@ function SnapScreen(props) {
 									// 	name: 'recette.jpg',
 									// });
 									// console.log(data, "data es tu la");
-									// var rawResponse = await fetch(`http://${privateIP}:3000/api/tesseract`, {
+									// var rawResponse = await fetch(`https://hungrybook-back.herokuapp.com/api/tesseract`, {
 									// 	method: 'POST',
 									// 	body: data
 									// });

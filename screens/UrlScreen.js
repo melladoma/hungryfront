@@ -20,7 +20,7 @@ import {
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 
-import { privateIP } from "../env.js";
+
 
 function UrlScreen(props) {
 	const navigation = useNavigation();
@@ -39,7 +39,7 @@ function UrlScreen(props) {
 		setWebView(false);
 		setLoadModalOpen(true);
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/api/url-scrapper`,
+			`https://hungrybook-back.herokuapp.com/api/url-scrapper`,
 			{
 				method: "post",
 				headers: {

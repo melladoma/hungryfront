@@ -8,7 +8,7 @@ import {
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { privateIP } from "../env.js";
+
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import {
@@ -101,7 +101,7 @@ function HomeScreen(props) {
 		if (isFocused) {
 			async function initialFetch() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/search/initial-fetch-myrecipes`,
+					`https://hungrybook-back.herokuapp.com/search/initial-fetch-myrecipes`,
 					{
 						method: "post",
 						headers: {

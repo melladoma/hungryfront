@@ -4,7 +4,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
 import * as ImagePicker from 'expo-image-picker';
-import { privateIP } from "../env.js"
+
 
 
 import {
@@ -94,7 +94,7 @@ function FormScreen(props) {
 					name: 'recipe.jpg',
 				});
 
-				var rawResponseImg = await fetch(`http://${privateIP}:3000/upload-image`, {
+				var rawResponseImg = await fetch(`https://hungrybook-back.herokuapp.com/upload-image`, {
 					method: 'post',
 					body: data
 				})
@@ -118,7 +118,7 @@ function FormScreen(props) {
 			//---- envoi recette en BDD 
 			setModalOpen(true)
 			let recipeData = { recipe: recipeObj, userToken: props.token, userName: props.username }
-			var rawResponse = await fetch(`http://${privateIP}:3000/validate-form`, {
+			var rawResponse = await fetch(`https://hungrybook-back.herokuapp.com/validate-form`, {
 				method: 'POST',
 				headers: { 'Content-type': 'application/json; charset=UTF-8' },
 				body: JSON.stringify(recipeData)

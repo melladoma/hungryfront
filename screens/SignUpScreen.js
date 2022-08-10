@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { privateIP } from "../env.js";
+
 
 import {
 	KeyboardAvoidingView,
@@ -52,7 +52,7 @@ function SignUpScreen(props) {
 	//le chemain du front au back
 	var handleSubmitSignup = async () => {
 		const rawResponse = await fetch(
-			`http://${privateIP}:3000/users/sign-up`,
+			`https://hungrybook-back.herokuapp.com/users/sign-up`,
 			{
 				method: "POST",
 				headers: {

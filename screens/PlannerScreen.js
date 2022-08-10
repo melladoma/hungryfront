@@ -17,7 +17,7 @@ import {
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
-import { privateIP } from "../env.js";
+
 
 
 function PlannerScreen(props) {
@@ -51,7 +51,7 @@ function PlannerScreen(props) {
 			setWeekDays(calculateWeek())
 			async function initialFetch() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/initial-fetch-calendar`,
+					`https://hungrybook-back.herokuapp.com/initial-fetch-calendar`,
 					{
 						method: "post",
 						headers: {

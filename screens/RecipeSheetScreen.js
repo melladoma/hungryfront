@@ -6,7 +6,7 @@ import {
 	useIsFocused,
 } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { privateIP } from "../env.js";
+
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Sharing from 'expo-sharing';
@@ -102,7 +102,7 @@ function RecipeSheetScreen(props) {
 			setRecipeData(props.recipe);
 			async function initialFetch() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/recipesheet/initial-fetch-recipesheet`,
+					`https://hungrybook-back.herokuapp.com/recipesheet/initial-fetch-recipesheet`,
 					{
 						method: "post",
 						headers: {
@@ -166,7 +166,7 @@ function RecipeSheetScreen(props) {
 	var handlePressHeartIcon = async (id, token) => {
 		if (likedRecipes.includes(recipeData._id)) {
 			var rawResponse = await fetch(
-				`http://${privateIP}:3000/recipesheet/dislike-recipe`,
+				`https://hungrybook-back.herokuapp.com/recipesheet/dislike-recipe`,
 				{
 					method: "post",
 					headers: {
@@ -186,7 +186,7 @@ function RecipeSheetScreen(props) {
 			});
 		} else {
 			var rawResponse = await fetch(
-				`http://${privateIP}:3000/recipesheet/like-recipe`,
+				`https://hungrybook-back.herokuapp.com/recipesheet/like-recipe`,
 				{
 					method: "post",
 					headers: {
@@ -209,7 +209,7 @@ function RecipeSheetScreen(props) {
 
 	var handleAddBook = async (recipe, token) => {
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/add-recipe-to-myrecipes`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/add-recipe-to-myrecipes`,
 			{
 				method: "post",
 				headers: {
@@ -224,7 +224,7 @@ function RecipeSheetScreen(props) {
 
 	var handleDeleteBook = async (recipe, token) => {
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/delete-recipe-to-myrecipes`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/delete-recipe-to-myrecipes`,
 			{
 				method: "post",
 				headers: {
@@ -240,7 +240,7 @@ function RecipeSheetScreen(props) {
 	var handleCart = async (recipe, token) => {
 		console.log('salut toi');
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/addToShoppingList`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/addToShoppingList`,
 			{
 				method: "post",
 				headers: {
@@ -281,7 +281,7 @@ function RecipeSheetScreen(props) {
 			token
 		}
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/addToWeeklyList`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/addToWeeklyList`,
 			{
 				method: "post",
 				headers: { 'Content-type': 'application/json; charset=UTF-8' },
@@ -398,7 +398,7 @@ function RecipeSheetScreen(props) {
 
 	var handlePressTrashIcon = async (id) => {
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/delete-recipe`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/delete-recipe`,
 			{
 				method: "post",
 				headers: {
@@ -658,7 +658,7 @@ function RecipeSheetScreen(props) {
 	//---------------------------------------------------------- DELETE RECIPE -------------------------------------------
 	var handlePressTrashIcon = async (id) => {
 		var rawResponse = await fetch(
-			`http://${privateIP}:3000/recipesheet/delete-recipe`,
+			`https://hungrybook-back.herokuapp.com/recipesheet/delete-recipe`,
 			{
 				method: "post",
 				headers: {
@@ -732,7 +732,7 @@ function RecipeSheetScreen(props) {
 		if (inputCommentValue != "") {
 			async function saveComment() {
 				var rawResponse = await fetch(
-					`http://${privateIP}:3000/recipesheet/save-comment`,
+					`https://hungrybook-back.herokuapp.com/recipesheet/save-comment`,
 					{
 						method: "post",
 						headers: {
