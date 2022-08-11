@@ -11,6 +11,7 @@ import {
 	TouchableOpacity,
 	Text,
 	StatusBar,
+	Linking,
 } from "react-native";
 
 import { MaterialCommunityIcons } from "react-native-vector-icons";
@@ -229,6 +230,44 @@ function DrawerScreen(props) {
 									}}
 								>
 									Mon planning
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<View
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								borderWidth: 1,
+								marginLeft: 20,
+								marginBottom: 10,
+								borderRadius: 100,
+								alignSelf: "flex-start",
+								paddingVertical: 5,
+								paddingHorizontal: 10,
+							}}
+						>
+							<TouchableOpacity
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+								}}
+								onPress={() => Linking.openURL("https://www.instagram.com/hungrybook00/")}
+							>
+								<MaterialCommunityIcons
+									name="instagram"
+									size={24}
+									color="#2f3542"
+								/>
+								<Text
+									style={{
+										color: "black",
+										fontSize: 18,
+										marginLeft: 10,
+									}}
+								>
+									Nous suivre
 								</Text>
 							</TouchableOpacity>
 						</View>
