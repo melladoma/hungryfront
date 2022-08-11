@@ -15,7 +15,7 @@ import {
 	ScrollView,
 	Modal,
 	Dimensions,
-	KeyboardAvoidingView,
+	TouchableWithoutFeedback,
 	TextInput,
 	Share,
 } from "react-native";
@@ -261,7 +261,7 @@ function RecipeSheetScreen(props) {
 
 		var response = await rawResponse.json();
 
-		navigation.navigate("ShoppingListScreen");
+		navigation.navigate("ShoppingList");
 	};
 
 	// ------------------------------------------------------------CALENDAR FUNCTION
@@ -612,55 +612,45 @@ function RecipeSheetScreen(props) {
 			visible={calendarModalOpen}
 			animationType="slide"
 			transparent={true}
-			style={styles.deleteModal}
 		>
-			<View
-				style={{
-					borderRadius: 100,
-					backgroundColor: "#fff",
-					width: "90%",
-					height: "70%",
-					marginTop: "15%",
-					marginLeft: "5%",
-					marginBottom: "10%",
+			<TouchableOpacity
+				style={{ flex: 1, justifyContent:"flex-end" }}
+				activeOpacity={1}
+				onPressOut={() => {
+					setCalendarModalOpen(false);
+					setShadow(false);
 				}}
 			>
-				<View
-					style={{
-						// marginBottom:"5%",
-						alignItems: "flex-end",
-						marginRight: "14%",
-						marginLeft: "5%",
-						marginTop: "3%",
-					}}
-				>
-					<MaterialCommunityIcons
-						name="close"
-						size={32}
-						color="#000"
-						onPress={() => {
-							setCalendarModalOpen(false);
-							setShadow(false);
+				<TouchableWithoutFeedback>
+					<View
+						style={{
+							alignItems: "center",
+							borderTopLeftRadius: 20,
+							borderTopRightRadius: 20,
+							backgroundColor: "#f5f6fa",
+							width: "100%",
+							paddingBottom:20
 						}}
-					/>
-				</View>
-				<Text
-					style={{
-						fontSize: 20,
-						marginTop: "8%",
-						textAlign: "center",
-						alignItems: "center",
-						flexWrap: "wrap",
-						marginLeft: "8%",
-						marginLeft: "8%",
-						marginBottom: "5%",
-					}}
-				>
-					Ajouter ma recette le :
-				</Text>
+					>
+						<Text
+							style={{
+								fontSize: 20,
+								marginTop: "8%",
+								textAlign: "center",
+								alignItems: "center",
+								flexWrap: "wrap",
+								marginLeft: "8%",
+								marginLeft: "8%",
+								marginBottom: "5%",
+							}}
+						>
+							Ajouter ma recette le :
+						</Text>
 
-				{weekButtonsList}
-			</View>
+						{weekButtonsList}
+					</View>
+				</TouchableWithoutFeedback>
+			</TouchableOpacity>
 		</Modal>
 	);
 	//----------------------------------------------------------------Fin Modale -------------------------------------------------------------------
@@ -693,12 +683,11 @@ function RecipeSheetScreen(props) {
 			<View
 				style={{
 					borderWidth: 2,
-					flex: 1,
 					position: "absolute",
-					bottom: 60,
-					width: "50%",
-					backgroundColor: "white",
-					alignSelf: "center",
+					right: "100%",
+					bottom: "-20%",
+					height: 100,
+					width: 120,
 				}}
 			>
 				<ScrollPicker
@@ -710,12 +699,12 @@ function RecipeSheetScreen(props) {
 						//data = la valeur que la scrollPicker renvoi et on le set dans un etat
 						setNbPersonne(data);
 					}}
-					wrapperHeight={180}
-					wrapperWidth={150}
+					wrapperHeight={100}
+					wrapperWidth={200}
 					wrapperColor="#FFFFFF"
-					itemHeight={60}
+					itemHeight={40}
 					highlightColor="#f19066"
-					highlightBorderWidth={3}
+					highlightBorderWidth={2}
 				/>
 			</View>
 		);
@@ -762,7 +751,7 @@ function RecipeSheetScreen(props) {
 	};
 
 	var inputNewComment = (
-		<KeyboardAvoidingView>
+		<View>
 			<Text
 				style={{
 					padding: 20,
@@ -801,7 +790,7 @@ function RecipeSheetScreen(props) {
 					/>
 				</TouchableOpacity>
 			</View>
-		</KeyboardAvoidingView>
+		</View>
 	);
 
 	var commentsSection = recipeData.comments.map((x, i) => (
@@ -865,7 +854,7 @@ function RecipeSheetScreen(props) {
 		<View style={styles.container}>
 			{/*-----------------------------------------------------Nom de recette + edit ---------------------------------------------------------  */}
 
-			<ScrollView>
+			<ScrollView keyboardShouldPersistTaps={"handled"}>
 				<Text h1 style={styles.recipeName}>
 					{recipeData.name}
 					{modificationPencilIcon}
@@ -969,9 +958,8 @@ function RecipeSheetScreen(props) {
 							</Text>
 							<Text>Cuisson</Text>
 						</View>
-						<View
-							style={{ display: "flex", flexDirection: "column" }}
-						>
+						<View style={{ display: "flex", flexDirection: "row" }}>
+							{plusPersonne}
 							<TouchableOpacity
 								style={{
 									marginRight: 8,
@@ -1012,7 +1000,6 @@ function RecipeSheetScreen(props) {
 									/>
 								</View>
 							</TouchableOpacity>
-							{plusPersonne}
 						</View>
 					</View>
 				</View>
@@ -1060,7 +1047,10 @@ function RecipeSheetScreen(props) {
 				</View>
 				<Modal visible={modalOpen} animationType="slide">
 					<View style={styles.modal}>
-						<ScrollView style={{ marginTop: 30 }}>
+						<ScrollView
+							style={{ marginTop: 30 }}
+							keyboardShouldPersistTaps={"handled"}
+						>
 							<View
 								style={{
 									marginTop: 20,
@@ -1086,13 +1076,21 @@ function RecipeSheetScreen(props) {
 									(cette instruction est pour {recipeData.servings} personne)
 								</Text> */}
 							</View>
-							<View style={styles.screenContainer}>
-								<CloseModal
-									title="Retour à la liste des ingédients"
-									size="sm"
-								/>
-							</View>
+							<View style={{ height: 70 }}></View>
 						</ScrollView>
+						<View
+							style={{
+								justifyContent: "center",
+								bottom: 0,
+								padding: 16,
+								position: "absolute",
+							}}
+						>
+							<CloseModal
+								title="Retour à la liste des ingédients"
+								size="sm"
+							/>
+						</View>
 					</View>
 				</Modal>
 
@@ -1118,12 +1116,14 @@ function RecipeSheetScreen(props) {
 
 				<Modal visible={commentsVisible} animationType="slide">
 					<View>
-						<ScrollView style={{ marginTop: "10%", height: 500 }}>
+						<View>{inputNewComment}</View>
+						<ScrollView
+							style={{ marginTop: "10%", height: 500 }}
+							keyboardShouldPersistTaps={"handled"}
+						>
 							{commentsSection}
 						</ScrollView>
-						<KeyboardAvoidingView>
-							{inputNewComment}
-						</KeyboardAvoidingView>
+
 						<View style={styles.appButtonContainer}>
 							<TouchableOpacity
 								onPress={() => setCommentsVisible(false)}

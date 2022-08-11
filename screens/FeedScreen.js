@@ -401,10 +401,10 @@ function FeedScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if (recipeName.length > 24) {
+			if (recipeName.length > 16) {
 				elipse = "...";
 			}
-			var maxCaracters = recipeName.substring(0, 24) + elipse;
+			var maxCaracters = recipeName.substring(0, 16) + elipse;
 			return (
 				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 					<View
@@ -489,6 +489,7 @@ function FeedScreen(props) {
 				data={DATA}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				keyboardShouldPersistTaps={'handled'}
 			/>
 		);
 	} else if (typeAffichage === "liste") {
@@ -589,6 +590,7 @@ function FeedScreen(props) {
 				data={DATA}
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
+				keyboardShouldPersistTaps={'handled'}
 			/>
 		);
 	}
@@ -667,6 +669,7 @@ function FeedScreen(props) {
 						horizontal
 						showsHorizontalScrollIndicator={false}
 						style={{}}
+						keyboardShouldPersistTaps={'handled'}
 					>
 						{TagsComponent}
 					</ScrollView>

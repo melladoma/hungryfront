@@ -188,7 +188,7 @@ function SnapScreen(props) {
 			props.setRecipe(recipeToStore);
 			setLoadModalOpen(false);
 			navigation.navigate("FormScreen");
-		}
+		} 
 	};
 
 	// -----------------------------------------------------------Demande permission appareil photo ---------------------------------------------------
@@ -293,6 +293,7 @@ function SnapScreen(props) {
 						fontSize: 20,
 						alignSelf: "center",
 						textAlign: "center",
+						padding:30
 						// marginTop: 400,
 					}}
 				>

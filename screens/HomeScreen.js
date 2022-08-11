@@ -443,10 +443,10 @@ function HomeScreen(props) {
 		const renderItem = ({ item }) => {
 			var recipeName = item.name;
 			let elipse = "";
-			if (recipeName.length > 24) {
+			if (recipeName.length > 16) {
 				elipse = "...";
 			}
-			var maxCaracters = recipeName.substring(0, 24) + elipse;
+			var maxCaracters = recipeName.substring(0, 16) + elipse;
 			return (
 				<TouchableOpacity onPress={() => handlePressOnCard(item)}>
 					<View
@@ -532,6 +532,7 @@ function HomeScreen(props) {
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
 				ListEmptyComponent={whenEmpty}
+				keyboardShouldPersistTaps={'handled'}
 			/>
 		);
 	} else if (typeAffichage === "liste") {
@@ -634,6 +635,7 @@ function HomeScreen(props) {
 				renderItem={renderItem}
 				keyExtractor={(item) => item._id}
 				ListEmptyComponent={whenEmpty}
+				keyboardShouldPersistTaps={'handled'}
 			/>
 		);
 	}
@@ -712,6 +714,7 @@ function HomeScreen(props) {
 						horizontal
 						showsHorizontalScrollIndicator={false}
 						style={{}}
+						keyboardShouldPersistTaps={'handled'}
 					>
 						{TagsComponent}
 					</ScrollView>

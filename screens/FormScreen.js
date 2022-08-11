@@ -522,6 +522,7 @@ function FormScreen(props) {
 						value={String(recipe.servings)}
 						placeholder={"Nombre de personnes"}
 						placeholderTextColor={"#d35400"}
+						keyboardType="numeric"
 					/>
 				</View>
 				{/* <Text style={styles.label}>Nombre de personnes</Text> */}

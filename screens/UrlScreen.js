@@ -52,6 +52,7 @@ function UrlScreen(props) {
 		// UrlSearch();
 		if (response.status) {
 			props.setRecipe(response.recipe);
+			setSearchInput("")
 			setLoadModalOpen(false);
 			navigation.navigate("FormScreen");
 		}
